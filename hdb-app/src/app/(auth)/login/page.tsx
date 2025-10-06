@@ -31,9 +31,9 @@ export default function LoginPage() {
     };
 
     return (
-        <div className="min-h-screen w-full font-sans flex items-center justify-center bg-blue-100">
+        <div className="min-h-screen w-full font-sans flex items-center justify-center" style={{ backgroundColor: '#fadabeff' }}>
             <div className="bg-white bg-opacity-90 rounded-xl shadow-lg p-8 w-full max-w-md">
-                <h1 className="text-4xl font-extrabold text-blue-900 mb-8 text-center">Login</h1>
+                <h1 className="text-4xl font-extrabold text-black mb-8 text-center">Login</h1>
                 {error && <p className="mb-4 text-red-500 text-center">{error}</p>}
                 <form onSubmit={handleSubmit} className="flex flex-col gap-6">
                     <input
@@ -41,7 +41,7 @@ export default function LoginPage() {
                         placeholder="Username"
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
-                        className="p-3 rounded border border-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-400 placeholder:text-gray-400 text-black"
+                        className="p-3 rounded border border-black focus:outline-none focus:ring-2 focus:ring-black placeholder:text-gray-400 text-black"
                         required
                     />
                     <input
@@ -49,19 +49,19 @@ export default function LoginPage() {
                         placeholder="Password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        className="p-3 rounded border border-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-400 placeholder:text-gray-400 text-black"
+                        className="p-3 rounded border border-black focus:outline-none focus:ring-2 focus:ring-black placeholder:text-gray-400 text-black"
                         required
                     />
                     <button
                         type="submit"
-                        className="bg-blue-900 text-white px-6 py-2 rounded font-bold shadow hover:bg-blue-800 transition"
+                        className="bg-[#f7af70ff] text-black px-6 py-2 rounded font-bold shadow hover:bg-[#fadabeff] transition"
                     >
                         Login
                     </button>
                 </form>
-                <p className="mt-6 text-center text-blue-800">
+                <p className="mt-6 text-center text-black">
                     Don't have an account?{' '}
-                    <Link href="/register" className="text-blue-900 font-bold hover:underline">
+                    <Link href="/register" className="text-black font-bold hover:underline">
                         Register
                     </Link>
                 </p>
