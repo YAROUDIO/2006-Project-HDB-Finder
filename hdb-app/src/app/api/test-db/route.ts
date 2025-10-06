@@ -13,7 +13,7 @@ export async function GET() {
     // 2️⃣ Insert a test user (change name each time to avoid unique key conflict)
     const timestamp = Date.now();
     const testUser = await User.create({
-      username: `testuser_${timestamp}`,
+      username: `jordan_${timestamp}`,
       password: "temporary123",
       income: "4000",
       citizenship: "Singaporean",

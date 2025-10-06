@@ -5,7 +5,6 @@ export default function UserInfo() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const navOptions = [
     { label: "UserInfo", href: "/userinfo" },
-    { label: "UserPreference", href: "/userpreference" },
     { label: "Recommended", href: "/recommended" },
     { label: "HDB Listings", href: "/hdb-listings" },
     { label: "Overview", href: "/overview" },
@@ -14,11 +13,16 @@ export default function UserInfo() {
     { label: "Amenities", href: "/amenities" },
   ];
 
-  // Dropdown states
+  // All form states
   const [income, setIncome] = useState("");
+  const [formError, setFormError] = useState("");
   const [citizenship, setCitizenship] = useState("");
   const [householdSize, setHouseholdSize] = useState("");
   const [loanType, setLoanType] = useState("");
+  const [flatType, setFlatType] = useState("");
+  const [budget, setBudget] = useState("");
+  const [area, setArea] = useState("");
+  const [lease, setLease] = useState("");
 
   return (
     <div style={{ minHeight: "100vh", width: "100vw", background: "#fad3b1ff" }}>
@@ -112,36 +116,73 @@ export default function UserInfo() {
         </nav>
       </div>
 
-      {/* Four dropdowns in quadrants */}
+      {/* 8 fields in 4x2 grid */}
       <form
-        onSubmit={e => {
+        onSubmit={async e => {
           e.preventDefault();
-          // TODO: send data to backend
+          setFormError("");
+          if (!/^[0-9]+$/.test(income)) {
+            setFormError("Yearly Household Income must be an integer.");
+            return;
+          }
+          try {
+            const res = await fetch("/api/userinfo", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                income,
+                citizenship,
+                householdSize,
+                loanType,
+                flatType,
+                budget,
+                area,
+                lease
+              })
+            });
+            const data = await res.json();
+            if (!res.ok) {
+              setFormError(data.error || data.message || "Failed to save user info.");
+            } else {
+              // Optionally show success or redirect
+              setFormError("");
+            }
+          } catch (err) {
+            setFormError("Failed to save user info. Please try again.");
+          }
         }}
         style={{
           display: "grid",
           gridTemplateColumns: "1fr 1fr",
-          gridTemplateRows: "1fr 1fr auto",
-          gap: "64px 64px",
+          gridTemplateRows: "40px repeat(2, 1fr) 40px repeat(2, 1fr) auto",
+          gap: "48px 48px",
           maxWidth: "900px",
           margin: "64px auto 0 auto",
-          minHeight: "400px"
+          minHeight: "700px"
         }}
       >
-        {/* Top Left: Yearly household income */}
+        {/* User Info Section Header */}
+        <div style={{ gridColumn: "1 / span 2", display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <div style={{ flex: 1, height: 1, background: "#ccc", marginRight: 16 }} />
+          <span style={{ fontWeight: 700, fontSize: "1.2rem", color: "#3a4a2b", letterSpacing: 2 }}>User Info</span>
+          <div style={{ flex: 1, height: 1, background: "#ccc", marginLeft: 16 }} />
+        </div>
+        {/* Row 1 */}
         <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start" }}>
           <label style={{ fontWeight: 600, marginBottom: 12, fontSize: "1.1rem", color: "#3a4a2b" }}>Yearly Household Income</label>
-          <select value={income} onChange={e => setIncome(e.target.value)} style={{ width: "260px", padding: "10px", fontSize: "1rem", borderRadius: 8, border: "1px solid #ccc", background: "#fff", color: "#000" }}>
-            <option value="">Select...</option>
-            <option value="$0-$30000">$0-$30000</option>
-            <option value="$30000-$50000">$30000-$50000</option>
-            <option value="$50000-$75000">$50000-$75000</option>
-            <option value="$75000-$100000">$75000-$100000</option>
-            <option value=">$100000">More than $100000</option>
-          </select>
+          <input
+            type="text"
+            value={income}
+            onChange={e => {
+              // Only allow numbers in input
+              if (e.target.value === "" || /^[0-9]+$/.test(e.target.value)) {
+                setIncome(e.target.value);
+              }
+            }}
+            placeholder="Enter yearly household income"
+            style={{ width: "260px", padding: "10px", fontSize: "1rem", borderRadius: 8, border: "1px solid #ccc", background: "#fff", color: "#000" }}
+          />
         </div>
-
-        {/* Top Right: Citizenship */}
         <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end" }}>
           <label style={{ fontWeight: 600, marginBottom: 12, fontSize: "1.1rem", color: "#3a4a2b" }}>Citizenship</label>
           <select value={citizenship} onChange={e => setCitizenship(e.target.value)} style={{ width: "260px", padding: "10px", fontSize: "1rem", borderRadius: 8, border: "1px solid #ccc", background: "#fff", color: "#000" }}>
@@ -151,8 +192,7 @@ export default function UserInfo() {
             <option value="Foreigner">Foreigner</option>
           </select>
         </div>
-
-        {/* Bottom Left: Household Size */}
+        {/* Row 2 */}
         <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start" }}>
           <label style={{ fontWeight: 600, marginBottom: 12, fontSize: "1.1rem", color: "#3a4a2b" }}>Household Size</label>
           <select value={householdSize} onChange={e => setHouseholdSize(e.target.value)} style={{ width: "260px", padding: "10px", fontSize: "1rem", borderRadius: 8, border: "1px solid #ccc", background: "#fff", color: "#000" }}>
@@ -163,8 +203,6 @@ export default function UserInfo() {
             <option value=">9">More than 9</option>
           </select>
         </div>
-
-        {/* Bottom Right: Loan Type */}
         <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end" }}>
           <label style={{ fontWeight: 600, marginBottom: 12, fontSize: "1.1rem", color: "#3a4a2b" }}>Loan Type</label>
           <select value={loanType} onChange={e => setLoanType(e.target.value)} style={{ width: "260px", padding: "10px", fontSize: "1rem", borderRadius: 8, border: "1px solid #ccc", background: "#fff", color: "#000" }}>
@@ -174,9 +212,60 @@ export default function UserInfo() {
             <option value="Loan C">Loan C</option>
           </select>
         </div>
-
-        {/* Submit Button: bottom middle, spans both columns */}
+        {/* User Preferences Section Header */}
+        <div style={{ gridColumn: "1 / span 2", display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <div style={{ flex: 1, height: 1, background: "#ccc", marginRight: 16 }} />
+          <span style={{ fontWeight: 700, fontSize: "1.2rem", color: "#3a4a2b", letterSpacing: 2 }}>User Preferences</span>
+          <div style={{ flex: 1, height: 1, background: "#ccc", marginLeft: 16 }} />
+        </div>
+        {/* Row 3 */}
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start" }}>
+          <label style={{ fontWeight: 600, marginBottom: 12, fontSize: "1.1rem", color: "#3a4a2b" }}>Flat Type</label>
+          <select value={flatType} onChange={e => setFlatType(e.target.value)} style={{ width: "260px", padding: "10px", fontSize: "1rem", borderRadius: 8, border: "1px solid #ccc", background: "#fff", color: "#000" }}>
+            <option value="">Select...</option>
+            <option value="2-room">2-room</option>
+            <option value="3-room">3-room</option>
+            <option value="4-room">4-room</option>
+            <option value="5-room">5-room</option>
+            <option value="Executive">Executive</option>
+          </select>
+        </div>
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end" }}>
+          <label style={{ fontWeight: 600, marginBottom: 12, fontSize: "1.1rem", color: "#3a4a2b" }}>Budget</label>
+          <select value={budget} onChange={e => setBudget(e.target.value)} style={{ width: "260px", padding: "10px", fontSize: "1rem", borderRadius: 8, border: "1px solid #ccc", background: "#fff", color: "#000" }}>
+            <option value="">Select...</option>
+            <option value="<$200k">Less than $200k</option>
+            <option value="$200k-$400k">$200k-$400k</option>
+            <option value="$400k-$600k">$400k-$600k</option>
+            <option value="$600k-$800k">$600k-$800k</option>
+            <option value=">$800k">More than $800k</option>
+          </select>
+        </div>
+        {/* Row 4 */}
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start" }}>
+          <label style={{ fontWeight: 600, marginBottom: 12, fontSize: "1.1rem", color: "#3a4a2b" }}>Preferred Area</label>
+          <select value={area} onChange={e => setArea(e.target.value)} style={{ width: "260px", padding: "10px", fontSize: "1rem", borderRadius: 8, border: "1px solid #ccc", background: "#fff", color: "#000" }}>
+            <option value="">Select...</option>
+            <option value="Central">Central</option>
+            <option value="East">East</option>
+            <option value="West">West</option>
+            <option value="North">North</option>
+            <option value="North-East">North-East</option>
+          </select>
+        </div>
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end" }}>
+          <label style={{ fontWeight: 600, marginBottom: 12, fontSize: "1.1rem", color: "#3a4a2b" }}>Lease Duration</label>
+          <select value={lease} onChange={e => setLease(e.target.value)} style={{ width: "260px", padding: "10px", fontSize: "1rem", borderRadius: 8, border: "1px solid #ccc", background: "#fff", color: "#000" }}>
+            <option value="">Select...</option>
+            <option value="99 years">99 years</option>
+            <option value="60 years">60 years</option>
+            <option value="30 years">30 years</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        {/* Save Button: bottom middle, spans both columns */}
         <div style={{ gridColumn: "1 / span 2", textAlign: "center", marginTop: "32px" }}>
+          {formError && <div style={{ color: "red", marginBottom: "16px", fontWeight: 500 }}>{formError}</div>}
           <button
             type="submit"
             style={{
@@ -192,10 +281,10 @@ export default function UserInfo() {
               transition: "background 0.2s"
             }}
           >
-            Submit
+            Save
           </button>
         </div>
-  </form>
+      </form>
     </div>
   );
 }

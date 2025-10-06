@@ -1,29 +1,33 @@
 "use client";
 import Link from "next/link";
 import { useState } from "react";
-import axios from "axios";
+import { useRouter } from "next/navigation";
 
-
-export default function Register() {
+export default function Register(){
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [rePassword, setRePassword] = useState("");
   const [error, setError] = useState("");
+  const router = useRouter();
 
   async function handleRegister(e: React.FormEvent<HTMLFormElement>) {
-  e.preventDefault();
-  try {
-    const res = await fetch("/api/register", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username, password, rePassword }),
-    });
-    const data = await res.json();
-    setError(data.message || data.error || "");
-  } catch (err) {
-    setError("Registration failed. Please try again.");
+    e.preventDefault();
+    try {
+      const res = await fetch("/api/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password, rePassword }),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        router.push("/home");
+      } else {
+        setError(data.message || data.error || "");
+      }
+    } catch (err) {
+      setError("Registration failed. Please try again.");
+    }
   }
-}
 
   return (
     <div className="min-h-screen w-full font-sans flex items-center justify-center" style={{ backgroundColor: '#fadabeff' }}>
