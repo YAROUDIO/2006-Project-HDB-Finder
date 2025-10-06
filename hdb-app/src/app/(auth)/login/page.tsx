@@ -9,10 +9,25 @@ export default function LoginPage() {
     const [error, setError] = useState("");
     const router = useRouter();
 
-    const handleSubmit = async (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setError("");
-        // Add authentication logic here
+        try {
+            const res = await fetch("/api/login", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ username, password }),
+            });
+            const data = await res.json();
+            if (res.ok) {
+                // Redirect or handle success
+                router.push("/");
+            } else {
+                setError(data.error || data.message || "Login failed");
+            }
+        } catch (err) {
+            setError("Login failed. Please try again.");
+        }
     };
 
     return (

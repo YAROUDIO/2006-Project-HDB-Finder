@@ -30,7 +30,7 @@ export default function Home() {
       </nav>
 
       {/* Hero Section with Parallax */}
-      <section id="home" className="relative flex items-center justify-center h-[80vh] bg-[url('/public/globe.svg')] bg-cover bg-center">
+      <section id="home" className="relative flex items-center justify-center h-[80vh] bg-[url('/globe.svg')] bg-cover bg-center">
         <div className="absolute inset-0 bg-blue-900 bg-opacity-60"></div>
         <div className="relative z-10 text-center">
           <h1 className="text-7xl font-extrabold text-white tracking-widest mb-6 drop-shadow-lg">Resale HDB Finder</h1>

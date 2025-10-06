@@ -1,5 +1,6 @@
 "use client";
 import React, { useState } from "react";
+import Link from "next/link";
 export default function UserInfo() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const navOptions = [
@@ -37,7 +38,7 @@ export default function UserInfo() {
           background: "#fff"
         }}>
           {/* Home Button */}
-          <a href="/" style={{
+          <Link href="/" style={{
             background: "#fad3b1ff",
             borderRadius: "16px",
             padding: "8px 24px",
@@ -46,7 +47,7 @@ export default function UserInfo() {
             textDecoration: "none",
             boxShadow: "none",
             border: "1px solid #e0e0e0"
-          }}>Home</a>
+          }}>Home</Link>
 
           {/* Title */}
           <h1 style={{
