@@ -46,9 +46,63 @@ export default function HomePage() {
 
 				{/* Bubble Buttons */}
 				<div style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", marginTop: 32 }}>
-					<button style={{ background: "#fad3b1ff", color: "#3a4a2b", border: "none", borderRadius: "32px", padding: "14px 32px", fontWeight: 600, fontSize: "1.1rem", marginBottom: 16, cursor: "pointer", boxShadow: "0 2px 8px rgba(0,0,0,0.04)" }}>View all Flats</button>
-					<button style={{ background: "#fad3b1ff", color: "#3a4a2b", border: "none", borderRadius: "32px", padding: "14px 32px", fontWeight: 600, fontSize: "1.1rem", marginBottom: 16, cursor: "pointer", boxShadow: "0 2px 8px rgba(0,0,0,0.04)" }}>View recommended flats</button>
-					<button style={{ background: "#fad3b1ff", color: "#3a4a2b", border: "none", borderRadius: "32px", padding: "14px 32px", fontWeight: 600, fontSize: "1.1rem", marginBottom: 16, cursor: "pointer", boxShadow: "0 2px 8px rgba(0,0,0,0.04)" }}>View Bookmarked Flats</button>
+					<Link
+						href="/listing"
+						style={{
+							background: "#fad3b1ff",
+							color: "#3a4a2b",
+							border: "none",
+							borderRadius: "32px",
+							padding: "14px 32px",
+							fontWeight: 600,
+							fontSize: "1.1rem",
+							marginBottom: 16,
+							cursor: "pointer",
+							boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
+							textDecoration: "none",
+							display: "inline-block"
+						}}
+					>
+						View all Flats
+					</Link>
+					<Link
+						href="/recommended"
+						style={{
+							background: "#fad3b1ff",
+							color: "#3a4a2b",
+							border: "none",
+							borderRadius: "32px",
+							padding: "14px 32px",
+							fontWeight: 600,
+							fontSize: "1.1rem",
+							marginBottom: 16,
+							cursor: "pointer",
+							boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
+							textDecoration: "none",
+							display: "inline-block"
+						}}
+					>
+						View recommended flats
+					</Link>
+					<Link
+						href="/bookmarks"
+						style={{
+							background: "#fad3b1ff",
+							color: "#3a4a2b",
+							border: "none",
+							borderRadius: "32px",
+							padding: "14px 32px",
+							fontWeight: 600,
+							fontSize: "1.1rem",
+							marginBottom: 16,
+							cursor: "pointer",
+							boxShadow: "0 2px 8px rgba(0,0,0,0.04)",
+							textDecoration: "none",
+							display: "inline-block"
+						}}
+					>
+						View Bookmarked Flats
+					</Link>
 				</div>
 			</div>
 
