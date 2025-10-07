@@ -8,6 +8,9 @@ interface HDBRecord {
   town: string;
   flat_type: string;
   resale_price: string;
+  block: string;
+  street_name: string;
+  month: string;
 }
 
 const PAGE_SIZE = 20;
@@ -30,6 +33,7 @@ export default function ListingPage() {
   const [hasMore, setHasMore] = useState(true);
   const loader = useRef<HTMLDivElement | null>(null);
   const [navOpen, setNavOpen] = useClientState(false);
+  
 
   const loadMore = useCallback(async () => {
     if (loading || !hasMore) return;
@@ -77,8 +81,8 @@ export default function ListingPage() {
         {/* Dropdown Navigation */}
         {navOpen && (
           <div className="absolute left-0 top-full mt-2 w-56 bg-white text-blue-900 rounded-lg shadow-lg z-50 border border-blue-200 animate-fade-in">
-            <Link href="/display/reccomended" className="block px-6 py-3 hover:bg-blue-50">View Reccomended</Link>
-            <Link href="/display/bookmarked" className="block px-6 py-3 hover:bg-blue-50">View Bookmarked</Link>
+            <Link href="/recomended" className="block px-6 py-3 hover:bg-blue-50">View Reccomended</Link>
+            <Link href="/bookmarked" className="block px-6 py-3 hover:bg-blue-50">View Bookmarked</Link>
             <Link href="/account" className="block px-6 py-3 hover:bg-blue-50">Account</Link>
             <Link href="/userinfo" className="block px-6 py-3 hover:bg-blue-50">User Info</Link>
             <Link href="/logout" className="block px-6 py-3 hover:bg-blue-50">Logout</Link>
@@ -88,21 +92,24 @@ export default function ListingPage() {
 
   {/* Listing Content */}
   <div className="flex flex-col items-center py-8 gap-8">
-        {records.map((rec) => (
+        {records.map((rec, i) => {
+            const compositeKey = `${rec.block}__${rec.street_name}__${rec.flat_type}__${rec.month}__${offset + i}`;
+        return(
+            
           <Link
             key={rec._id}
-            href={`/display/listing/${rec._id}`}
+            href={`listing/${encodeURIComponent(compositeKey)}`}
             className="w-3/4 rounded-3xl bg-white shadow-lg p-8 flex flex-col items-start hover:scale-105 transition-transform duration-200 border-2 border-blue-200"
             style={{ minHeight: "16vh", minWidth: "75vw", maxWidth: "75vw" }}
           >
-            <div className="text-3xl font-bold text-gray-900 mb-2">
+            <div className="text-3xl font-bold mb-2" style={{ color: '#000' }}>
               {rec.town}, {rec.flat_type}
             </div>
-            <div className="text-2xl font-semibold text-blue-700">
+            <div className="text-2xl font-semibold" style={{ color: '#000' }}>
               ${rec.resale_price}
             </div>
           </Link>
-        ))}
+        )})}
         <div ref={loader} style={{ height: 40 }} />
         {loading && <div className="text-lg text-gray-500">Loading...</div>}
         {!hasMore && <div className="text-lg text-gray-400">No more listings.</div>}

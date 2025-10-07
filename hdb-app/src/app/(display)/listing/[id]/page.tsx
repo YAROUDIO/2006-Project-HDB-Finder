@@ -15,30 +15,39 @@ interface HDBRecord {
   resale_price: string;
 }
 
-async function getHDBRecord(id: string): Promise<HDBRecord | null> {
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "";
-  const res = await fetch(baseUrl + "/api/hdbdata?id=" + encodeURIComponent(id));
-  const data = await res.json();
-  if (data.success && data.records && data.records.length > 0) {
-    return data.records[0];
-  }
-  return null;
+function parseCompositeKey(key: string) {
+  const [block, street_name, flat_type, month, offset] = decodeURIComponent(key).split("__");
+  return { block, street_name, flat_type, month, offset };
 }
 
+async function getHDBRecordByCompositeKey(key: string) {
+  const { block, street_name, flat_type, month, offset } = parseCompositeKey(key);
+  // Fetch a batch (or all) and find the matching record
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+  const res = await fetch(`${baseUrl}/api/hdbdata?limit=1000&offset=${offset}`);
+  const data = await res.json();
+  return data.records.find(
+    (rec: any) =>
+      rec.block === block &&
+      rec.street_name === street_name &&
+      rec.flat_type === flat_type &&
+      rec.month === month
+  );
+}
 export default async function ListingDetailPage({ params }: { params: { id: string } }) {
-  const record = await getHDBRecord(params.id);
+  const record = await getHDBRecordByCompositeKey(params.id);
   if (!record) return notFound();
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-[#e0f2ff] py-12 px-4">
       <div className="bg-white rounded-3xl shadow-xl p-10 w-full max-w-2xl border-2 border-blue-200">
-        <h1 className="text-4xl font-bold text-blue-900 mb-4">
+        <h1 className="text-4xl font-bold mb-4 text-blue-900">
           {record.town}, {record.flat_type}
         </h1>
-        <div className="text-3xl text-blue-700 font-semibold mb-6">
+        <div className="text-3xl font-semibold mb-6 text-blue-700">
           ${record.resale_price}
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-lg">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-lg" style={{ color: '#000' }}>
           <div><span className="font-semibold">Block:</span> {record.block}</div>
           <div><span className="font-semibold">Street:</span> {record.street_name}</div>
           <div><span className="font-semibold">Storey:</span> {record.storey_range}</div>

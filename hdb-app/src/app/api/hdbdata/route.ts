@@ -8,14 +8,16 @@ export async function GET(req: { url: string | URL; }) {
     const { searchParams } = new URL(req.url);
     const id = searchParams.get("id");
     if (id) {
-      // For debugging: return the first 10 records so we can inspect their _id values
-      const url = `https://data.gov.sg/api/action/datastore_search?resource_id=${dataset_id}&limit=10`;
+      // Try to fetch a batch and find the record with the given id
+      // (data.gov.sg API does not support direct id lookup, so we fetch a large batch and filter)
+      const url = `https://data.gov.sg/api/action/datastore_search?resource_id=${dataset_id}&limit=1000`;
       const res = await fetch(url);
       const data = await res.json();
+      const found = data.result.records.find((rec: any) => String(rec._id) === String(id));
       return NextResponse.json({
         success: true,
-        count: data.result.records.length,
-        records: data.result.records,
+        count: found ? 1 : 0,
+        records: found ? [found] : [],
       });
     } else {
       const limit = parseInt(searchParams.get("limit") || "20", 10);
