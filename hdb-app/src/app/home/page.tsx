@@ -9,14 +9,16 @@ export default function HomePage() {
   const [username, setUsername] = useState<string | null>(null);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const firstLinkRef = useRef<HTMLAnchorElement | null>(null);
 
-  // Load username from localStorage (and keep it in sync if it changes)
+  const firstLinkRef = useRef<HTMLAnchorElement | null>(null);
+  const dropdownRef = useRef<HTMLDivElement | null>(null);
+  const dropdownBtnRef = useRef<HTMLButtonElement | null>(null);
+
+  // ---- Load username (and keep in sync across tabs) ----
   useEffect(() => {
     if (typeof window === "undefined") return;
     const load = () => setUsername(localStorage.getItem("username") ?? "Guest");
     load();
-    // keep in sync across tabs/windows
     const onStorage = (e: StorageEvent) => {
       if (e.key === "username") load();
     };
@@ -24,7 +26,7 @@ export default function HomePage() {
     return () => window.removeEventListener("storage", onStorage);
   }, []);
 
-  // Close with ESC
+  // ---- Global ESC key closes drawer & dropdown ----
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
@@ -36,28 +38,64 @@ export default function HomePage() {
     return () => window.removeEventListener("keydown", onKey);
   }, []);
 
-  // Focus first item when drawer opens
+  // ---- Focus first item when drawer opens ----
   useEffect(() => {
     if (drawerOpen && firstLinkRef.current) {
       firstLinkRef.current.focus();
     }
   }, [drawerOpen]);
 
-  // Logout: clear storage and go to login
+  // ---- Prevent body scroll when drawer is open ----
+  useEffect(() => {
+    if (typeof document === "undefined") return;
+    const { body } = document;
+    if (drawerOpen) {
+      const prev = body.style.overflow;
+      body.style.overflow = "hidden";
+      return () => {
+        body.style.overflow = prev;
+      };
+    }
+  }, [drawerOpen]);
+
+  // ---- Close dropdown on outside click ----
+  useEffect(() => {
+    if (!dropdownOpen) return;
+    const handler = (e: MouseEvent) => {
+      const target = e.target as Node;
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(target) &&
+        dropdownBtnRef.current &&
+        !dropdownBtnRef.current.contains(target)
+      ) {
+        setDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [dropdownOpen]);
+
+  // ---- Logout ----
   const handleLogout = () => {
     if (typeof window !== "undefined") {
       localStorage.removeItem("username");
     }
-    router.push("/login"); // change if your login route is different
+    router.push("/login");
   };
 
+  // ---- Colors (from your scheme) ----
+  const BLUE = "#143D8D";
+  const BLUE_DARK = "#0E2B64";
+  const SURFACE = "#E9F5FF";
+
   return (
-    <div style={{ minHeight: "100vh", width: "100vw", background: "#e9f5ff" }}>
+    <div style={{ minHeight: "100vh", width: "100%", background: SURFACE }}>
       {/* Top Bar */}
       <div
         style={{
           width: "100%",
-          background: "#143D8D",
+          background: BLUE,
           color: "#fff",
           display: "flex",
           alignItems: "center",
@@ -94,30 +132,35 @@ export default function HomePage() {
               letterSpacing: "1px",
             }}
           >
-            HDBFinder
+            FlatMatch
           </h1>
         </div>
 
         {/* User menu */}
         <div style={{ position: "relative" }}>
           <button
+            ref={dropdownBtnRef}
+            aria-haspopup="menu"
+            aria-expanded={dropdownOpen}
+            onClick={() => setDropdownOpen((open) => !open)}
             style={{
               background: "#ffffff",
               borderRadius: "16px",
               padding: "8px 20px",
               fontWeight: 500,
-              color: "#143D8D",
+              color: BLUE,
               border: "none",
               cursor: "pointer",
               minWidth: 120,
             }}
-            onClick={() => setDropdownOpen((open) => !open)}
           >
             {username ?? "Loading..."}
           </button>
 
           {dropdownOpen && (
             <div
+              ref={dropdownRef}
+              role="menu"
               style={{
                 position: "absolute",
                 right: 0,
@@ -126,60 +169,44 @@ export default function HomePage() {
                 borderRadius: "12px",
                 boxShadow: "0 4px 16px rgba(0,0,0,0.08)",
                 border: "1px solid #e0e0e0",
-                minWidth: "180px",
+                minWidth: "200px",
                 zIndex: 40,
                 padding: "8px 0",
+                overflow: "hidden",
               }}
             >
               <div
                 style={{
-                  padding: "12px 24px",
+                  padding: "12px 20px",
                   fontWeight: 700,
-                  color: "#143D8D",
+                  color: BLUE,
                   borderBottom: "1px solid #f0f0f0",
                 }}
               >
                 {username}
               </div>
-              <div
-                style={{
-                  padding: "12px 24px",
-                  color: "#143D8D",
-                  borderBottom: "1px solid #f0f0f0",
-                  cursor: "pointer",
-                }}
+              <button
+                role="menuitem"
+                style={menuItemStyle(BLUE)}
+                onClick={() => setDropdownOpen(false)}
               >
                 Account
-              </div>
+              </button>
               <Link
                 href="/userinfo"
-                style={{
-                  display: "block",
-                  padding: "12px 24px",
-                  color: "#143D8D",
-                  textDecoration: "none",
-                  fontWeight: 500,
-                  borderBottom: "1px solid #f0f0f0",
-                }}
+                role="menuitem"
+                style={{ ...menuItemStyle(BLUE), textDecoration: "none", display: "block" }}
                 onClick={() => setDropdownOpen(false)}
               >
                 User Info
               </Link>
               <button
+                role="menuitem"
                 onClick={() => {
                   setDropdownOpen(false);
                   handleLogout();
                 }}
-                style={{
-                  width: "100%",
-                  textAlign: "left",
-                  background: "transparent",
-                  border: "none",
-                  padding: "12px 24px",
-                  color: "#143D8D",
-                  fontWeight: 500,
-                  cursor: "pointer",
-                }}
+                style={{ ...menuItemStyle(BLUE), fontWeight: 600 }}
               >
                 Logout
               </button>
@@ -187,6 +214,9 @@ export default function HomePage() {
           )}
         </div>
       </div>
+
+      {/* Hero strip (matches your color scheme) */}
+      <div style={{ background: BLUE, height: 80 }} />
 
       {/* Drawer overlay */}
       {drawerOpen && (
@@ -227,7 +257,7 @@ export default function HomePage() {
       >
         <div
           style={{
-            background: "#143D8D",
+            background: BLUE,
             color: "#fff",
             padding: "16px 18px",
             fontWeight: 700,
@@ -258,17 +288,7 @@ export default function HomePage() {
             ref={firstLinkRef}
             href="/listing"
             onClick={() => setDrawerOpen(false)}
-            style={{
-              outline: "none",
-              background: "#ffffff",
-              color: "#143D8D",
-              borderRadius: 12,
-              padding: "14px 16px",
-              fontWeight: 600,
-              textDecoration: "none",
-              border: "1px solid #d0e5ff",
-              boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
-            }}
+            style={navLinkStyle}
           >
             View all Flats
           </Link>
@@ -276,16 +296,7 @@ export default function HomePage() {
           <Link
             href="/recommended"
             onClick={() => setDrawerOpen(false)}
-            style={{
-              background: "#ffffff",
-              color: "#143D8D",
-              borderRadius: 12,
-              padding: "14px 16px",
-              fontWeight: 600,
-              textDecoration: "none",
-              border: "1px solid #d0e5ff",
-              boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
-            }}
+            style={navLinkStyle}
           >
             View recommended flats
           </Link>
@@ -293,105 +304,196 @@ export default function HomePage() {
           <Link
             href="/bookmarks"
             onClick={() => setDrawerOpen(false)}
-            style={{
-              background: "#ffffff",
-              color: "#143D8D",
-              borderRadius: 12,
-              padding: "14px 16px",
-              fontWeight: 600,
-              textDecoration: "none",
-              border: "1px solid #d0e5ff",
-              boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
-            }}
+            style={navLinkStyle}
           >
             View Bookmarked Flats
           </Link>
         </nav>
       </aside>
 
-      {/* Search Bar & quick links (kept) */}
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          marginTop: 48,
-        }}
-      >
-        <div
+      {/* Search & quick links */}
+      <main style={{ maxWidth: 1100, margin: "0 auto", padding: "0 20px" }}>
+        {/* Card overlapping the blue strip */}
+        <section
           style={{
-            display: "flex",
-            alignItems: "center",
-            width: "100%",
-            maxWidth: 600,
+            marginTop: -40,
+            background: "#ffffffcc",
+            backdropFilter: "blur(6px)",
+            border: "1px solid #ffffff",
+            boxShadow: "0 12px 24px rgba(20,61,141,0.10)",
+            borderRadius: 24,
+            padding: 24,
           }}
         >
-          <input
-            type="text"
-            placeholder="Search for flats..."
+          <h2
             style={{
-              flex: 1,
-              padding: "14px 20px",
-              fontSize: "1.1rem",
-              borderRadius: "16px 0 0 16px",
-              border: "1px solid #ccc",
-              outline: "none",
-              background: "#fff",
-            }}
-          />
-          <button
-            style={{
-              background: "#143D8D",
-              color: "#fff",
-              border: "none",
-              borderRadius: "0 16px 16px 0",
-              padding: "14px 32px",
-              fontWeight: 600,
-              fontSize: "1.1rem",
-              cursor: "pointer",
+              margin: 0,
+              fontSize: "1.8rem",
+              fontWeight: 800,
+              color: BLUE_DARK,
             }}
           >
-            Filter
-          </button>
-        </div>
+            Find your next HDB home
+          </h2>
+          <p style={{ marginTop: 6, color: "#334155" }}>
+            Search listings by town, flat type, lease, and price. Built for Singapore buyers and tenants.
+          </p>
 
-        {/* Optional: quick buttons */}
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "flex-start",
-            marginTop: 32,
-          }}
-        >
-          {[
-            { text: "View all Flats", href: "/listing" },
-            { text: "View recommended flats", href: "/recommended" },
-            { text: "View Bookmarked Flats", href: "/bookmarks" },
-          ].map((btn, idx) => (
-            <Link
-              key={idx}
-              href={btn.href}
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              width: "100%",
+              maxWidth: 680,
+              marginTop: 16,
+            }}
+          >
+            <input
+              type="text"
+              placeholder="Search for flats..."
+              aria-label="Search for flats"
               style={{
-                background: "#ffffff",
-                color: "#143D8D",
-                borderRadius: "32px",
-                padding: "14px 32px",
-                fontWeight: 600,
-                fontSize: "1.1rem",
-                marginBottom: 16,
-                cursor: "pointer",
-                boxShadow: "0 3px 10px rgba(0,0,0,0.08)",
-                textDecoration: "none",
-                display: "inline-block",
-                border: "1px solid #d0e5ff",
+                flex: 1,
+                padding: "14px 20px",
+                fontSize: "1.05rem",
+                borderRadius: "14px 0 0 14px",
+                border: "1px solid #cbd5e1",
+                outline: "none",
+                background: "#fff",
               }}
+            />
+            <button
+              style={{
+                background: BLUE,
+                color: "#fff",
+                border: "none",
+                borderRadius: "0 14px 14px 0",
+                padding: "14px 22px",
+                fontWeight: 700,
+                fontSize: "1.05rem",
+                cursor: "pointer",
+              }}
+              onClick={() => {}}
             >
-              {btn.text}
-            </Link>
-          ))}
-        </div>
-      </div>
+              Filter
+            </button>
+          </div>
+
+          {/* Quick buttons */}
+          <div
+            style={{
+              display: "flex",
+              flexWrap: "wrap",
+              gap: 12,
+              marginTop: 18,
+            }}
+          >
+            {[
+              { text: "View all Flats", href: "/listing" },
+              { text: "View recommended flats", href: "/recommended" },
+              { text: "View Bookmarked Flats", href: "/bookmarks" },
+            ].map((btn) => (
+              <Link
+                key={btn.href}
+                href={btn.href}
+                style={pillLinkStyle(BLUE)}
+              >
+                {btn.text}
+              </Link>
+            ))}
+          </div>
+        </section>
+
+        {/* Featured placeholders (you can wire real data later) */}
+        <section style={{ marginTop: 28 }}>
+          <h3 style={{ margin: 0, fontSize: "1.4rem", color: "#0f172a" }}>
+            Featured neighbourhoods
+          </h3>
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))",
+              gap: 14,
+              marginTop: 12,
+            }}
+          >
+            {["Bishan • 3-Room near MRT", "Sengkang • 4-Room Corner", "Pasir Ris • Executive Maisonette"].map(
+              (t, i) => (
+                <div
+                  key={i}
+                  style={{
+                    borderRadius: 16,
+                    background: "#ffffffcc",
+                    backdropFilter: "blur(4px)",
+                    border: "1px solid #ffffff",
+                    boxShadow: "0 6px 16px rgba(20,61,141,0.08)",
+                    padding: 14,
+                  }}
+                >
+                  <div
+                    style={{
+                      aspectRatio: "16/10",
+                      borderRadius: 12,
+                      background:
+                        "linear-gradient(135deg, #ffffff, rgba(20,61,141,0.08))",
+                      marginBottom: 10,
+                    }}
+                  />
+                  <div style={{ fontWeight: 700, color: "#0f172a" }}>{t}</div>
+                  <div style={{ fontSize: 13, color: "#475569", marginTop: 2 }}>
+                    Sample listing card
+                  </div>
+                </div>
+              )
+            )}
+          </div>
+        </section>
+
+        <footer style={{ padding: "28px 0 36px", color: "#475569", fontSize: 14 }}>
+            {/* Footer removed as requested */}
+        </footer>
+      </main>
     </div>
   );
+}
+
+/* ---------- tiny style helpers ---------- */
+const navLinkStyle: React.CSSProperties = {
+  outline: "none",
+  background: "#ffffff",
+  color: "#143D8D",
+  borderRadius: 12,
+  padding: "14px 16px",
+  fontWeight: 600,
+  textDecoration: "none",
+  border: "1px solid #d0e5ff",
+  boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
+};
+
+function menuItemStyle(color: string): React.CSSProperties {
+  return {
+    width: "100%",
+    textAlign: "left",
+    background: "transparent",
+    border: "none",
+    padding: "12px 20px",
+    color,
+    fontWeight: 500,
+    cursor: "pointer",
+  };
+}
+
+function pillLinkStyle(color: string): React.CSSProperties {
+  return {
+    background: "#ffffff",
+    color,
+    borderRadius: 999,
+    padding: "12px 20px",
+    fontWeight: 600,
+    fontSize: "1rem",
+    textDecoration: "none",
+    display: "inline-block",
+    border: "1px solid #d0e5ff",
+    boxShadow: "0 3px 10px rgba(0,0,0,0.08)",
+  };
 }
