@@ -82,7 +82,7 @@ export default function ListingPage() {
         {navOpen && (
           <div className="absolute left-0 top-full mt-2 w-56 bg-white text-blue-900 rounded-lg shadow-lg z-50 border border-blue-200 animate-fade-in">
             <Link href="/recomended" className="block px-6 py-3 hover:bg-blue-50">View Reccomended</Link>
-            <Link href="/bookmarked" className="block px-6 py-3 hover:bg-blue-50">View Bookmarked</Link>
+            <Link href="/bookmarks" className="block px-6 py-3 hover:bg-blue-50">View Bookmarked</Link>
             <Link href="/account" className="block px-6 py-3 hover:bg-blue-50">Account</Link>
             <Link href="/userinfo" className="block px-6 py-3 hover:bg-blue-50">User Info</Link>
             <Link href="/logout" className="block px-6 py-3 hover:bg-blue-50">Logout</Link>
@@ -92,24 +92,50 @@ export default function ListingPage() {
 
   {/* Listing Content */}
   <div className="flex flex-col items-center py-8 gap-8">
-        {records.map((rec, i) => {
-            const compositeKey = `${rec.block}__${rec.street_name}__${rec.flat_type}__${rec.month}__${offset + i}`;
-        return(
-            
-          <Link
-            key={rec._id}
-            href={`listing/${encodeURIComponent(compositeKey)}`}
-            className="w-3/4 rounded-3xl bg-white shadow-lg p-8 flex flex-col items-start hover:scale-105 transition-transform duration-200 border-2 border-blue-200"
-            style={{ minHeight: "16vh", minWidth: "75vw", maxWidth: "75vw" }}
-          >
-            <div className="text-3xl font-bold mb-2" style={{ color: '#000' }}>
-              {rec.town}, {rec.flat_type}
-            </div>
-            <div className="text-2xl font-semibold" style={{ color: '#000' }}>
-              ${rec.resale_price}
-            </div>
-          </Link>
-        )})}
+    {records.map((rec, i) => {
+      // Calculate the global index of this record
+            const globalIndex = offset - records.length + i + 1;
+            // Offset should be the largest multiple of 1000 <= globalIndex
+            const offsetForKey = Math.floor(globalIndex / 1000) * 1000;
+            const compositeKey = `${rec.block}__${rec.street_name}__${rec.flat_type}__${rec.month}__${offsetForKey}`;
+            // Placeholder: Assume not bookmarked for now
+            const isBookmarked = false;
+            return (
+              <div
+                key={compositeKey + '__' + i}
+                className="w-3/4 rounded-3xl bg-white shadow-lg p-8 flex flex-col items-start hover:scale-105 transition-transform duration-200 border-2 border-blue-200 relative"
+                style={{ minHeight: "16vh", minWidth: "75vw", maxWidth: "75vw" }}
+              >
+                {/* Add to Bookmarks button */}
+                <button
+                  className={
+                    `absolute top-4 right-4 px-4 py-2 rounded-full font-semibold text-sm border-2 transition-colors duration-200 ` +
+                    (isBookmarked
+                      ? 'bg-yellow-400 border-yellow-400 text-white shadow-md'
+                      : 'bg-white border-yellow-400 text-yellow-500 hover:bg-yellow-100')
+                  }
+                  style={{ zIndex: 10 }}
+                  // onClick handler will be added when backend is ready
+                  tabIndex={0}
+                  aria-label={isBookmarked ? 'Bookmarked' : 'Add to Bookmarks'}
+                >
+                  {isBookmarked ? 'Bookmarked' : 'Add to Bookmarks'}
+                </button>
+                <Link
+                  href={`listing/${encodeURIComponent(compositeKey)}`}
+                  className="w-full flex flex-col items-start"
+                  style={{ textDecoration: 'none' }}
+                >
+                  <div className="text-3xl font-bold mb-2" style={{ color: '#000' }}>
+                    {rec.town}, {rec.flat_type}
+                  </div>
+                  <div className="text-2xl font-semibold" style={{ color: '#000' }}>
+                    ${rec.resale_price}
+                  </div>
+                </Link>
+              </div>
+            );
+        })}
         <div ref={loader} style={{ height: 40 }} />
         {loading && <div className="text-lg text-gray-500">Loading...</div>}
         {!hasMore && <div className="text-lg text-gray-400">No more listings.</div>}
