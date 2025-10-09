@@ -215,8 +215,6 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* Hero strip (matches your color scheme) */}
-      <div style={{ background: BLUE, height: 80 }} />
 
       {/* Drawer overlay */}
       {drawerOpen && (
@@ -316,7 +314,7 @@ export default function HomePage() {
         {/* Card overlapping the blue strip */}
         <section
           style={{
-            marginTop: -40,
+            marginTop: 15,
             background: "#ffffffcc",
             backdropFilter: "blur(6px)",
             border: "1px solid #ffffff",
@@ -375,7 +373,7 @@ export default function HomePage() {
               }}
               onClick={() => {}}
             >
-              Filter
+              Search
             </button>
           </div>
 
