@@ -215,69 +215,94 @@ export default function AccountPage() {
         </p>
 
         {/* === USER INFO DROPDOWN SECTION === */}
-        <section
+<section
+  style={{
+    border: "1px solid #d0ddf5",
+    borderRadius: 10,
+    overflow: "hidden",
+    marginBottom: 20,
+    background: "#f9fbff",
+  }}
+>
+  <button
+    onClick={() => setUserInfoOpen((v) => !v)}
+    aria-expanded={userInfoOpen}
+    aria-controls="user-info-disclosure"
+    style={{
+      width: "100%",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between",
+      padding: "14px 16px",
+      background: "#eef4ff",
+      color: "#123b91",
+      border: "none",
+      cursor: "pointer",
+      fontWeight: 800,
+      fontSize: 16,
+    }}
+  >
+    <span>User Info</span>
+    <span style={{ fontWeight: 900 }}>{userInfoOpen ? "▴" : "▾"}</span>
+  </button>
+
+  <div
+    id="user-info-disclosure"
+    style={{
+      transition: "max-height 220ms ease",
+      maxHeight: userInfoOpen ? 900 : 0,
+      overflow: "hidden",
+    }}
+  >
+    <div style={{ padding: "16px 18px" }}>
+      <Section title="Profile">
+        <KV label="Username" value={user.username ?? "—"} />
+        <KV label="Email" value={user.email ?? "—"} />
+        <KV label="Phone" value={user.phone ?? "—"} />
+        <KV label="Address" value={user.address ?? "—"} />
+      </Section>
+
+      <Section title="Housing Preferences">
+        <KV label="Citizenship" value={user.citizenship ?? "—"} />
+        <KV label="Household Size" value={user.householdSize ?? "—"} />
+        <KV label="Loan Type" value={user.loan ?? "—"} />
+        <KV label="Flat Type" value={user.flatType ?? "—"} />
+        <KV label="Preferred Area" value={user.area ?? "—"} />
+        <KV label="Lease Duration Left" value={user.leaseLeft ?? "—"} />
+      </Section>
+
+      <Section title="Financials">
+        <KV label="Household Income (S$)" value={prettyNumber(user.income)} />
+        <KV label="Budget (S$)" value={prettyNumber(user.budget)} />
+      </Section>
+
+      {/* === EDIT INFO BUTTON - now higher === */}
+      <div
+        style={{
+          textAlign: "center",
+          marginTop: 10, // tighter placement after info
+        }}
+      >
+        <Link
+          href="/userinfo"
           style={{
-            border: "1px solid #d0ddf5",
-            borderRadius: 10,
-            overflow: "hidden",
-            marginBottom: 20,
-            background: "#f9fbff",
+            display: "inline-block",
+            padding: "10px 20px",
+            backgroundColor: "#123b91",
+            color: "white",
+            borderRadius: 6,
+            textDecoration: "none",
+            fontWeight: 600,
           }}
         >
-          <button
-            onClick={() => setUserInfoOpen((v) => !v)}
-            aria-expanded={userInfoOpen}
-            aria-controls="user-info-disclosure"
-            style={{
-              width: "100%",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              padding: "14px 16px",
-              background: "#eef4ff",
-              color: "#123b91",
-              border: "none",
-              cursor: "pointer",
-              fontWeight: 800,
-              fontSize: 16,
-            }}
-          >
-            <span>User Info</span>
-            <span style={{ fontWeight: 900 }}>{userInfoOpen ? "▴" : "▾"}</span>
-          </button>
+          ✏️ Edit Info
+        </Link>
+      </div>
+      {/* === End Edit Info Button === */}
+    </div>
+  </div>
+</section>
 
-          <div
-            id="user-info-disclosure"
-            style={{
-              transition: "max-height 220ms ease",
-              maxHeight: userInfoOpen ? 900 : 0,
-              overflow: "hidden",
-            }}
-          >
-            <div style={{ padding: "16px 18px" }}>
-              <Section title="Profile">
-                <KV label="Username" value={user.username ?? "—"} />
-                <KV label="Email" value={user.email ?? "—"} />
-                <KV label="Phone" value={user.phone ?? "—"} />
-                <KV label="Address" value={user.address ?? "—"} />
-              </Section>
-
-              <Section title="Housing Preferences">
-                <KV label="Citizenship" value={user.citizenship ?? "—"} />
-                <KV label="Household Size" value={user.householdSize ?? "—"} />
-                <KV label="Loan Type" value={user.loan ?? "—"} />
-                <KV label="Flat Type" value={user.flatType ?? "—"} />
-                <KV label="Preferred Area" value={user.area ?? "—"} />
-                <KV label="Lease Duration Left" value={user.leaseLeft ?? "—"} />
-              </Section>
-
-              <Section title="Financials">
-                <KV label="Household Income (S$)" value={prettyNumber(user.income)} />
-                <KV label="Budget (S$)" value={prettyNumber(user.budget)} />
-              </Section>
-            </div>
-          </div>
-        </section>
       </main>
     </div>
   );
