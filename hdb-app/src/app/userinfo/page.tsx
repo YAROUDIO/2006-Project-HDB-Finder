@@ -32,6 +32,7 @@ export default function UserInfo() {
 
   const [formError, setFormError] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
+  const [showPopup, setShowPopup] = useState(false);
 
   // ---------------- Effects: dropdown listeners ----------------
   useEffect(() => {
@@ -120,8 +121,12 @@ export default function UserInfo() {
       if (!res.ok) {
         setFormError(data.error || data.message || "Failed to save user info.");
       } else {
-        setSuccessMsg("Saved successfully ✔");
-        setTimeout(() => setSuccessMsg(""), 3000);
+        setSuccessMsg("Information saved successfully");
+        setShowPopup(true);
+        setTimeout(() => {
+          setShowPopup(false);
+          setSuccessMsg("");
+        }, 3000);
       }
     } catch {
       setFormError("Failed to save user info. Please try again.");
@@ -452,6 +457,37 @@ export default function UserInfo() {
           </footer>
         </main>
       </div>
+
+      {/* Success Popup */}
+      {showPopup && (
+        <div
+          style={{
+            position: "fixed",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            background: "#ECFDF3",
+            padding: "16px 24px",
+            borderRadius: 12,
+            boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
+            zIndex: 1000,
+            animation: "fadeIn 0.3s ease-out",
+            display: "flex",
+            alignItems: "center",
+            gap: 10,
+          }}
+        >
+          <span style={{ color: "#059669", fontSize: 20 }}>✓</span>
+          <span style={{ color: "#065F46", fontWeight: 600 }}>{successMsg}</span>
+        </div>
+      )}
+
+      <style jsx global>{`
+        @keyframes fadeIn {
+          from { opacity: 0; transform: translate(-50%, -40%); }
+          to { opacity: 1; transform: translate(-50%, -50%); }
+        }
+      `}</style>
     </>
   );
 }

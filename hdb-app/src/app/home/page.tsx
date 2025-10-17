@@ -136,7 +136,7 @@ export default function HomePage() {
           </h1>
         </div>
 
-        {/* User menu with Account link */}
+        {/* User menu with improved icon inside the button */}
         <button
           ref={dropdownBtnRef}
           aria-haspopup="menu"
@@ -156,6 +156,14 @@ export default function HomePage() {
             minWidth: 120,
           }}
         >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="currentColor"
+            viewBox="0 0 24 24"
+            style={{ width: "20px", height: "20px" }}
+          >
+            <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+          </svg>
           {username ?? "Loading..."}
         </button>
 
@@ -190,15 +198,18 @@ export default function HomePage() {
             <Link
               href="/account"
               role="menuitem"
-              style={{
-                display: "block",
-                padding: "12px 20px",
-                color: BLUE,
-                textDecoration: "none",
-                fontWeight: 500,
-              }}
+              style={{ ...menuItemStyle(BLUE), textDecoration: "none", display: "block" }}
+              onClick={() => setDropdownOpen(false)}
             >
               Account
+            </Link>
+            <Link
+              href="/userinfo"
+              role="menuitem"
+              style={{ ...menuItemStyle(BLUE), textDecoration: "none", display: "block" }}
+              onClick={() => setDropdownOpen(false)}
+            >
+              User Info
             </Link>
             <button
               role="menuitem"
@@ -206,22 +217,14 @@ export default function HomePage() {
                 setDropdownOpen(false);
                 handleLogout();
               }}
-              style={{
-                width: "100%",
-                textAlign: "left",
-                background: "transparent",
-                border: "none",
-                padding: "12px 20px",
-                color: BLUE,
-                fontWeight: 500,
-                cursor: "pointer",
-              }}
+              style={{ ...menuItemStyle(BLUE), fontWeight: 600 }}
             >
               Logout
             </button>
           </div>
         )}
       </div>
+
 
       {/* Drawer overlay */}
       {drawerOpen && (
