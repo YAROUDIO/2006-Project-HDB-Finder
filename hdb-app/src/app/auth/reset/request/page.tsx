@@ -64,7 +64,15 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-b from-blue-50 to-blue-100 p-6">
+    <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-b from-blue-50 to-blue-100 p-6 relative">
+      {/* Home button (top-left) */}
+      <Link
+        href="/"
+        className="absolute top-6 left-6 bg-blue-800 text-white px-4 py-2 rounded shadow hover:bg-blue-700 transition font-semibold"
+      >
+        Home Page
+      </Link>
+
       <div className="bg-white rounded-xl shadow-lg p-6 w-full max-w-md border border-blue-100">
         <h1 className="text-2xl font-extrabold text-blue-900 mb-4 text-center">Forgot password</h1>
 
