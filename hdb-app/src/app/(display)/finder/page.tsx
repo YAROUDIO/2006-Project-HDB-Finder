@@ -1,96 +1,355 @@
 // app/finder/page.tsx
 "use client";
-import { useState } from "react";
+
+import Link from "next/link";
+import { useEffect, useMemo, useRef, useState } from "react";
+
+type RawResult = {
+  town: string;
+  block: string;
+  street_name: string;
+  resale_price: number | string;
+  score: number; // 0..100
+  distances?: { dMrt?: number; dSchool?: number; dHospital?: number; dHosp?: number };
+  compositeKey?: string;
+};
+
+type FinderResult = {
+  town: string;
+  block: string;
+  street_name: string;
+  resale_price: number | string;
+  score: number; // 0..100
+  distances: { dMrt?: number; dSchool?: number; dHospital?: number };
+  compositeKey: string; // `${BLOCK}__${STREET_NAME}__${TOWN}`
+};
 
 export default function FinderPage() {
-  const [w, setW] = useState({ school:5, mrt:8, hospital:0, level:3, price:9, lease:6 });
-  const [results, setResults] = useState<any[]|null>(null);
+  const [weights, setWeights] = useState({
+    mrt: 7,
+    school: 6,
+    hospital: 3,
+    affordability: 8,
+  });
+
+  const [allTowns, setAllTowns] = useState<string[]>([]);
+  const [townQuery, setTownQuery] = useState("");
+  const [selectedTowns, setSelectedTowns] = useState<string[]>([]);
+  const [showSuggest, setShowSuggest] = useState(false);
+  const suggestRef = useRef<HTMLDivElement | null>(null);
+
   const [loading, setLoading] = useState(false);
-  const [townInput, setTownInput] = useState("");
-  const [towns, setTowns] = useState<string[]>([]); // up to 3
+  const [results, setResults] = useState<FinderResult[] | null>(null);
+  const [error, setError] = useState<string>("");
 
-  function addTown() {
-    const t = townInput.trim().toUpperCase();
-    if (!t) return;
-    if (towns.includes(t)) return;
-    if (towns.length >= 3) return;
-    setTowns([...towns, t]);
-    setTownInput("");
+  // --- Load valid towns (with fallback) ---
+  useEffect(() => {
+    let alive = true;
+    (async () => {
+      try {
+        console.log("[finder/page] GET /api/finder?op=towns");
+        const res = await fetch("/api/finder?op=towns", { cache: "no-store" });
+        const data = await res.json().catch(() => ({}));
+        if (alive && data?.ok && Array.isArray(data.towns)) {
+          console.log("[finder/page] towns ok, count=", data.towns.length);
+          setAllTowns(data.towns);
+        } else if (alive) {
+          console.warn("[finder/page] towns failed; fallback short list.");
+          setAllTowns(["ANG MO KIO", "BEDOK", "BISHAN", "BUKIT BATOK", "QUEENSTOWN", "TOA PAYOH"]);
+        }
+      } catch (e) {
+        console.warn("[finder/page] towns fetch error; fallback short list.", e);
+        if (alive) {
+          setAllTowns(["ANG MO KIO", "BEDOK", "BISHAN", "BUKIT BATOK", "QUEENSTOWN", "TOA PAYOH"]);
+        }
+      }
+    })();
+    return () => { alive = false; };
+  }, []);
+
+  // Close suggestions on outside click
+  useEffect(() => {
+    function onDocClick(e: MouseEvent) {
+      if (!suggestRef.current) return;
+      if (!suggestRef.current.contains(e.target as Node)) setShowSuggest(false);
+    }
+    document.addEventListener("mousedown", onDocClick);
+    return () => document.removeEventListener("mousedown", onDocClick);
+  }, []);
+
+  const filteredSuggestions = useMemo(() => {
+    const q = townQuery.trim().toUpperCase();
+    if (!q) return allTowns.filter((t) => !selectedTowns.includes(t)).slice(0, 10);
+    return allTowns.filter((t) => t.includes(q) && !selectedTowns.includes(t)).slice(0, 10);
+  }, [townQuery, allTowns, selectedTowns]);
+
+  function addTown(t?: string) {
+    const name = (t ?? townQuery).trim().toUpperCase();
+    if (!name) return;
+    if (!allTowns.includes(name)) return; // only allow known towns
+    if (selectedTowns.includes(name)) return;
+    if (selectedTowns.length >= 3) return;
+    setSelectedTowns((prev) => [...prev, name]);
+    setTownQuery("");
+    setShowSuggest(false);
+    console.log("[finder/page] town added:", name, "selected:", [...selectedTowns, name]);
   }
-  function removeTown(t:string) { setTowns(towns.filter(x=>x!==t)); }
-
-  async function run() {
-    setLoading(true);
-    const res = await fetch("/api/finder", {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({ weights: { ...w, hospital:0 }, towns }),
-    });
-    const data = await res.json();
-    setResults(data.results ?? []);
-    setLoading(false);
+  function removeTown(t: string) {
+    setSelectedTowns((prev) => prev.filter((x) => x !== t));
+    console.log("[finder/page] town removed:", t);
   }
 
-  function Slider({label, keyName}:{label:string; keyName: keyof typeof w}) {
+  function Slider({
+    label,
+    value,
+    onChange,
+    ariaLabel,
+  }: {
+    label: string;
+    value: number;
+    onChange: (v: number) => void;
+    ariaLabel?: string;
+  }) {
     return (
       <label className="block">
-        <div className="mb-1">{label}: {w[keyName]}</div>
-        <input type="range" min={1} max={10} value={w[keyName]}
-          onChange={(e)=>setW({...w, [keyName]: Number(e.target.value)})}/>
+        <div className="mb-1 font-medium text-blue-900">
+          {label}: <span className="font-bold">{value}</span>
+        </div>
+        <input
+          aria-label={ariaLabel ?? label}
+          type="range"
+          min={0}
+          max={10}
+          step={1}
+          value={value}
+          onChange={(e) => onChange(Number(e.target.value))}
+          className="w-full accent-blue-800"
+        />
       </label>
     );
   }
 
-  return (
-    <main className="p-6 space-y-4">
-      <h1 className="text-2xl font-semibold">HDB Finder</h1>
-      <div className="space-y-2">
-        <label className="block font-medium">Select up to 3 Towns</label>
-        <div className="flex gap-2 flex-wrap">
-          {towns.map(t => (
-            <span key={t} className="bg-blue-100 text-blue-800 px-2 py-1 rounded text-sm flex items-center gap-1">
-              {t}
-              <button onClick={()=>removeTown(t)} className="text-red-500 hover:text-red-700">×</button>
-            </span>
-          ))}
-          {towns.length < 3 && (
-            <input
-              value={townInput}
-              onChange={e=>setTownInput(e.target.value)}
-              onKeyDown={e=>{ if (e.key==='Enter') { e.preventDefault(); addTown(); } }}
-              placeholder="e.g. ANG MO KIO"
-              className="border px-2 py-1 rounded"
-            />
-          )}
-          {towns.length < 3 && (
-            <button onClick={addTown} className="px-3 py-1 bg-blue-600 text-white rounded">Add</button>
-          )}
-        </div>
-        <p className="text-xs text-gray-500">Town names must match HDB dataset TOWN values (uppercase).</p>
-      </div>
-      <div className="grid gap-4 sm:grid-cols-3">
-        <Slider label="Proximity to Schools" keyName="school" />
-        <Slider label="Proximity to MRT" keyName="mrt" />
-        <Slider label="House Level" keyName="level" />
-        <Slider label="Price (lower better)" keyName="price" />
-        <Slider label="Lease (more better)" keyName="lease" />
-      </div>
-      <button onClick={run} className="px-4 py-2 rounded bg-blue-600 text-white" disabled={loading || towns.length===0}>
-        {loading ? "Scoring…" : towns.length===0 ? "Add at least 1 town" : "Find Flats"}
-      </button>
+  function normalizeResults(rows: RawResult[] | undefined | null): FinderResult[] {
+    if (!Array.isArray(rows)) return [];
+    return rows.map((r, i) => {
+      const dMrt = r.distances?.dMrt;
+      const dSchool = r.distances?.dSchool;
+      const dHospital = (r.distances?.dHospital ?? r.distances?.dHosp) as number | undefined;
 
-      {results && (
-        <ul className="divide-y">
-          {results.map(r => (
-            <li key={r.id} className="py-3">
-              <div className="font-medium">{r.town} {r.block} {r.street_name}</div>
-              <div className="text-sm opacity-75">
-                Score {(r.score*100).toFixed(1)} · {Math.round(r.distances?.dMrt)}m to MRT
+      const compositeKey =
+        r.compositeKey ||
+        [
+          (r.block || "").toString().trim().toUpperCase(),
+          (r.street_name || "").toString().trim().toUpperCase(),
+          (r.town || "").toString().trim().toUpperCase(),
+        ].join("__");
+
+      if (i < 3) {
+        console.log("[finder/page] sample result", i, {
+          town: r.town, block: r.block, street: r.street_name, price: r.resale_price,
+          score: r.score, compositeKey
+        });
+      }
+
+      return {
+        town: r.town,
+        block: r.block,
+        street_name: r.street_name,
+        resale_price: r.resale_price,
+        score: r.score, // already 0..100 from backend
+        compositeKey,
+        distances: { dMrt, dSchool, dHospital },
+      };
+    });
+  }
+
+  async function runFinder() {
+    setLoading(true);
+    setError("");
+    setResults(null);
+    try {
+      const weightsForApi = {
+        mrt: weights.mrt,
+        school: weights.school,
+        hospital: weights.hospital,
+        affordability: weights.affordability,
+      };
+
+      console.log("[finder/page] POST /api/finder", { towns: selectedTowns, weights: weightsForApi });
+
+      const res = await fetch("/api/finder", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ weights: weightsForApi, towns: selectedTowns }),
+      });
+      const data = await res.json().catch(() => ({}));
+      console.log("[finder/page] response status", res.status, "payload", data);
+
+      if (!res.ok || data?.ok === false) {
+        setError(data?.error || `Sorry, something went wrong while scoring flats (HTTP ${res.status}).`);
+        setResults([]);
+      } else {
+        const norm = normalizeResults(data.results);
+        console.log("[finder/page] normalized results length:", norm.length);
+        setResults(norm);
+      }
+    } catch (e) {
+      console.error("[finder/page] network error:", e);
+      setError("Network error. Please try again.");
+      setResults([]);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  function formatMeters(m?: number) {
+    if (!Number.isFinite(m)) return "—";
+    const v = m as number;
+    if (v >= 1000) return `${(v / 1000).toFixed(1)} km`;
+    return `${Math.round(v)} m`;
+  }
+
+  return (
+    <div className="min-h-screen w-full" style={{ background: "#e0f2ff" }}>
+      {/* Top Bar */}
+      <div className="w-full bg-blue-900 text-white flex items-center px-6 py-4 relative shadow-md">
+        <span className="text-2xl font-bold tracking-wide">HDBFinder</span>
+        <div className="ml-auto flex items-center gap-2">
+          <Link href="/home" className="bg-white text-blue-900 font-bold px-4 py-2 rounded-full shadow hover:bg-blue-100 transition-colors border-2 border-blue-900">
+            Home
+          </Link>
+          <Link href="/listing" className="bg-white text-blue-900 font-bold px-4 py-2 rounded-full shadow hover:bg-blue-100 transition-colors border-2 border-blue-900">
+            View Listings
+          </Link>
+        </div>
+      </div>
+
+      <main className="max-w-5xl mx-auto py-8 px-4 space-y-6">
+        <header className="flex items-center justify-between">
+          <h1 className="text-3xl font-extrabold text-blue-900">HDB Finder</h1>
+        </header>
+
+        {/* Town picker */}
+        <section className="bg-white rounded-2xl shadow p-5 border border-blue-200">
+          <h2 className="text-xl font-bold text-blue-900 mb-3">Choose up to 3 towns</h2>
+
+          <div className="flex flex-wrap gap-2 mb-3">
+            {selectedTowns.map((t) => (
+              <span key={t} className="inline-flex items-center gap-2 bg-blue-100 text-blue-900 rounded-full px-3 py-1 border border-blue-300">
+                {t}
+                <button onClick={() => removeTown(t)} className="text-red-600 hover:text-red-800 font-bold" aria-label={`Remove ${t}`} title="Remove">
+                  ×
+                </button>
+              </span>
+            ))}
+          </div>
+
+          <div className="relative" ref={suggestRef}>
+            <label className="block text-sm font-medium text-blue-900 mb-1">Add town (autocomplete shows valid towns)</label>
+            <div className="flex gap-2">
+              <input
+                value={townQuery}
+                onChange={(e) => { setTownQuery(e.target.value); setShowSuggest(true); }}
+                onFocus={() => setShowSuggest(true)}
+                onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addTown(); } }}
+                placeholder="e.g. ANG MO KIO"
+                className="flex-1 rounded-lg border border-blue-300 bg-white text-blue-900 placeholder:text-gray-600 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              <button
+                onClick={() => addTown()}
+                className="px-4 py-2 bg-blue-800 text-white rounded-lg font-semibold shadow hover:bg-blue-700 transition"
+                disabled={selectedTowns.length >= 3}
+              >
+                Add
+              </button>
+            </div>
+
+            {/* Suggestion dropdown */}
+            {showSuggest && filteredSuggestions.length > 0 && (
+              <div className="absolute z-10 mt-1 w-full bg-white text-blue-900 border border-blue-200 rounded-lg shadow max-h-64 overflow-auto">
+                {filteredSuggestions.map((t) => (
+                  <button
+                    key={t}
+                    type="button"
+                    className="block w-full text-left px-3 py-2 hover:bg-blue-50 focus:bg-blue-100"
+                    onClick={() => addTown(t)}
+                  >
+                    {t}
+                  </button>
+                ))}
               </div>
-            </li>
-          ))}
-        </ul>
-      )}
-    </main>
+            )}
+
+            <p className="text-xs text-gray-700 mt-2">
+              Tip: town names must match HDB dataset values (UPPERCASE). Max 3.
+            </p>
+          </div>
+        </section>
+
+        {/* Weights */}
+        <section className="bg-white rounded-2xl shadow p-5 border border-blue-200">
+          <h2 className="text-xl font-bold text-blue-900 mb-3">Set your priorities (0–10)</h2>
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            <Slider label="Distance to MRT" value={weights.mrt} onChange={(v) => setWeights({ ...weights, mrt: v })} />
+            <Slider label="Distance to Schools" value={weights.school} onChange={(v) => setWeights({ ...weights, school: v })} />
+            <Slider label="Distance to Hospitals/Clinics" value={weights.hospital} onChange={(v) => setWeights({ ...weights, hospital: v })} />
+            <Slider label="Affordability" value={weights.affordability} onChange={(v) => setWeights({ ...weights, affordability: v })} />
+          </div>
+
+          <div className="mt-5">
+            <button
+              onClick={runFinder}
+              className="px-5 py-3 bg-blue-900 text-white rounded-xl font-semibold shadow hover:bg-blue-800 transition disabled:opacity-60"
+              disabled={loading || selectedTowns.length === 0}
+            >
+              {loading ? "Scoring…" : selectedTowns.length === 0 ? "Add at least 1 town" : "Find Flats"}
+            </button>
+            {error && <div className="text-red-600 mt-3 font-medium">{error}</div>}
+          </div>
+        </section>
+
+        {/* Results */}
+        {results && (
+          <section className="space-y-3">
+            <h2 className="text-xl font-bold text-blue-900">Results ({results.length})</h2>
+
+            {results.length === 0 && (
+              <div className="text-blue-900/80">No results. Try adjusting your towns or weights.</div>
+            )}
+
+            <ul className="grid gap-4 md:grid-cols-2">
+              {results.map((r, idx) => {
+                const priceNum = Number(r.resale_price);
+                const priceText = Number.isFinite(priceNum) ? `$${priceNum.toLocaleString()}` : `${r.resale_price}`;
+                const scoreText = Number.isFinite(r.score) ? r.score.toFixed(1) : "-";
+                return (
+                  <li key={r.compositeKey + "_" + idx} className="bg-white rounded-2xl shadow p-5 border border-blue-200 hover:shadow-md transition">
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="text-blue-900">
+                        <div className="text-lg font-bold">{r.town} • {r.block} {r.street_name}</div>
+                        <div className="text-blue-700 font-semibold">{priceText}</div>
+                        <div className="text-sm mt-1">Score {scoreText}</div>
+                        <div className="text-sm mt-2 space-y-0.5">
+                          <div>MRT: {formatMeters(r.distances?.dMrt)}</div>
+                          <div>Schools: {formatMeters(r.distances?.dSchool)}</div>
+                          <div>Hospitals/Clinics: {formatMeters(r.distances?.dHospital)}</div>
+                        </div>
+                      </div>
+                      <Link
+                        href={`/listing/${encodeURIComponent(r.compositeKey)}`}
+                        className="shrink-0 px-4 py-2 bg-blue-900 text-white rounded-full font-semibold shadow hover:bg-blue-800 transition"
+                        onClick={() => console.log("[finder/page] navigate to /listing/", r.compositeKey)}
+                      >
+                        View details
+                      </Link>
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+          </section>
+        )}
+      </main>
+    </div>
   );
 }

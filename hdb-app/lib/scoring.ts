@@ -1,72 +1,86 @@
 // lib/scoring.ts
-import { nearestDistance, Pt } from './geo';
+// Utility functions for HDB scoring logic (used by /api/finder)
 
-type Flat = {
-  id: string;
-  lat: number; lng: number;
-  storey_range: string;
-  resale_price: number;
-  floor_area_sqm: number;
-  remaining_lease_yrs: number;
-  approx?: boolean; // centroid fallback used
+export type WeightInput = {
+  mrt: number;
+  school: number;
+  hospital: number;
+  affordability: number;
 };
 
-type Weights = { school: number; mrt: number; hospital: number; level: number; price: number; lease: number; };
+export type Distances = {
+  dMrt: number;
+  dSchool: number;
+  dHospital: number;
+};
 
-const caps = { school_m: 1500, mrt_m: 1200, hospital_m: 3000 };
+export type FlatCandidate = {
+  price: number;
+  distances: Distances;
+};
 
-function midLevel(sr: string) {
-  const m = sr.match(/(\d+)\s*TO\s*(\d+)/);
-  if (!m) return 0;
-  return (Number(m[1]) + Number(m[2])) / 2;
-}
-const clamp01 = (x:number)=> Math.max(0, Math.min(1, x));
-
-function nearestWithName(from: Pt, stations: (Pt & { name?: string })[]) {
-  let best = Infinity; let bestName = '';
-  for (const s of stations) {
-    const d = nearestDistance(from, [s]); // reuse haversine once per station
-    if (d < best) { best = d; bestName = (s as any).name || ''; }
-  }
-  return { name: bestName, distance: best };
+// --- Utility helpers ---
+export function clamp01(x: number): number {
+  return Math.max(0, Math.min(1, x));
 }
 
-export function scoreFlats(
-  flats: Flat[],
-  weights: Weights,
-  stations: (Pt & { name?: string })[],
-  schools: Pt[],
-  hospitals: Pt[]
+// Linear distance → score (0–100)
+// 0m = 100, capMeters = 0, decreases linearly until 0 at capMeters
+export function distanceToBaseScore(meters: number, capMeters: number): number {
+  if (!Number.isFinite(meters)) return 0;
+  const score = 100 * (1 - meters / capMeters);
+  return Math.max(0, Math.min(100, score));
+}
+
+// Converts 0–10 slider values into percentage shares
+export function normalizeWeights(w: WeightInput) {
+  const safe = {
+    mrt: Math.max(0, w.mrt || 0),
+    school: Math.max(0, w.school || 0),
+    hospital: Math.max(0, w.hospital || 0),
+    affordability: Math.max(0, w.affordability || 0),
+  };
+  let total = safe.mrt + safe.school + safe.hospital + safe.affordability;
+  if (total <= 0) total = 4; // default equal if all 0
+
+  return {
+    mrt: safe.mrt / total,
+    school: safe.school / total,
+    hospital: safe.hospital / total,
+    affordability: safe.affordability / total,
+  };
+}
+
+// Computes the price rank score (cheaper = higher score)
+export function computePriceScore(price: number, low: number, high: number): number {
+  const span = Math.max(high - low, 1);
+  return 100 * clamp01((high - price) / span);
+}
+
+// Main scoring function for 1 flat
+export function computeFlatScore(
+  flat: FlatCandidate,
+  weights: WeightInput,
+  priceLow: number,
+  priceHigh: number
 ) {
-  const sumW = Object.values(weights).reduce((a,b)=>a+b, 0) || 1;
-  const W = Object.fromEntries(Object.entries(weights).map(([k,v])=>[k, v/sumW])) as Weights;
+  const pct = normalizeWeights(weights);
 
-  return flats.map(f => {
-    const p = { lat: f.lat, lng: f.lng };
-  // If coordinates are approximate (town centroid), assign neutral distances so they neither dominate nor collapse to 0.
-  const isApprox = f.approx;
-  const neutralDist = 750; // mid-range within school/mrt caps
-  const dSchool = isApprox ? neutralDist : nearestDistance(p, schools);
-  const mrtInfo = isApprox ? { name: '', distance: neutralDist } : nearestWithName(p, stations);
-  const dMrt    = mrtInfo.distance;
-  const dHosp   = isApprox ? neutralDist*2 : nearestDistance(p, hospitals);
+  const baseMrt = distanceToBaseScore(flat.distances.dMrt, 3000);
+  const baseSchool = distanceToBaseScore(flat.distances.dSchool, 2000);
+  const baseHospital = distanceToBaseScore(flat.distances.dHospital, 3000);
 
-    const sSchool = 1 - clamp01(dSchool / caps.school_m);
-    const sMrt    = 1 - clamp01(dMrt    / caps.mrt_m);
-    const sHosp   = 1 - clamp01(dHosp   / caps.hospital_m);
+  const priceScore =
+    Number.isFinite(flat.price)
+      ? computePriceScore(flat.price, priceLow, priceHigh)
+      : 50; // fallback mid-value
 
-    const level = midLevel(f.storey_range);
-    const sLevel = clamp01(level / 50);
+  // Final 0–100
+  const score =
+    pct.mrt * baseMrt +
+    pct.school * baseSchool +
+    pct.hospital * baseHospital +
+    pct.affordability * priceScore;
 
-    const ppsm = f.resale_price / Math.max(1, f.floor_area_sqm);
-    const sPrice = 1 - clamp01((ppsm - 3000) / (9000 - 3000)); // tune bands
-
-    const sLease = clamp01(f.remaining_lease_yrs / 99);
-
-    const score =
-      W.school*sSchool + W.mrt*sMrt + W.hospital*sHosp +
-      W.level*sLevel + W.price*sPrice + W.lease*sLease;
-
-    return { ...f, score, distances: { dSchool, dMrt, dHosp, approx: isApprox }, nearestStation: { name: mrtInfo.name, distance_m: Math.round(dMrt), approx: isApprox } };
-  }).sort((a,b) => b.score - a.score);
+  return Math.max(0, Math.min(100, score));
 }
