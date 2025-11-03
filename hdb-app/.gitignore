@@ -13,9 +13,11 @@
 # testing
 /coverage
 
-# next.js
+# Next.js dev/build artifacts
 /.next/
-/out/
+/.next-dev/        # <-- add this if you ever see a .next-dev folder
+*.hot-update.*     # <-- add this for webpack HMR patches (js/json)
+
 
 # production
 /build
@@ -39,3 +41,23 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# more build/dev artifacts
+/out/
+dist/
+.turbo/
+.swc/
+.eslintcache
+*.map
+
+# editors/OS
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+.idea/
+Thumbs.db
+
+# merge/temp
+*.orig
+*.patch
+
