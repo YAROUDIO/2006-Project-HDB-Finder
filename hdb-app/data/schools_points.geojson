@@ -1,0 +1,5060 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.800040119743,
+          1.4426347903311
+        ]
+      },
+      "properties": {
+        "name": "ADMIRALTY PRIMARY SCHOOL",
+        "address": "https://admiraltypri.moe.edu.sg/",
+        "postal": "738907"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.802398196596,
+          1.44589068910993
+        ]
+      },
+      "properties": {
+        "name": "ADMIRALTY SECONDARY SCHOOL",
+        "address": "http://www.admiraltysec.moe.edu.sg",
+        "postal": "737916"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.832942401086,
+          1.43315271543517
+        ]
+      },
+      "properties": {
+        "name": "AHMAD IBRAHIM PRIMARY SCHOOL",
+        "address": "http://www.ahmadibrahimpri.moe.edu.sg",
+        "postal": "768643"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.829718690077,
+          1.43605975368804
+        ]
+      },
+      "properties": {
+        "name": "AHMAD IBRAHIM SECONDARY SCHOOL",
+        "address": "http://www.ahmadibrahimsec.moe.edu.sg",
+        "postal": "768928"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.833020333986,
+          1.3605834338904
+        ]
+      },
+      "properties": {
+        "name": "AI TONG SCHOOL",
+        "address": "http://www.aitong.moe.edu.sg",
+        "postal": "579646"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.824424680531,
+          1.29133439161334
+        ]
+      },
+      "properties": {
+        "name": "ALEXANDRA PRIMARY SCHOOL",
+        "address": "http://alexandrapri.moe.edu.sg",
+        "postal": "159016"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.887165375933,
+          1.39036998654612
+        ]
+      },
+      "properties": {
+        "name": "ANCHOR GREEN PRIMARY SCHOOL",
+        "address": "http://www.anchorgreenpri.moe.edu.sg",
+        "postal": "544969"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.841411716006,
+          1.38419941907925
+        ]
+      },
+      "properties": {
+        "name": "ANDERSON PRIMARY SCHOOL",
+        "address": "http://www.andersonpri.moe.edu.sg",
+        "postal": "569785"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.851554107068,
+          1.37434001701177
+        ]
+      },
+      "properties": {
+        "name": "ANDERSON SECONDARY SCHOOL",
+        "address": "http://www.andersonsec.moe.edu.sg",
+        "postal": "569206"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.887038809373,
+          1.36504342002442
+        ]
+      },
+      "properties": {
+        "name": "ANDERSON SERANGOON JUNIOR COLLEGE",
+        "address": "www.asrjc.moe.edu.sg",
+        "postal": "534768"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.839630858752,
+          1.36932176584608
+        ]
+      },
+      "properties": {
+        "name": "ANG MO KIO PRIMARY SCHOOL",
+        "address": "http://www.angmokiopri.moe.edu.sg",
+        "postal": "569920"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.842154973672,
+          1.36733710171069
+        ]
+      },
+      "properties": {
+        "name": "ANG MO KIO SECONDARY SCHOOL",
+        "address": "http://www.angmokiosec.moe.edu.sg",
+        "postal": "569362"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.941082513081,
+          1.33058126205128
+        ]
+      },
+      "properties": {
+        "name": "ANGLICAN HIGH SCHOOL",
+        "address": "http://www.anglicanhigh.moe.edu.sg",
+        "postal": "487012"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.785358436408,
+          1.30304255193392
+        ]
+      },
+      "properties": {
+        "name": "ANGLO-CHINESE JUNIOR COLLEGE",
+        "address": "https://acjc.moe.edu.sg",
+        "postal": "139745"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.835772689988,
+          1.31961649151328
+        ]
+      },
+      "properties": {
+        "name": "ANGLO-CHINESE SCHOOL (BARKER ROAD)",
+        "address": "http://www.acsbr.moe.edu.sg",
+        "postal": "309919"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.780363417671,
+          1.30370409257783
+        ]
+      },
+      "properties": {
+        "name": "ANGLO-CHINESE SCHOOL (INDEPENDENT)",
+        "address": "http://www.acsindep.moe.edu.sg",
+        "postal": "139650"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.840950265464,
+          1.30935041274966
+        ]
+      },
+      "properties": {
+        "name": "ANGLO-CHINESE SCHOOL (JUNIOR)",
+        "address": "www.acsj.moe.edu.sg",
+        "postal": "227988"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.835609732354,
+          1.31837054523521
+        ]
+      },
+      "properties": {
+        "name": "ANGLO-CHINESE SCHOOL (PRIMARY)",
+        "address": "http://www.acspri.moe.edu.sg/",
+        "postal": "309918"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.9389409004,
+          1.36360590588314
+        ]
+      },
+      "properties": {
+        "name": "ANGSANA PRIMARY SCHOOL",
+        "address": "https://angsanapri.moe.edu.sg/",
+        "postal": "528565"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.766687526556,
+          1.36838160662857
+        ]
+      },
+      "properties": {
+        "name": "ASSUMPTION ENGLISH SCHOOL",
+        "address": "http://www.assumptionenglish.moe.edu.sg",
+        "postal": "678117"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.765959130581,
+          1.3696707043227
+        ]
+      },
+      "properties": {
+        "name": "ASSUMPTION PATHWAY SCHOOL",
+        "address": "http://www.aps.edu.sg",
+        "postal": "679697"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.882806211705,
+          1.33995415587811
+        ]
+      },
+      "properties": {
+        "name": "BARTLEY SECONDARY SCHOOL",
+        "address": "http://www.bartleysec.moe.edu.sg",
+        "postal": "538403"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.773632022975,
+          1.38394936211823
+        ]
+      },
+      "properties": {
+        "name": "BEACON PRIMARY SCHOOL",
+        "address": "https://beaconpri.moe.edu.sg/",
+        "postal": "679944"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.852280842345,
+          1.341790284928
+        ]
+      },
+      "properties": {
+        "name": "BEATTY SECONDARY SCHOOL",
+        "address": "http://www.beattysec.moe.edu.sg",
+        "postal": "318990"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.937878976352,
+          1.32344593287992
+        ]
+      },
+      "properties": {
+        "name": "BEDOK GREEN PRIMARY SCHOOL",
+        "address": "http://www.bedokgreenpri.moe.edu.sg",
+        "postal": "469317"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.935028383346,
+          1.33451947288431
+        ]
+      },
+      "properties": {
+        "name": "BEDOK GREEN SECONDARY SCHOOL",
+        "address": "http://www.bedokgreensec.moe.edu.sg",
+        "postal": "469722"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.950989139261,
+          1.32513655159184
+        ]
+      },
+      "properties": {
+        "name": "BEDOK SOUTH SECONDARY SCHOOL",
+        "address": "https://bedoksouthsec.moe.edu.sg/",
+        "postal": "468585"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.943776245024,
+          1.32415704029686
+        ]
+      },
+      "properties": {
+        "name": "BEDOK VIEW SECONDARY SCHOOL",
+        "address": "http://www.bedokviewsec.moe.edu.sg",
+        "postal": "469293"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.865404167629,
+          1.32181250780475
+        ]
+      },
+      "properties": {
+        "name": "BENDEMEER PRIMARY SCHOOL",
+        "address": "http://www.bendemeerpri.moe.edu.sg/",
+        "postal": "339948"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.860518349544,
+          1.32434843114787
+        ]
+      },
+      "properties": {
+        "name": "BENDEMEER SECONDARY SCHOOL",
+        "address": "http://www.bendemeersec.moe.edu.sg",
+        "postal": "327919"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.808628535239,
+          1.27612047924037
+        ]
+      },
+      "properties": {
+        "name": "BLANGAH RISE PRIMARY SCHOOL",
+        "address": "http://www.blangahrisepri.moe.edu.sg/",
+        "postal": "109100"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.712858381937,
+          1.34284013791617
+        ]
+      },
+      "properties": {
+        "name": "BOON LAY GARDEN PRIMARY SCHOOL",
+        "address": "www.boonlaygardenpri.moe.edu.sg",
+        "postal": "649930"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.701891453912,
+          1.34272216334333
+        ]
+      },
+      "properties": {
+        "name": "BOON LAY SECONDARY SCHOOL",
+        "address": "https://www.boonlaysec.moe.edu.sg",
+        "postal": "648354"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.877659577677,
+          1.37035994436209
+        ]
+      },
+      "properties": {
+        "name": "BOWEN SECONDARY SCHOOL",
+        "address": "http://www.bowensec.moe.edu.sg",
+        "postal": "547529"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.886917922608,
+          1.30705061123433
+        ]
+      },
+      "properties": {
+        "name": "BROADRICK SECONDARY SCHOOL",
+        "address": "http://www.broadricksec.moe.edu.sg",
+        "postal": "399935"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.74087370482,
+          1.34849111079052
+        ]
+      },
+      "properties": {
+        "name": "BUKIT BATOK SECONDARY SCHOOL",
+        "address": "http://www.bukitbatoksec.moe.edu.sg",
+        "postal": "658962"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.813438929393,
+          1.28569283064288
+        ]
+      },
+      "properties": {
+        "name": "BUKIT MERAH SECONDARY SCHOOL",
+        "address": "http://www.bukitmerahsec.moe.edu.sg",
+        "postal": "159050"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.738361221869,
+          1.38224243360043
+        ]
+      },
+      "properties": {
+        "name": "BUKIT PANJANG GOVT. HIGH SCHOOL",
+        "address": "http://www.bpghs.moe.edu.sg",
+        "postal": "689809"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.769417337654,
+          1.37350089986584
+        ]
+      },
+      "properties": {
+        "name": "BUKIT PANJANG PRIMARY SCHOOL",
+        "address": "http://www.bukitpanjangpri.moe.edu.sg",
+        "postal": "679676"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.766855344779,
+          1.3377498622588
+        ]
+      },
+      "properties": {
+        "name": "BUKIT TIMAH PRIMARY SCHOOL",
+        "address": "http://www.bukittimahpri.moe.edu.sg",
+        "postal": "598112"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.75366641455,
+          1.34586054788695
+        ]
+      },
+      "properties": {
+        "name": "BUKIT VIEW PRIMARY SCHOOL",
+        "address": "http://www.bukitviewpri.moe.edu.sg",
+        "postal": "659634"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.752226593984,
+          1.3457330554294
+        ]
+      },
+      "properties": {
+        "name": "BUKIT VIEW SECONDARY SCHOOL",
+        "address": "https://www.bukitviewsec.moe.edu.sg",
+        "postal": "659633"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.815858858929,
+          1.45125024371543
+        ]
+      },
+      "properties": {
+        "name": "CANBERRA PRIMARY SCHOOL",
+        "address": "http://www.canberrapri.moe.edu.sg",
+        "postal": "757714"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.814203583818,
+          1.45319086315972
+        ]
+      },
+      "properties": {
+        "name": "CANBERRA SECONDARY SCHOOL",
+        "address": "https://canberrasec.moe.edu.sg",
+        "postal": "757699"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.882227964852,
+          1.32664424544839
+        ]
+      },
+      "properties": {
+        "name": "CANOSSA CATHOLIC PRIMARY SCHOOL",
+        "address": "https://canossacatholicpri.moe.edu.sg/",
+        "postal": "387621"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.839962631748,
+          1.27547252623201
+        ]
+      },
+      "properties": {
+        "name": "CANTONMENT PRIMARY SCHOOL",
+        "address": "http://www.cantonmentpri.moe.edu.sg",
+        "postal": "088256"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.957020286115,
+          1.37246063927999
+        ]
+      },
+      "properties": {
+        "name": "CASUARINA PRIMARY SCHOOL",
+        "address": "http://www.casuarinapri.moe.edu.sg/",
+        "postal": "518935"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.844874676599,
+          1.3547230747166
+        ]
+      },
+      "properties": {
+        "name": "CATHOLIC HIGH SCHOOL",
+        "address": "http://www.catholichigh.moe.edu.sg",
+        "postal": "579767"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.835028842353,
+          1.32455605783219
+        ]
+      },
+      "properties": {
+        "name": "CATHOLIC JUNIOR COLLEGE",
+        "address": "https://cjc.moe.edu.sg/",
+        "postal": "297822"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.873933064886,
+          1.33375800216334
+        ]
+      },
+      "properties": {
+        "name": "CEDAR GIRLS' SECONDARY SCHOOL",
+        "address": "http://www.cedargirlssec.moe.edu.sg",
+        "postal": "349692"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.87562006259,
+          1.33566084356265
+        ]
+      },
+      "properties": {
+        "name": "CEDAR PRIMARY SCHOOL",
+        "address": "Http://www.cedarpri.moe.edu.sg",
+        "postal": "349700"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.953245525564,
+          1.33950630072876
+        ]
+      },
+      "properties": {
+        "name": "CHANGKAT CHANGI SECONDARY SCHOOL",
+        "address": "http://www.changkatchangisec.moe.edu.sg",
+        "postal": "529894"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.952080114035,
+          1.34023163951633
+        ]
+      },
+      "properties": {
+        "name": "CHANGKAT PRIMARY SCHOOL",
+        "address": "http://www.changkatpri.moe.edu.sg/",
+        "postal": "529896"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.911105620496,
+          1.30648535277087
+        ]
+      },
+      "properties": {
+        "name": "CHIJ (KATONG) PRIMARY",
+        "address": "http://chijkcp.moe.edu.sg/",
+        "postal": "424821"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.898762173662,
+          1.40744168163777
+        ]
+      },
+      "properties": {
+        "name": "VALOUR PRIMARY SCHOOL",
+        "address": "valourpri.moe.edu.sg",
+        "postal": "828728"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.828157564896,
+          1.275022722964
+        ]
+      },
+      "properties": {
+        "name": "CHIJ (KELLOCK)",
+        "address": "http://www.chijkellock.moe.edu.sg/",
+        "postal": "099757"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.917144350028,
+          1.30644268034894
+        ]
+      },
+      "properties": {
+        "name": "CHIJ KATONG CONVENT",
+        "address": "http://www.chijkatongconvent.moe.edu.sg",
+        "postal": "449150"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.864009397373,
+          1.35742952269615
+        ]
+      },
+      "properties": {
+        "name": "CHIJ OUR LADY OF GOOD COUNSEL",
+        "address": "http://www.chijourladyofgoodcounsel.moe.edu.sg",
+        "postal": "558979"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.897575728303,
+          1.37330297140128
+        ]
+      },
+      "properties": {
+        "name": "CHIJ OUR LADY OF THE NATIVITY",
+        "address": "http://www.chijourladyofthenativity.moe.edu.sg/",
+        "postal": "534793"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.767412204602,
+          1.366603668561
+        ]
+      },
+      "properties": {
+        "name": "CHIJ OUR LADY QUEEN OF PEACE",
+        "address": "http://www.chijourladyqueenofpeace.moe.edu.sg/",
+        "postal": "679287"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.841847263786,
+          1.33275264711587
+        ]
+      },
+      "properties": {
+        "name": "CHIJ PRIMARY (TOA PAYOH)",
+        "address": "http://www.chijpritoapayoh.moe.edu.sg",
+        "postal": "319765"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.843271625083,
+          1.33246079948303
+        ]
+      },
+      "properties": {
+        "name": "CHIJ SECONDARY (TOA PAYOH)",
+        "address": "http://www.chijsec.edu.sg",
+        "postal": "319764"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.902464991543,
+          1.39175222260369
+        ]
+      },
+      "properties": {
+        "name": "CHIJ ST. JOSEPH'S CONVENT",
+        "address": "http://www.chijstjosephsconvent.moe.edu.sg",
+        "postal": "548595"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.834253269436,
+          1.37347687878916
+        ]
+      },
+      "properties": {
+        "name": "CHIJ ST. NICHOLAS GIRLS' SCHOOL",
+        "address": "http://www.chijstnicholasgirls.moe.edu.sg",
+        "postal": "569405"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.822440701642,
+          1.27535177510054
+        ]
+      },
+      "properties": {
+        "name": "CHIJ ST. THERESA'S CONVENT",
+        "address": "http://www.chijsttheresasconvent.moe.edu.sg",
+        "postal": "099138"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.839309173817,
+          1.43839562897006
+        ]
+      },
+      "properties": {
+        "name": "CHONGFU SCHOOL",
+        "address": "http://www.chongfu.moe.edu.sg/",
+        "postal": "768959"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.951317297552,
+          1.35061130568554
+        ]
+      },
+      "properties": {
+        "name": "CHONGZHENG PRIMARY SCHOOL",
+        "address": "http://www.chongzhengpri.moe.edu.sg",
+        "postal": "529392"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.793451105242,
+          1.42656780901455
+        ]
+      },
+      "properties": {
+        "name": "CHRIST CHURCH SECONDARY SCHOOL",
+        "address": "http://www.christchurchsec.moe.edu.sg",
+        "postal": "737924"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.741832917421,
+          1.37775890093367
+        ]
+      },
+      "properties": {
+        "name": "CHUA CHU KANG PRIMARY SCHOOL",
+        "address": "http://www.chuachukangpri.moe.edu.sg",
+        "postal": "689905"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.75510327583,
+          1.38333422637073
+        ]
+      },
+      "properties": {
+        "name": "CHUA CHU KANG SECONDARY SCHOOL",
+        "address": "http://www.chuachukangsec.moe.edu.sg",
+        "postal": "688848"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.891653229373,
+          1.30509154753048
+        ]
+      },
+      "properties": {
+        "name": "CHUNG CHENG HIGH SCHOOL (MAIN)",
+        "address": "http://www.chungchenghighmain.moe.edu.sg",
+        "postal": "439012"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.837390782849,
+          1.41922603586175
+        ]
+      },
+      "properties": {
+        "name": "CHUNG CHENG HIGH SCHOOL (YISHUN)",
+        "address": "http://www.chungchenghighyishun.moe.edu.sg",
+        "postal": "768547"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.763144493687,
+          1.31506321827875
+        ]
+      },
+      "properties": {
+        "name": "CLEMENTI PRIMARY SCHOOL",
+        "address": "http://www.clementipri.moe.edu.sg",
+        "postal": "129903"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.762020598524,
+          1.31553912945073
+        ]
+      },
+      "properties": {
+        "name": "CLEMENTI TOWN SECONDARY SCHOOL",
+        "address": "http://www.clementitownsec.moe.edu.sg",
+        "postal": "129904"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.745637393049,
+          1.31920395934801
+        ]
+      },
+      "properties": {
+        "name": "COMMONWEALTH SECONDARY SCHOOL",
+        "address": "http://www.commonwealthsec.moe.edu.sg",
+        "postal": "608784"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.897812229905,
+          1.39444529636566
+        ]
+      },
+      "properties": {
+        "name": "COMPASSVALE PRIMARY SCHOOL",
+        "address": "https://www.compassvalepri.moe.edu.sg",
+        "postal": "545091"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.899847164494,
+          1.39614083952009
+        ]
+      },
+      "properties": {
+        "name": "COMPASSVALE SECONDARY SCHOOL",
+        "address": "http://www.compassvalesec.moe.edu.sg",
+        "postal": "545083"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.736554295636,
+          1.38026516111464
+        ]
+      },
+      "properties": {
+        "name": "CONCORD PRIMARY SCHOOL",
+        "address": "http://www.concordpri.moe.edu.sg/",
+        "postal": "689814"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.707578404944,
+          1.35148548772662
+        ]
+      },
+      "properties": {
+        "name": "CORPORATION PRIMARY SCHOOL",
+        "address": "http://www.corporationpri.moe.edu.sg",
+        "postal": "648347"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.817544461755,
+          1.29331947077104
+        ]
+      },
+      "properties": {
+        "name": "CRESCENT GIRLS' SCHOOL",
+        "address": "http://www.crescent.edu.sg",
+        "postal": "247961"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.742628105304,
+          1.3431198045076
+        ]
+      },
+      "properties": {
+        "name": "CREST SECONDARY SCHOOL",
+        "address": "http://www.crestsec.edu.sg",
+        "postal": "609561"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.921286435321,
+          1.33524602829747
+        ]
+      },
+      "properties": {
+        "name": "DAMAI PRIMARY SCHOOL",
+        "address": "http://www.damaipri.moe.edu.sg",
+        "postal": "479226"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.927091653438,
+          1.33692798510393
+        ]
+      },
+      "properties": {
+        "name": "DAMAI SECONDARY SCHOOL",
+        "address": "http://www.damaisec.moe.edu.sg",
+        "postal": "479229"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.74847210784,
+          1.3591797447277
+        ]
+      },
+      "properties": {
+        "name": "DAZHONG PRIMARY SCHOOL",
+        "address": "http://www.dazhongpri.moe.edu.sg",
+        "postal": "659441"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.743201812831,
+          1.3947078296399
+        ]
+      },
+      "properties": {
+        "name": "DE LA SALLE SCHOOL",
+        "address": "http://www.delasalle.moe.edu.sg",
+        "postal": "689285"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.852545772422,
+          1.36599702567717
+        ]
+      },
+      "properties": {
+        "name": "DEYI SECONDARY SCHOOL",
+        "address": "http://www.deyisec.moe.edu.sg",
+        "postal": "569277"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.74472109107,
+          1.36357900792871
+        ]
+      },
+      "properties": {
+        "name": "DUNEARN SECONDARY SCHOOL",
+        "address": "http://www.dunearnsec.moe.edu.sg",
+        "postal": "659204"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.88294155989,
+          1.29996216014962
+        ]
+      },
+      "properties": {
+        "name": "DUNMAN HIGH SCHOOL",
+        "address": "http://www.dunmanhigh.moe.edu.sg",
+        "postal": "436895"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.956213906966,
+          1.36065258337022
+        ]
+      },
+      "properties": {
+        "name": "DUNMAN SECONDARY SCHOOL",
+        "address": "http://www.dunmansec.moe.edu.sg",
+        "postal": "529093"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.961676849165,
+          1.35268400746357
+        ]
+      },
+      "properties": {
+        "name": "EAST SPRING PRIMARY SCHOOL",
+        "address": "http://www.eastspringpri.moe.edu.sg",
+        "postal": "529258"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.960640700298,
+          1.35622508992581
+        ]
+      },
+      "properties": {
+        "name": "EAST SPRING SECONDARY SCHOOL",
+        "address": "http://www.eastspringsec.moe.edu.sg",
+        "postal": "529231"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.907847599114,
+          1.40009139510996
+        ]
+      },
+      "properties": {
+        "name": "EDGEFIELD PRIMARY SCHOOL",
+        "address": "http://www.edgefieldpri.moe.edu.sg",
+        "postal": "828869"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.902687385465,
+          1.40059309981824
+        ]
+      },
+      "properties": {
+        "name": "EDGEFIELD SECONDARY SCHOOL",
+        "address": "http://www.edgefieldsec.moe.edu.sg",
+        "postal": "828814"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.945289416873,
+          1.37505696315817
+        ]
+      },
+      "properties": {
+        "name": "ELIAS PARK PRIMARY SCHOOL",
+        "address": "http://www.eliasparkpri.moe.edu.sg",
+        "postal": "518866"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.817174701639,
+          1.45388170417263
+        ]
+      },
+      "properties": {
+        "name": "ENDEAVOUR PRIMARY SCHOOL",
+        "address": "https://endeavourpri.moe.edu.sg/",
+        "postal": "757521"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.841286169122,
+          1.36213757183547
+        ]
+      },
+      "properties": {
+        "name": "EUNOIA JUNIOR COLLEGE",
+        "address": "http://www.eunoiajc.moe.edu.sg",
+        "postal": "573838"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.794545295922,
+          1.44414835451585
+        ]
+      },
+      "properties": {
+        "name": "EVERGREEN PRIMARY SCHOOL",
+        "address": "http://www.evergreenpri.moe.edu.sg/",
+        "postal": "738908"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.794137756171,
+          1.44149131273737
+        ]
+      },
+      "properties": {
+        "name": "EVERGREEN SECONDARY SCHOOL",
+        "address": "http://www.evergreensec.moe.edu.sg",
+        "postal": "738489"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.785455606827,
+          1.30100441916733
+        ]
+      },
+      "properties": {
+        "name": "FAIRFIELD METHODIST SCHOOL (PRIMARY)",
+        "address": "http://www.fmsp.moe.edu.sg/",
+        "postal": "139648"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.784099647149,
+          1.30163374395823
+        ]
+      },
+      "properties": {
+        "name": "FAIRFIELD METHODIST SCHOOL (SECONDARY)",
+        "address": "http://www.fairfieldmethodistsec.moe.edu.sg",
+        "postal": "139649"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.850766402965,
+          1.31236867681371
+        ]
+      },
+      "properties": {
+        "name": "FARRER PARK PRIMARY SCHOOL",
+        "address": "http://www.farrerparkpri.moe.edu.sg",
+        "postal": "217567"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.931710293058,
+          1.32980598760785
+        ]
+      },
+      "properties": {
+        "name": "FENGSHAN PRIMARY SCHOOL",
+        "address": "http://www.fengshanpri.moe.edu.sg",
+        "postal": "469680"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.880330305684,
+          1.39726966050479
+        ]
+      },
+      "properties": {
+        "name": "FERN GREEN PRIMARY SCHOOL",
+        "address": "www.ferngreenpri.moe.edu.sg",
+        "postal": "797538"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.874445458032,
+          1.39030227963797
+        ]
+      },
+      "properties": {
+        "name": "FERNVALE PRIMARY SCHOOL",
+        "address": "www.fernvalepri.moe.edu.sg",
+        "postal": "797701"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.855529906182,
+          1.34032299499938
+        ]
+      },
+      "properties": {
+        "name": "FIRST TOA PAYOH PRIMARY SCHOOL",
+        "address": "http://www.firsttoapayohpri.moe.edu.sg",
+        "postal": "319252"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.69970173931,
+          1.33641298743234
+        ]
+      },
+      "properties": {
+        "name": "FRONTIER PRIMARY SCHOOL",
+        "address": "http://www.frontierpri.moe.edu.sg",
+        "postal": "648200"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.778192944298,
+          1.43047990810126
+        ]
+      },
+      "properties": {
+        "name": "FUCHUN PRIMARY SCHOOL",
+        "address": "http://www.fuchunpri.moe.edu.sg",
+        "postal": "739063"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.736089481883,
+          1.33659726465816
+        ]
+      },
+      "properties": {
+        "name": "FUHUA PRIMARY SCHOOL",
+        "address": "http://www.fuhuapri.moe.edu.sg",
+        "postal": "609647"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.72652089832,
+          1.34701408913756
+        ]
+      },
+      "properties": {
+        "name": "FUHUA SECONDARY SCHOOL",
+        "address": "http://www.fuhuasec.moe.edu.sg",
+        "postal": "649410"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.815547410064,
+          1.28559516494962
+        ]
+      },
+      "properties": {
+        "name": "GAN ENG SENG PRIMARY SCHOOL",
+        "address": "http://www.ganengsengpri.moe.edu.sg",
+        "postal": "158901"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.823733673089,
+          1.28907114485773
+        ]
+      },
+      "properties": {
+        "name": "GAN ENG SENG SCHOOL",
+        "address": "http://www.ganengsengsch.moe.edu.sg",
+        "postal": "159561"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.883628501601,
+          1.31814416827374
+        ]
+      },
+      "properties": {
+        "name": "GEYLANG METHODIST SCHOOL (PRIMARY)",
+        "address": "www.geylangmethodistpri.moe.edu.sg",
+        "postal": "389706"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.882661129303,
+          1.31764900474601
+        ]
+      },
+      "properties": {
+        "name": "GEYLANG METHODIST SCHOOL (SECONDARY)",
+        "address": "http://www.geylangmethodistsec.moe.edu.sg",
+        "postal": "389705"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.949144797277,
+          1.35711606790292
+        ]
+      },
+      "properties": {
+        "name": "GONGSHANG PRIMARY SCHOOL",
+        "address": "http://www.gongshangpri.moe.edu.sg",
+        "postal": "529176"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.91233462071,
+          1.39648195114256
+        ]
+      },
+      "properties": {
+        "name": "GREENDALE PRIMARY SCHOOL",
+        "address": "http://www.greendalepri.moe.edu.sg",
+        "postal": "828848"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.91170014084,
+          1.39696019936894
+        ]
+      },
+      "properties": {
+        "name": "GREENDALE SECONDARY SCHOOL",
+        "address": "http://www.greendalesec.moe.edu.sg",
+        "postal": "828866"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.767794469258,
+          1.3858892193692
+        ]
+      },
+      "properties": {
+        "name": "GREENRIDGE PRIMARY SCHOOL",
+        "address": "http://www.greenridgepri.moe.edu.sg",
+        "postal": "677744"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.763998914082,
+          1.375600053443
+        ]
+      },
+      "properties": {
+        "name": "GREENRIDGE SECONDARY SCHOOL",
+        "address": "http://www.greenridgesec.moe.edu.sg",
+        "postal": "678972"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.804725587384,
+          1.43989958331782
+        ]
+      },
+      "properties": {
+        "name": "GREENWOOD PRIMARY SCHOOL",
+        "address": "http://www.greenwoodpri.moe.edu.sg",
+        "postal": "737942"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.850208933626,
+          1.34440856042912
+        ]
+      },
+      "properties": {
+        "name": "GUANGYANG SECONDARY SCHOOL",
+        "address": "http://guangyangsec.moe.edu.sg",
+        "postal": "579807"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.962762942764,
+          1.36933055696636
+        ]
+      },
+      "properties": {
+        "name": "HAI SING CATHOLIC SCHOOL",
+        "address": "http://www.haisingcatholic.moe.edu.sg",
+        "postal": "518969"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.902902557195,
+          1.31194344271383
+        ]
+      },
+      "properties": {
+        "name": "HAIG GIRLS' SCHOOL",
+        "address": "http://www.haiggirls.moe.edu.sg",
+        "postal": "427072"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.784296227747,
+          1.31667646178347
+        ]
+      },
+      "properties": {
+        "name": "HENRY PARK PRIMARY SCHOOL",
+        "address": "http://www.henryparkpri.moe.edu.sg",
+        "postal": "278790"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.752986488399,
+          1.35273576615912
+        ]
+      },
+      "properties": {
+        "name": "HILLGROVE SECONDARY SCHOOL",
+        "address": "http://www.hillgrovesec.moe.edu.sg",
+        "postal": "659250"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.896398814264,
+          1.37154508822261
+        ]
+      },
+      "properties": {
+        "name": "HOLY INNOCENTS' HIGH SCHOOL",
+        "address": "http://www.holyinnocentshigh.moe.edu.sg",
+        "postal": "534786"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.894114899795,
+          1.36693830877349
+        ]
+      },
+      "properties": {
+        "name": "HOLY INNOCENTS' PRIMARY SCHOOL",
+        "address": "http://www.holyinnocentspri.moe.edu.sg/",
+        "postal": "536451"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.857628468881,
+          1.32175999964553
+        ]
+      },
+      "properties": {
+        "name": "HONG WEN SCHOOL",
+        "address": "http://www.hongwen.moe.edu.sg",
+        "postal": "327829"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.913404855665,
+          1.399550034492
+        ]
+      },
+      "properties": {
+        "name": "HORIZON PRIMARY SCHOOL",
+        "address": "http://www.horizonpri.moe.edu.sg",
+        "postal": "828819"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.880805274557,
+          1.37738245231461
+        ]
+      },
+      "properties": {
+        "name": "HOUGANG PRIMARY SCHOOL",
+        "address": "http://www.hougangpri.moe.edu.sg/",
+        "postal": "534238"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.882533963338,
+          1.37764019332164
+        ]
+      },
+      "properties": {
+        "name": "HOUGANG SECONDARY SCHOOL",
+        "address": "http://www.hougangsec.moe.edu.sg",
+        "postal": "534256"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.721832320169,
+          1.35234365488339
+        ]
+      },
+      "properties": {
+        "name": "HUA YI SECONDARY SCHOOL",
+        "address": "http://www.huayisec.moe.edu.sg",
+        "postal": "649371"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.844240226564,
+          1.42697284512936
+        ]
+      },
+      "properties": {
+        "name": "HUAMIN PRIMARY SCHOOL",
+        "address": "http://www.huaminpri.moe.edu.sg",
+        "postal": "768857"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.803290365022,
+          1.3263580622144
+        ]
+      },
+      "properties": {
+        "name": "HWA CHONG INSTITUTION",
+        "address": "http://www.hwachong.edu.sg",
+        "postal": "269734"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.790607539185,
+          1.42896700684852
+        ]
+      },
+      "properties": {
+        "name": "INNOVA PRIMARY SCHOOL",
+        "address": "http://www.innovapri.moe.edu.sg/",
+        "postal": "737888"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.830425490093,
+          1.42768847665227
+        ]
+      },
+      "properties": {
+        "name": "JIEMIN PRIMARY SCHOOL",
+        "address": "http://www.jieminpri.moe.edu.sg",
+        "postal": "768515"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.851763531681,
+          1.37196445720109
+        ]
+      },
+      "properties": {
+        "name": "JING SHAN PRIMARY SCHOOL",
+        "address": "http://www.jingshanpri.moe.edu.sg",
+        "postal": "569228"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.939221709073,
+          1.34787074766746
+        ]
+      },
+      "properties": {
+        "name": "JUNYUAN PRIMARY SCHOOL",
+        "address": "https://junyuanpri.moe.edu.sg",
+        "postal": "528906"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.933886165824,
+          1.35361315263537
+        ]
+      },
+      "properties": {
+        "name": "JUNYUAN SECONDARY SCHOOL",
+        "address": "https://junyuansec.moe.edu.sg/",
+        "postal": "528933"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.75437461519,
+          1.38437406410733
+        ]
+      },
+      "properties": {
+        "name": "JURONG PIONEER JUNIOR COLLEGE",
+        "address": "http://jpjc.moe.edu.sg",
+        "postal": "688258"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.733156566858,
+          1.34843859698946
+        ]
+      },
+      "properties": {
+        "name": "JURONG PRIMARY SCHOOL",
+        "address": "http://www.jurongpri.moe.edu.sg",
+        "postal": "609476"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.723952961648,
+          1.33002032220942
+        ]
+      },
+      "properties": {
+        "name": "JURONG SECONDARY SCHOOL",
+        "address": "http://www.jurongsec.moe.edu.sg",
+        "postal": "618652"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.698803732244,
+          1.33917519796104
+        ]
+      },
+      "properties": {
+        "name": "JURONG WEST PRIMARY SCHOOL",
+        "address": "http://www.jurongwestpri.moe.edu.sg",
+        "postal": "648368"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.702098904443,
+          1.33525634688323
+        ]
+      },
+      "properties": {
+        "name": "JURONG WEST SECONDARY SCHOOL",
+        "address": "https://www.jurongwestsec.moe.edu.sg",
+        "postal": "648348"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.728907710089,
+          1.35128862770284
+        ]
+      },
+      "properties": {
+        "name": "JURONGVILLE SECONDARY SCHOOL",
+        "address": "http://www.jurongvillesec.moe.edu.sg",
+        "postal": "609790"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.687310264575,
+          1.3387227734133
+        ]
+      },
+      "properties": {
+        "name": "JUYING SECONDARY SCHOOL",
+        "address": "http://juyingsec.moe.edu.sg",
+        "postal": "649038"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.90857257736,
+          1.39485356081865
+        ]
+      },
+      "properties": {
+        "name": "MEE TOH SCHOOL",
+        "address": "http://www.meetoh.moe.edu.sg/",
+        "postal": "828867"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.756449399351,
+          1.34552849960874
+        ]
+      },
+      "properties": {
+        "name": "KEMING PRIMARY SCHOOL",
+        "address": "http://www.kemingpri.moe.edu.sg",
+        "postal": "659762"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.764889617566,
+          1.30122773426098
+        ]
+      },
+      "properties": {
+        "name": "KENT RIDGE SECONDARY SCHOOL",
+        "address": "http://www.kentridgesec.moe.edu.sg",
+        "postal": "127368"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.847148501824,
+          1.3373381935639
+        ]
+      },
+      "properties": {
+        "name": "KHENG CHENG SCHOOL",
+        "address": "http://www.khengcheng.moe.edu.sg/",
+        "postal": "319580"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.888352029067,
+          1.31099674009193
+        ]
+      },
+      "properties": {
+        "name": "KONG HWA SCHOOL",
+        "address": "http://www.konghwa.moe.edu.sg",
+        "postal": "399772"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.747362720939,
+          1.39356050497104
+        ]
+      },
+      "properties": {
+        "name": "KRANJI PRIMARY SCHOOL",
+        "address": "http://kranjipri.moe.edu.sg",
+        "postal": "689189"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.741190664845,
+          1.39005109871311
+        ]
+      },
+      "properties": {
+        "name": "KRANJI SECONDARY SCHOOL",
+        "address": "http://www.kranjisec.moe.edu.sg",
+        "postal": "689333"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.855018233311,
+          1.34939813669536
+        ]
+      },
+      "properties": {
+        "name": "KUO CHUAN PRESBYTERIAN PRIMARY SCHOOL",
+        "address": "http://www.kuochuanpresbyterianpri.moe.edu.sg",
+        "postal": "579793"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.854983746416,
+          1.35017129930314
+        ]
+      },
+      "properties": {
+        "name": "KUO CHUAN PRESBYTERIAN SECONDARY SCHOOL",
+        "address": "http://www.kuochuanpresbyteriansec.moe.edu.sg",
+        "postal": "579795"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.718089546664,
+          1.33820397704287
+        ]
+      },
+      "properties": {
+        "name": "LAKESIDE PRIMARY SCHOOL",
+        "address": "http://www.lakesidepri.moe.edu.sg/",
+        "postal": "618310"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.754165828711,
+          1.35424191127295
+        ]
+      },
+      "properties": {
+        "name": "LIANHUA PRIMARY SCHOOL",
+        "address": "http://www.lianhuapri.moe.edu.sg/",
+        "postal": "659243"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.956944585725,
+          1.36658417167238
+        ]
+      },
+      "properties": {
+        "name": "LOYANG VIEW SECONDARY SCHOOL",
+        "address": "http://www.loyangviewsec.moe.edu.sg",
+        "postal": "519073"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.901306904157,
+          1.32858023873554
+        ]
+      },
+      "properties": {
+        "name": "MAHA BODHI SCHOOL",
+        "address": "http://www.mahabodhi.moe.edu.sg/",
+        "postal": "408931"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.901719963831,
+          1.32747123084846
+        ]
+      },
+      "properties": {
+        "name": "MANJUSRI SECONDARY SCHOOL",
+        "address": "http://www.manjusrisec.moe.edu.sg",
+        "postal": "408940"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.877740713449,
+          1.34139181236127
+        ]
+      },
+      "properties": {
+        "name": "MARIS STELLA HIGH SCHOOL",
+        "address": "http://www.marisstellahigh.moe.edu.sg",
+        "postal": "368051"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.773643013846,
+          1.43383904037059
+        ]
+      },
+      "properties": {
+        "name": "MARSILING PRIMARY SCHOOL",
+        "address": "http://www.marsilingpri.moe.edu.sg",
+        "postal": "738927"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.776008090454,
+          1.43664424769955
+        ]
+      },
+      "properties": {
+        "name": "MARSILING SECONDARY SCHOOL",
+        "address": "http://www.marsilingsec.moe.edu.sg",
+        "postal": "739110"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.839811736775,
+          1.34043840661368
+        ]
+      },
+      "properties": {
+        "name": "MARYMOUNT CONVENT SCHOOL",
+        "address": "HTTP://WWW.MARYMOUNTCONVENT.MOE.EDU.SG",
+        "postal": "297754"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.843252803742,
+          1.37637683547682
+        ]
+      },
+      "properties": {
+        "name": "MAYFLOWER PRIMARY SCHOOL",
+        "address": "http://www.mayflowerpri.moe.edu.sg",
+        "postal": "569878"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.835360726863,
+          1.36827266209722
+        ]
+      },
+      "properties": {
+        "name": "MAYFLOWER SECONDARY SCHOOL",
+        "address": "http://www.mayflowersec.moe.edu.sg",
+        "postal": "569384"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.934953276155,
+          1.37550677054835
+        ]
+      },
+      "properties": {
+        "name": "MERIDIAN PRIMARY SCHOOL",
+        "address": "http://www.meridianpri.moe.edu.sg/",
+        "postal": "518798"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.948972483629,
+          1.3672468492013
+        ]
+      },
+      "properties": {
+        "name": "MERIDIAN SECONDARY SCHOOL",
+        "address": "http://www.meridiansec.moe.edu.sg",
+        "postal": "518901"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.783382114018,
+          1.33266213599636
+        ]
+      },
+      "properties": {
+        "name": "METHODIST GIRLS' SCHOOL (PRIMARY)",
+        "address": "https://www.mgs.moe.edu.sg/",
+        "postal": "599986"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.783382114018,
+          1.33266213599636
+        ]
+      },
+      "properties": {
+        "name": "METHODIST GIRLS' SCHOOL (SECONDARY)",
+        "address": "http://www.mgs.moe.edu.sg",
+        "postal": "599986"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.741593577684,
+          1.35031939200985
+        ]
+      },
+      "properties": {
+        "name": "MILLENNIA INSTITUTE",
+        "address": "http://www.millenniainstitute.moe.edu.sg",
+        "postal": "658965"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.889741457901,
+          1.37362445234082
+        ]
+      },
+      "properties": {
+        "name": "MONTFORT JUNIOR SCHOOL",
+        "address": "http://www.montfortjunior.moe.edu.sg/",
+        "postal": "538786"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.888928372577,
+          1.37396131656912
+        ]
+      },
+      "properties": {
+        "name": "MONTFORT SECONDARY SCHOOL",
+        "address": "https://montfortsec.moe.edu.sg/",
+        "postal": "538785"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.890004423764,
+          1.38879582498399
+        ]
+      },
+      "properties": {
+        "name": "NAN CHIAU HIGH SCHOOL",
+        "address": "http://www.nanchiauhigh.moe.edu.sg",
+        "postal": "545079"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.891180928186,
+          1.39221149906592
+        ]
+      },
+      "properties": {
+        "name": "NAN CHIAU PRIMARY SCHOOL",
+        "address": "http://www.ncps.moe.edu.sg",
+        "postal": "545080"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.768561446725,
+          1.30809529518605
+        ]
+      },
+      "properties": {
+        "name": "NAN HUA HIGH SCHOOL",
+        "address": "http://www.nanhuahigh.moe.edu.sg",
+        "postal": "129956"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.761095065761,
+          1.31920159956387
+        ]
+      },
+      "properties": {
+        "name": "NAN HUA PRIMARY SCHOOL",
+        "address": "http://www.nanhuapri.moe.edu.sg",
+        "postal": "128806"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.802420979943,
+          1.33058326666479
+        ]
+      },
+      "properties": {
+        "name": "NANYANG GIRLS' HIGH SCHOOL",
+        "address": "https://www.nygh.edu.sg",
+        "postal": "288683"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.866498721912,
+          1.35028314949236
+        ]
+      },
+      "properties": {
+        "name": "NANYANG JUNIOR COLLEGE",
+        "address": "http://www.nanyangjc.moe.edu.sg/",
+        "postal": "556111"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.807681852799,
+          1.32107094241153
+        ]
+      },
+      "properties": {
+        "name": "NANYANG PRIMARY SCHOOL",
+        "address": "http://www.nyps.moe.edu.sg",
+        "postal": "268097"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.804110905425,
+          1.33029291072172
+        ]
+      },
+      "properties": {
+        "name": "NATIONAL JUNIOR COLLEGE",
+        "address": "http://www.nationaljc.moe.edu.sg",
+        "postal": "288913"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.839100590207,
+          1.41590195697649
+        ]
+      },
+      "properties": {
+        "name": "NAVAL BASE PRIMARY SCHOOL",
+        "address": "http://www.navalbasepri.moe.edu.sg/",
+        "postal": "769028"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.831050390247,
+          1.41937881620441
+        ]
+      },
+      "properties": {
+        "name": "NAVAL BASE SECONDARY SCHOOL",
+        "address": "http://www.navalbasesec.moe.edu.sg",
+        "postal": "768689"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.799964819895,
+          1.29981138884057
+        ]
+      },
+      "properties": {
+        "name": "NEW TOWN PRIMARY SCHOOL",
+        "address": "http://www.newtownpri.moe.edu.sg/",
+        "postal": "148812"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.77318863421,
+          1.30977590011357
+        ]
+      },
+      "properties": {
+        "name": "NEW TOWN SECONDARY SCHOOL",
+        "address": "http://www.newtownsec.moe.edu.sg",
+        "postal": "139657"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.917570005713,
+          1.30553224180437
+        ]
+      },
+      "properties": {
+        "name": "NGEE ANN PRIMARY SCHOOL",
+        "address": "http://www.ngeeannpri.moe.edu.sg",
+        "postal": "449149"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.956747262496,
+          1.35447525755806
+        ]
+      },
+      "properties": {
+        "name": "NGEE ANN SECONDARY SCHOOL",
+        "address": "http://www.ngeeannsec.moe.edu.sg",
+        "postal": "529283"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.903202683028,
+          1.38706146494859
+        ]
+      },
+      "properties": {
+        "name": "NORTH SPRING PRIMARY SCHOOL",
+        "address": "http://www.northspringpri.moe.edu.sg",
+        "postal": "545088"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.848378442893,
+          1.42745159462566
+        ]
+      },
+      "properties": {
+        "name": "NORTH VIEW PRIMARY SCHOOL",
+        "address": "http://www.northviewpri.moe.edu.sg",
+        "postal": "768960"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.89626457548,
+          1.38255066171151
+        ]
+      },
+      "properties": {
+        "name": "NORTH VISTA PRIMARY SCHOOL",
+        "address": "http://www.northvistapri.moe.edu.sg",
+        "postal": "544974"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.899188813886,
+          1.381131285358
+        ]
+      },
+      "properties": {
+        "name": "NORTH VISTA SECONDARY SCHOOL",
+        "address": "http://www.northvistasec.moe.edu.sg",
+        "postal": "545081"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.845147332528,
+          1.42081285020652
+        ]
+      },
+      "properties": {
+        "name": "NORTHBROOKS SECONDARY SCHOOL",
+        "address": "http://www.northbrookssec.moe.edu.sg",
+        "postal": "768692"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.840792923345,
+          1.42130404159807
+        ]
+      },
+      "properties": {
+        "name": "NORTHLAND PRIMARY SCHOOL",
+        "address": "http://www.northlandpri.moe.edu.sg",
+        "postal": "769026"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.840104687784,
+          1.43580183362637
+        ]
+      },
+      "properties": {
+        "name": "NORTHLAND SECONDARY SCHOOL",
+        "address": "http://www.northlandsec.moe.edu.sg",
+        "postal": "768578"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.85575955353,
+          1.3191002158167
+        ]
+      },
+      "properties": {
+        "name": "NORTHLIGHT SCHOOL",
+        "address": "https://www.nls.edu.sg",
+        "postal": "327830"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.814075611175,
+          1.45732867302094
+        ]
+      },
+      "properties": {
+        "name": "NORTHOAKS PRIMARY SCHOOL",
+        "address": "http://www.northoakspri.moe.edu.sg",
+        "postal": "757622"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.905147201163,
+          1.41842322079348
+        ]
+      },
+      "properties": {
+        "name": "NORTHSHORE PRIMARY SCHOOL",
+        "address": "https://northshorepri.moe.edu.sg/",
+        "postal": "828671"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.770152807737,
+          1.30600678096247
+        ]
+      },
+      "properties": {
+        "name": "NUS HIGH SCHOOL OF MATHEMATICS AND SCIENCE",
+        "address": "www.nushigh.edu.sg",
+        "postal": "129957"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.911200193835,
+          1.40507184758584
+        ]
+      },
+      "properties": {
+        "name": "OASIS PRIMARY SCHOOL",
+        "address": "http://www.oasispri.moe.edu.sg/",
+        "postal": "828716"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.923752668632,
+          1.31996876377748
+        ]
+      },
+      "properties": {
+        "name": "OPERA ESTATE PRIMARY SCHOOL",
+        "address": "http://www.operaestatepri.moe.edu.sg",
+        "postal": "458436"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.837859241343,
+          1.41532032779634
+        ]
+      },
+      "properties": {
+        "name": "ORCHID PARK SECONDARY SCHOOL",
+        "address": "http://www.orchidparksec.moe.edu.sg",
+        "postal": "768454"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.837127264403,
+          1.28651357464735
+        ]
+      },
+      "properties": {
+        "name": "OUTRAM SECONDARY SCHOOL",
+        "address": "http://www.outramsec.moe.edu.sg",
+        "postal": "168622"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.891354675017,
+          1.38376923022123
+        ]
+      },
+      "properties": {
+        "name": "PALM VIEW PRIMARY SCHOOL",
+        "address": "http://www.palmviewpri.moe.edu.sg",
+        "postal": "544822"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.9392021807,
+          1.37801687647812
+        ]
+      },
+      "properties": {
+        "name": "PARK VIEW PRIMARY SCHOOL",
+        "address": "http://www.parkviewpri.moe.edu.sg",
+        "postal": "519524"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.959728202919,
+          1.37284060102246
+        ]
+      },
+      "properties": {
+        "name": "PASIR RIS CREST SECONDARY SCHOOL",
+        "address": "http://www.prcss.moe.edu.sg",
+        "postal": "518934"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.962922699031,
+          1.37245132722087
+        ]
+      },
+      "properties": {
+        "name": "PASIR RIS PRIMARY SCHOOL",
+        "address": "http://www.pasirrispri.moe.edu.sg",
+        "postal": "518968"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.948962626204,
+          1.35422732653396
+        ]
+      },
+      "properties": {
+        "name": "PASIR RIS SECONDARY SCHOOL",
+        "address": "https://pasirrissec.moe.edu.sg",
+        "postal": "529400"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.884846876112,
+          1.3502545600894
+        ]
+      },
+      "properties": {
+        "name": "PAYA LEBAR METHODIST GIRLS' SCHOOL (PRIMARY)",
+        "address": "http://www.payalebarmethodistgirlspri.moe.edu.sg/",
+        "postal": "536741"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.885120050588,
+          1.35096755912522
+        ]
+      },
+      "properties": {
+        "name": "PAYA LEBAR METHODIST GIRLS' SCHOOL (SECONDARY)",
+        "address": "http://www.plmgss.moe.edu.sg",
+        "postal": "536742"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.855341310212,
+          1.33677864390672
+        ]
+      },
+      "properties": {
+        "name": "PEI CHUN PUBLIC SCHOOL",
+        "address": "http://www.peichunpublic.moe.edu.sg",
+        "postal": "319320"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.776250903095,
+          1.33807302121151
+        ]
+      },
+      "properties": {
+        "name": "PEI HWA PRESBYTERIAN PRIMARY SCHOOL",
+        "address": "http://www.peihwapresbyterianpri.moe.edu.sg/",
+        "postal": "597610"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.878461745339,
+          1.39037504993234
+        ]
+      },
+      "properties": {
+        "name": "PEI HWA SECONDARY SCHOOL",
+        "address": "http://www.peihwasec.moe.edu.sg",
+        "postal": "797702"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.767438999533,
+          1.31666529308968
+        ]
+      },
+      "properties": {
+        "name": "PEI TONG PRIMARY SCHOOL",
+        "address": "http://www.peitongpri.moe.edu.sg/",
+        "postal": "129857"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.870010749055,
+          1.35951583222214
+        ]
+      },
+      "properties": {
+        "name": "PEICAI SECONDARY SCHOOL",
+        "address": "http://www.peicaisec.moe.edu.sg",
+        "postal": "556094"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.83021606804,
+          1.36665944653812
+        ]
+      },
+      "properties": {
+        "name": "PEIRCE SECONDARY SCHOOL",
+        "address": "http://www.peircesec.moe.edu.sg",
+        "postal": "575566"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.830143209875,
+          1.41741627551251
+        ]
+      },
+      "properties": {
+        "name": "PEIYING PRIMARY SCHOOL",
+        "address": "http://www.peiyingpri.moe.edu.sg",
+        "postal": "768687"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.732790920197,
+          1.35442592930738
+        ]
+      },
+      "properties": {
+        "name": "PIONEER PRIMARY SCHOOL",
+        "address": "http://www.pioneerpri.moe.edu.sg",
+        "postal": "699915"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.935246486174,
+          1.35765121877679
+        ]
+      },
+      "properties": {
+        "name": "POI CHING SCHOOL",
+        "address": "http://www.poiching.moe.edu.sg",
+        "postal": "529067"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.842382968794,
+          1.38175437421949
+        ]
+      },
+      "properties": {
+        "name": "PRESBYTERIAN HIGH SCHOOL",
+        "address": "http://www.presbyterian.moe.edu.sg",
+        "postal": "569845"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.740719208011,
+          1.34919098857585
+        ]
+      },
+      "properties": {
+        "name": "PRINCESS ELIZABETH PRIMARY SCHOOL",
+        "address": "http://www.princesselizabethpri.moe.edu.sg",
+        "postal": "659163"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.89890448429,
+          1.41158455562454
+        ]
+      },
+      "properties": {
+        "name": "PUNGGOL COVE PRIMARY SCHOOL",
+        "address": "https://punggolcovepri.moe.edu.sg/",
+        "postal": "828674"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.898794262307,
+          1.40172590450528
+        ]
+      },
+      "properties": {
+        "name": "PUNGGOL GREEN PRIMARY SCHOOL",
+        "address": "http://www.punggolgreenpri.moe.edu.sg",
+        "postal": "828772"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.894667159512,
+          1.37820062547641
+        ]
+      },
+      "properties": {
+        "name": "PUNGGOL PRIMARY SCHOOL",
+        "address": "http://www.punggolpri.moe.edu.sg/",
+        "postal": "538787"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.909213706482,
+          1.40205738421399
+        ]
+      },
+      "properties": {
+        "name": "PUNGGOL SECONDARY SCHOOL",
+        "address": "http://www.punggolsec.moe.edu.sg",
+        "postal": "828870"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.905299026568,
+          1.40505250226058
+        ]
+      },
+      "properties": {
+        "name": "PUNGGOL VIEW PRIMARY SCHOOL",
+        "address": "http://www.punggolviewpri.moe.edu.sg",
+        "postal": "828845"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.756629101811,
+          1.3132658326807
+        ]
+      },
+      "properties": {
+        "name": "QIFA PRIMARY SCHOOL",
+        "address": "http://www.qifapri.moe.edu.sg",
+        "postal": "128104"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.788339762066,
+          1.44203596557592
+        ]
+      },
+      "properties": {
+        "name": "QIHUA PRIMARY SCHOOL",
+        "address": "http://www.qihuapri.moe.edu.sg",
+        "postal": "738525"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.807648475656,
+          1.29552905587752
+        ]
+      },
+      "properties": {
+        "name": "QUEENSTOWN PRIMARY SCHOOL",
+        "address": "http://www.queenstownpri.moe.edu.sg",
+        "postal": "149303"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.813190980055,
+          1.29352126774652
+        ]
+      },
+      "properties": {
+        "name": "QUEENSTOWN SECONDARY SCHOOL",
+        "address": "http://www.queenstownsec.moe.edu.sg",
+        "postal": "148800"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.802207291625,
+          1.30022271592188
+        ]
+      },
+      "properties": {
+        "name": "QUEENSWAY SECONDARY SCHOOL",
+        "address": "http://www.queenswaysec.moe.edu.sg",
+        "postal": "149295"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.824115781658,
+          1.27489701529771
+        ]
+      },
+      "properties": {
+        "name": "RADIN MAS PRIMARY SCHOOL",
+        "address": "http://www.radinmasps.moe.edu.sg",
+        "postal": "099840"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.806397828938,
+          1.33004178068277
+        ]
+      },
+      "properties": {
+        "name": "RAFFLES GIRLS' PRIMARY SCHOOL",
+        "address": "http://www.rafflesgirlspri.moe.edu.sg",
+        "postal": "289072"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.84313404727,
+          1.34217479932295
+        ]
+      },
+      "properties": {
+        "name": "RAFFLES GIRLS' SCHOOL (SECONDARY)",
+        "address": "http://www.rgs.edu.sg",
+        "postal": "318871"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.843620247231,
+          1.34629045013358
+        ]
+      },
+      "properties": {
+        "name": "RAFFLES INSTITUTION",
+        "address": "http://www.ri.edu.sg",
+        "postal": "575954"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.934317528484,
+          1.33405659580859
+        ]
+      },
+      "properties": {
+        "name": "RED SWASTIKA SCHOOL",
+        "address": "http://www.redswastika.moe.edu.sg",
+        "postal": "469719"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.751034411529,
+          1.39327908335682
+        ]
+      },
+      "properties": {
+        "name": "REGENT SECONDARY SCHOOL",
+        "address": "http://regentsec.moe.edu.sg",
+        "postal": "689621"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.708190688947,
+          1.34459584223718
+        ]
+      },
+      "properties": {
+        "name": "RIVER VALLEY HIGH SCHOOL",
+        "address": "https://rivervalleyhigh.moe.edu.sg/",
+        "postal": "649961"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.836018941571,
+          1.29418347842837
+        ]
+      },
+      "properties": {
+        "name": "RIVER VALLEY PRIMARY SCHOOL",
+        "address": "http://www.rivervalleypri.moe.edu.sg",
+        "postal": "237993"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.801889031334,
+          1.44700426493785
+        ]
+      },
+      "properties": {
+        "name": "RIVERSIDE PRIMARY SCHOOL",
+        "address": "http://www.riversidepri.moe.edu.sg",
+        "postal": "737803"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.78830823641,
+          1.44110157139127
+        ]
+      },
+      "properties": {
+        "name": "RIVERSIDE SECONDARY SCHOOL",
+        "address": "http://www.riversidesec.moe.edu.sg",
+        "postal": "738524"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.746801233973,
+          1.40278303219036
+        ]
+      },
+      "properties": {
+        "name": "UNITY PRIMARY SCHOOL",
+        "address": "http://www.unitypri.moe.edu.sg",
+        "postal": "688268"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.904545253288,
+          1.39333506298213
+        ]
+      },
+      "properties": {
+        "name": "RIVERVALE PRIMARY SCHOOL",
+        "address": "http://www.rivervalepri.moe.edu.sg/",
+        "postal": "545092"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.87477170399,
+          1.3728583654058
+        ]
+      },
+      "properties": {
+        "name": "ROSYTH SCHOOL",
+        "address": "https://www.rosyth.moe.edu.sg",
+        "postal": "555855"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.718457955487,
+          1.34673868889096
+        ]
+      },
+      "properties": {
+        "name": "RULANG PRIMARY SCHOOL",
+        "address": "http://www.rulangpri.moe.edu.sg/",
+        "postal": "649295"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.774011529322,
+          1.31292810600277
+        ]
+      },
+      "properties": {
+        "name": "SCHOOL OF SCIENCE AND TECHNOLOGY, SINGAPORE",
+        "address": "http://www.sst.edu.sg",
+        "postal": "138572"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.848687419363,
+          1.29936480411316
+        ]
+      },
+      "properties": {
+        "name": "SCHOOL OF THE ARTS, SINGAPORE",
+        "address": "http://www.sota.edu.sg/",
+        "postal": "227968"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.821152676215,
+          1.4457453096024
+        ]
+      },
+      "properties": {
+        "name": "SEMBAWANG PRIMARY SCHOOL",
+        "address": "http://www.sembawangpri.moe.edu.sg",
+        "postal": "757715"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.816843258118,
+          1.44531502131387
+        ]
+      },
+      "properties": {
+        "name": "SEMBAWANG SECONDARY SCHOOL",
+        "address": "http://www.sembawangsec.moe.edu.sg",
+        "postal": "757704"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.899527879229,
+          1.38925044778224
+        ]
+      },
+      "properties": {
+        "name": "SENG KANG PRIMARY SCHOOL",
+        "address": "http://www.sengkangpri.moe.edu.sg/",
+        "postal": "545166"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.898365036709,
+          1.38659683143747
+        ]
+      },
+      "properties": {
+        "name": "SENG KANG SECONDARY SCHOOL",
+        "address": "http://www.sengkangsec.moe.edu.sg",
+        "postal": "545090"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.874984869551,
+          1.3925400930811
+        ]
+      },
+      "properties": {
+        "name": "SENGKANG GREEN PRIMARY SCHOOL",
+        "address": "https://sengkanggreenpri.moe.edu.sg/",
+        "postal": "797636"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.869270301476,
+          1.36932570490947
+        ]
+      },
+      "properties": {
+        "name": "SERANGOON GARDEN SECONDARY SCHOOL",
+        "address": "http://www.sgs.edu.sg",
+        "postal": "555889"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.902138740699,
+          1.37465538827443
+        ]
+      },
+      "properties": {
+        "name": "SERANGOON SECONDARY SCHOOL",
+        "address": "http://www.serangoonsec.moe.edu.sg",
+        "postal": "534237"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.721559387203,
+          1.34686967259067
+        ]
+      },
+      "properties": {
+        "name": "SHUQUN PRIMARY SCHOOL",
+        "address": "http://www.shuqunpri.moe.edu.sg",
+        "postal": "649332"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.786035065192,
+          1.43240935732525
+        ]
+      },
+      "properties": {
+        "name": "SI LING PRIMARY SCHOOL",
+        "address": "http://www.silingpri.moe.edu.sg",
+        "postal": "739067"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.828164966953,
+          1.3206340835184
+        ]
+      },
+      "properties": {
+        "name": "SINGAPORE CHINESE GIRLS' PRIMARY SCHOOL",
+        "address": "www.scgs.moe.edu.sg",
+        "postal": "309437"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.828164966953,
+          1.3206340835184
+        ]
+      },
+      "properties": {
+        "name": "SINGAPORE CHINESE GIRLS' SCHOOL",
+        "address": "http://www.scgs.moe.edu.sg",
+        "postal": "309437"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.789444793951,
+          1.42641140556342
+        ]
+      },
+      "properties": {
+        "name": "SINGAPORE SPORTS SCHOOL",
+        "address": "http://www.sportsschool.edu.sg",
+        "postal": "737913"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.747153671,
+          1.38143123987698
+        ]
+      },
+      "properties": {
+        "name": "SOUTH VIEW PRIMARY SCHOOL",
+        "address": "http://www.southviewpri.moe.edu.sg",
+        "postal": "689762"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.804100467487,
+          1.43703750789961
+        ]
+      },
+      "properties": {
+        "name": "SPECTRA SECONDARY SCHOOL",
+        "address": "https://www.spectra.edu.sg",
+        "postal": "737758"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.889416413501,
+          1.39528544463377
+        ]
+      },
+      "properties": {
+        "name": "SPRINGDALE PRIMARY SCHOOL",
+        "address": "http://springdalepri.moe.edu.sg/",
+        "postal": "544799"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.930354460693,
+          1.34957303471476
+        ]
+      },
+      "properties": {
+        "name": "SPRINGFIELD SECONDARY SCHOOL",
+        "address": "http://www.springfieldsec.moe.edu.sg",
+        "postal": "529593"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.865117134385,
+          1.33140255308868
+        ]
+      },
+      "properties": {
+        "name": "ST ANDREW'S SCHOOL (JUNIOR)",
+        "address": "http://www.saintandrewsjunior.moe.edu.sg",
+        "postal": "359337"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.866249138562,
+          1.33069360968075
+        ]
+      },
+      "properties": {
+        "name": "ST ANDREW'S SCHOOL (SECONDARY)",
+        "address": "http://www.standrewssec.moe.edu.sg",
+        "postal": "359342"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.863576377056,
+          1.33306515740956
+        ]
+      },
+      "properties": {
+        "name": "ST. ANDREW'S JUNIOR COLLEGE",
+        "address": "http://www.standrewsjc.moe.edu.sg/",
+        "postal": "357691"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.941234868202,
+          1.3347253730189
+        ]
+      },
+      "properties": {
+        "name": "ST. ANTHONY'S CANOSSIAN PRIMARY SCHOOL",
+        "address": "http://www.stanthonyscanossianpri.moe.edu.sg",
+        "postal": "469701"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.941977166932,
+          1.33466313498855
+        ]
+      },
+      "properties": {
+        "name": "ST. ANTHONY'S CANOSSIAN SECONDARY SCHOOL",
+        "address": "https://stanthonyscanossiansec.moe.edu.sg",
+        "postal": "469700"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.749251919049,
+          1.36411948475833
+        ]
+      },
+      "properties": {
+        "name": "ST. ANTHONY'S PRIMARY SCHOOL",
+        "address": "http://www.stanthonyspri.moe.edu.sg",
+        "postal": "659401"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.862309899986,
+          1.34930766795555
+        ]
+      },
+      "properties": {
+        "name": "ST. GABRIEL'S PRIMARY SCHOOL",
+        "address": "http://www.stgabrielspri.moe.edu.sg",
+        "postal": "556742"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.876094163287,
+          1.34648798732177
+        ]
+      },
+      "properties": {
+        "name": "ST. GABRIEL'S SECONDARY SCHOOL",
+        "address": "http://www.stgabrielssec.moe.edu.sg",
+        "postal": "556140"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.937016363397,
+          1.34967978969837
+        ]
+      },
+      "properties": {
+        "name": "ST. HILDA'S PRIMARY SCHOOL",
+        "address": "http://www.shps.moe.edu.sg",
+        "postal": "529706"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.937608032148,
+          1.34973922385379
+        ]
+      },
+      "properties": {
+        "name": "ST. HILDA'S SECONDARY SCHOOL",
+        "address": "http://www.sthildassec.moe.edu.sg",
+        "postal": "528986"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.828498974985,
+          1.32365313490152
+        ]
+      },
+      "properties": {
+        "name": "ST. JOSEPH'S INSTITUTION",
+        "address": "http://www.sji.edu.sg",
+        "postal": "308274"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.845633334522,
+          1.31781476118551
+        ]
+      },
+      "properties": {
+        "name": "ST. JOSEPH'S INSTITUTION JUNIOR",
+        "address": "https://sjijunior.moe.edu.sg",
+        "postal": "309331"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.845820266438,
+          1.30414407358332
+        ]
+      },
+      "properties": {
+        "name": "ST. MARGARET'S SCHOOL (PRIMARY)",
+        "address": "https://stmargaretspri.moe.edu.sg",
+        "postal": "228197"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.809602215402,
+          1.31977464050584
+        ]
+      },
+      "properties": {
+        "name": "ST. MARGARET'S SCHOOL (SECONDARY)",
+        "address": "http://www.stmargaretssec.moe.edu.sg",
+        "postal": "259240"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.74602091483,
+          1.40001524119441
+        ]
+      },
+      "properties": {
+        "name": "UNITY SECONDARY SCHOOL",
+        "address": "http://www.unitysec.moe.edu.sg",
+        "postal": "689143"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.917638193713,
+          1.30788341871801
+        ]
+      },
+      "properties": {
+        "name": "ST. PATRICK'S SCHOOL",
+        "address": "http://www.stpatricks.moe.edu.sg",
+        "postal": "429058"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.917258129598,
+          1.31878997295135
+        ]
+      },
+      "properties": {
+        "name": "ST. STEPHEN'S SCHOOL",
+        "address": "http://www.ststephens.moe.edu.sg",
+        "postal": "455789"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.750396136688,
+          1.36471742697475
+        ]
+      },
+      "properties": {
+        "name": "SWISS COTTAGE SECONDARY SCHOOL",
+        "address": "http://www.swisscottagesec.moe.edu.sg",
+        "postal": "659322"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.936990723441,
+          1.37633346909682
+        ]
+      },
+      "properties": {
+        "name": "TAMPINES MERIDIAN JUNIOR COLLEGE",
+        "address": "http://www.tmjc.moe.edu.sg",
+        "postal": "518799"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.948768900518,
+          1.36048786025607
+        ]
+      },
+      "properties": {
+        "name": "TAMPINES NORTH PRIMARY SCHOOL",
+        "address": "http://www.tampinesnorthpri.moe.edu.sg",
+        "postal": "529565"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.943573098509,
+          1.3504863946694
+        ]
+      },
+      "properties": {
+        "name": "TAMPINES PRIMARY SCHOOL",
+        "address": "http://www.tampinespri.moe.edu.sg",
+        "postal": "529426"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.944263709507,
+          1.34926094811197
+        ]
+      },
+      "properties": {
+        "name": "TAMPINES SECONDARY SCHOOL",
+        "address": "https://www.tampinessec.moe.edu.sg",
+        "postal": "529427"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.896107204542,
+          1.3075626184394
+        ]
+      },
+      "properties": {
+        "name": "TANJONG KATONG GIRLS' SCHOOL",
+        "address": "http://www.tkgs.moe.edu.sg",
+        "postal": "439272"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.899999965407,
+          1.30498489044822
+        ]
+      },
+      "properties": {
+        "name": "TANJONG KATONG PRIMARY SCHOOL",
+        "address": "http://www.tanjongkatongpri.moe.edu.sg/",
+        "postal": "437259"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.897225196199,
+          1.30873515955341
+        ]
+      },
+      "properties": {
+        "name": "TANJONG KATONG SECONDARY SCHOOL",
+        "address": "http://www.tanjongkatongsec.moe.edu.sg",
+        "postal": "438796"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.911553152326,
+          1.30528528687321
+        ]
+      },
+      "properties": {
+        "name": "TAO NAN SCHOOL",
+        "address": "http://www.taonan.moe.edu.sg",
+        "postal": "449761"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.851009800453,
+          1.36565018546903
+        ]
+      },
+      "properties": {
+        "name": "TECK GHEE PRIMARY SCHOOL",
+        "address": "http://www.teckgheepri.moe.edu.sg",
+        "postal": "569299"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.753924558586,
+          1.38388660469396
+        ]
+      },
+      "properties": {
+        "name": "TECK WHYE PRIMARY SCHOOL",
+        "address": "http://www.teckwhyepri.moe.edu.sg",
+        "postal": "688261"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.911005345855,
+          1.33109611001931
+        ]
+      },
+      "properties": {
+        "name": "TELOK KURAU PRIMARY SCHOOL",
+        "address": "http://www.telokkuraupri.moe.edu.sg",
+        "postal": "479239"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.956185936394,
+          1.35728017255861
+        ]
+      },
+      "properties": {
+        "name": "TEMASEK JUNIOR COLLEGE",
+        "address": "http://www.temasekjc.moe.edu.sg",
+        "postal": "529564"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.94575943784,
+          1.31720341663064
+        ]
+      },
+      "properties": {
+        "name": "TEMASEK PRIMARY SCHOOL",
+        "address": "http://www.temasekpri.moe.edu.sg",
+        "postal": "469300"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.947564112022,
+          1.31591673150616
+        ]
+      },
+      "properties": {
+        "name": "TEMASEK SECONDARY SCHOOL",
+        "address": "https://temaseksec.moe.edu.sg",
+        "postal": "465561"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.853768994775,
+          1.35994649477568
+        ]
+      },
+      "properties": {
+        "name": "TOWNSVILLE PRIMARY SCHOOL",
+        "address": "http://www.townsvillepri.moe.edu.sg/",
+        "postal": "569730"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.919982704149,
+          1.30670174177479
+        ]
+      },
+      "properties": {
+        "name": "VICTORIA JUNIOR COLLEGE",
+        "address": "https://www.victoriajc.moe.edu.sg/",
+        "postal": "449035"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.927980966639,
+          1.3087130270751
+        ]
+      },
+      "properties": {
+        "name": "VICTORIA SCHOOL",
+        "address": "http://www.victoria.moe.edu.sg",
+        "postal": "448880"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.918585924582,
+          1.39889261226315
+        ]
+      },
+      "properties": {
+        "name": "WATERWAY PRIMARY SCHOOL",
+        "address": "https://waterwaypri.moe.edu.sg",
+        "postal": "828802"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.822516208087,
+          1.45168517614776
+        ]
+      },
+      "properties": {
+        "name": "WELLINGTON PRIMARY SCHOOL",
+        "address": "http://www.wellingtonpri.moe.edu.sg",
+        "postal": "757702"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.698964212988,
+          1.34471211768915
+        ]
+      },
+      "properties": {
+        "name": "WEST GROVE PRIMARY SCHOOL",
+        "address": "http://www.westgrovepri.moe.edu.sg/",
+        "postal": "649223"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.76639772288,
+          1.38917971808454
+        ]
+      },
+      "properties": {
+        "name": "WEST SPRING PRIMARY SCHOOL",
+        "address": "http://www.westspringpri.moe.edu.sg",
+        "postal": "679946"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.760128840155,
+          1.38782283303782
+        ]
+      },
+      "properties": {
+        "name": "WEST SPRING SECONDARY SCHOOL",
+        "address": "http://www.westspringsec.moe.edu.sg",
+        "postal": "677737"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.760273432258,
+          1.38378546546228
+        ]
+      },
+      "properties": {
+        "name": "WEST VIEW PRIMARY SCHOOL",
+        "address": "http://www.westviewpri.moe.edu.sg",
+        "postal": "677742"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.700467520791,
+          1.3477109654722
+        ]
+      },
+      "properties": {
+        "name": "WESTWOOD PRIMARY SCHOOL",
+        "address": "http://www.westwoodpri.moe.edu.sg",
+        "postal": "649188"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.701772102139,
+          1.35373698510994
+        ]
+      },
+      "properties": {
+        "name": "WESTWOOD SECONDARY SCHOOL",
+        "address": "https://www.westwoodsec.moe.edu.sg",
+        "postal": "648350"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.960861814678,
+          1.36563610941695
+        ]
+      },
+      "properties": {
+        "name": "WHITE SANDS PRIMARY SCHOOL",
+        "address": "http://www.whitesandspri.moe.edu.sg",
+        "postal": "519075"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.842552378136,
+          1.35505208480649
+        ]
+      },
+      "properties": {
+        "name": "WHITLEY SECONDARY SCHOOL",
+        "address": "http://www.whitleysec.moe.edu.sg",
+        "postal": "579747"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.79023031392,
+          1.43273620725049
+        ]
+      },
+      "properties": {
+        "name": "WOODGROVE PRIMARY SCHOOL",
+        "address": "http://www.woodgrovepri.moe.edu.sg/",
+        "postal": "738079"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.79604758539,
+          1.42831828137013
+        ]
+      },
+      "properties": {
+        "name": "WOODGROVE SECONDARY SCHOOL",
+        "address": "https://www.woodgrovesec.moe.edu.sg",
+        "postal": "738990"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.791791282236,
+          1.43658270720199
+        ]
+      },
+      "properties": {
+        "name": "WOODLANDS PRIMARY SCHOOL",
+        "address": "http://www.woodlandspri.moe.edu.sg",
+        "postal": "738853"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.79741434351,
+          1.43485179380236
+        ]
+      },
+      "properties": {
+        "name": "WOODLANDS RING PRIMARY SCHOOL",
+        "address": "HTTP://www.woodlandsringpri.moe.edu.sg",
+        "postal": "738240"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.777625748539,
+          1.43070452883799
+        ]
+      },
+      "properties": {
+        "name": "WOODLANDS RING SECONDARY SCHOOL",
+        "address": "http://www.woodlandsringsec.moe.edu.sg",
+        "postal": "739062"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.774586410437,
+          1.43912528141356
+        ]
+      },
+      "properties": {
+        "name": "WOODLANDS SECONDARY SCHOOL",
+        "address": "http://www.woodlandssec.moe.edu.sg",
+        "postal": "739111"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.890216355459,
+          1.35799653782463
+        ]
+      },
+      "properties": {
+        "name": "XINGHUA PRIMARY SCHOOL",
+        "address": "http://www.xinghuapri.moe.edu.sg",
+        "postal": "538882"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.687588478681,
+          1.34270639669225
+        ]
+      },
+      "properties": {
+        "name": "XINGNAN PRIMARY SCHOOL",
+        "address": "http://www.xingnanpri.moe.edu.sg",
+        "postal": "649036"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.88280991785,
+          1.37176798317468
+        ]
+      },
+      "properties": {
+        "name": "XINMIN PRIMARY SCHOOL",
+        "address": "https://xinminpri.moe.edu.sg/",
+        "postal": "538784"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.88305161385,
+          1.37255884700002
+        ]
+      },
+      "properties": {
+        "name": "XINMIN SECONDARY SCHOOL",
+        "address": "http://www.xinminsec.moe.edu.sg",
+        "postal": "538789"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.837755319448,
+          1.43347186925064
+        ]
+      },
+      "properties": {
+        "name": "XISHAN PRIMARY SCHOOL",
+        "address": "https://www.xishanpri.moe.edu.sg/",
+        "postal": "768611"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.868467129954,
+          1.3489768083841
+        ]
+      },
+      "properties": {
+        "name": "YANGZHENG PRIMARY SCHOOL",
+        "address": "http://www.yangzhengpri.moe.edu.sg/",
+        "postal": "556108"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.751817992962,
+          1.39672603497195
+        ]
+      },
+      "properties": {
+        "name": "YEW TEE PRIMARY SCHOOL",
+        "address": "http://www.yewteepri.moe.edu.sg",
+        "postal": "689100"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.885643682171,
+          1.37793264345276
+        ]
+      },
+      "properties": {
+        "name": "YIO CHU KANG PRIMARY SCHOOL",
+        "address": "http://www.yiochukangpri.moe.edu.sg",
+        "postal": "538720"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.84213696352,
+          1.37797597740925
+        ]
+      },
+      "properties": {
+        "name": "YIO CHU KANG SECONDARY SCHOOL",
+        "address": "http://www.yiochukangsec.moe.edu.sg",
+        "postal": "569868"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.83003171149,
+          1.42426692572335
+        ]
+      },
+      "properties": {
+        "name": "YISHUN INNOVA JUNIOR COLLEGE",
+        "address": "https://yijc.moe.edu.sg/",
+        "postal": "768675"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.834050796658,
+          1.43397617334964
+        ]
+      },
+      "properties": {
+        "name": "YISHUN PRIMARY SCHOOL",
+        "address": "http://www.yishunpri.moe.edu.sg",
+        "postal": "768679"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.828764316679,
+          1.42813324276086
+        ]
+      },
+      "properties": {
+        "name": "YISHUN SECONDARY SCHOOL",
+        "address": "http://www.yishunsec.moe.edu.sg",
+        "postal": "768516"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.838094226361,
+          1.43232156717386
+        ]
+      },
+      "properties": {
+        "name": "YISHUN TOWN SECONDARY SCHOOL",
+        "address": "http://www.yishuntownsec.moe.edu.sg",
+        "postal": "768610"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.932015036296,
+          1.33398037894072
+        ]
+      },
+      "properties": {
+        "name": "YU NENG PRIMARY SCHOOL",
+        "address": "http://www.ynps.moe.edu.sg/",
+        "postal": "469623"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.72089870437,
+          1.34200635764467
+        ]
+      },
+      "properties": {
+        "name": "YUAN CHING SECONDARY SCHOOL",
+        "address": "https://yuanchingsec.moe.edu.sg/",
+        "postal": "618654"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.740861148879,
+          1.34291981622016
+        ]
+      },
+      "properties": {
+        "name": "YUHUA PRIMARY SCHOOL",
+        "address": "http://www.yuhuapri.moe.edu.sg",
+        "postal": "609558"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.722687235839,
+          1.34718626876968
+        ]
+      },
+      "properties": {
+        "name": "YUHUA SECONDARY SCHOOL",
+        "address": "http://www.yuhuasec.moe.edu.sg",
+        "postal": "649406"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.950551091373,
+          1.35131569890862
+        ]
+      },
+      "properties": {
+        "name": "YUMIN PRIMARY SCHOOL",
+        "address": "http://www.yuminpri.moe.edu.sg",
+        "postal": "529393"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.896275149571,
+          1.40693702458178
+        ]
+      },
+      "properties": {
+        "name": "YUSOF ISHAK SECONDARY SCHOOL",
+        "address": "http://www.yusofishaksec.moe.edu.sg",
+        "postal": "828676"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.890194755287,
+          1.35713595302467
+        ]
+      },
+      "properties": {
+        "name": "YUYING SECONDARY SCHOOL",
+        "address": "http://www.yuyingsec.moe.edu.sg",
+        "postal": "538884"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.825951884637,
+          1.28421153855474
+        ]
+      },
+      "properties": {
+        "name": "ZHANGDE PRIMARY SCHOOL",
+        "address": "http://www.zhangdepri.moe.edu.sg/",
+        "postal": "169485"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.76970317201,
+          1.37942873617052
+        ]
+      },
+      "properties": {
+        "name": "ZHENGHUA PRIMARY SCHOOL",
+        "address": "http://www.zhenghuapri.moe.edu.sg",
+        "postal": "679002"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.765510638527,
+          1.38836583415352
+        ]
+      },
+      "properties": {
+        "name": "ZHENGHUA SECONDARY SCHOOL",
+        "address": "http://www.zhenghuasec.moe.edu.sg",
+        "postal": "679962"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.869712517383,
+          1.36026072476019
+        ]
+      },
+      "properties": {
+        "name": "ZHONGHUA PRIMARY SCHOOL",
+        "address": "http://www.zhonghuapri.moe.edu.sg",
+        "postal": "556095"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          103.869430481414,
+          1.34840720846208
+        ]
+      },
+      "properties": {
+        "name": "ZHONGHUA SECONDARY SCHOOL",
+        "address": "https://www.zhonghuasec.moe.edu.sg",
+        "postal": "556123"
+      }
+    }
+  ]
+}

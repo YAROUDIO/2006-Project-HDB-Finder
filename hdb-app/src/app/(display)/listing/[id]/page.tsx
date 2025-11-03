@@ -20,8 +20,14 @@ interface HDBRecord {
 }
 
 function parseCompositeKey(key: string) {
-  const [block, street_name, flat_type, month, offset] = decodeURIComponent(key).split("__");
-  return { block, street_name, flat_type, month, offset };
+  // First decode the whole key (handles the case where the entire key was encoded)
+  const once = decodeURIComponent(key);
+  // Then split and decode each segment (handles the case where each segment was encoded,
+  // and also fixes any lingering %xx if the whole key was double-encoded)
+  const [b, s, f, m, o] = once.split("__").map(seg => {
+    try { return decodeURIComponent(seg); } catch { return seg; }
+  });
+  return { block: b, street_name: s, flat_type: f, month: m, offset: o };
 }
 
 async function getHDBRecordByCompositeKey(key: string) {
