@@ -28,7 +28,6 @@ async function fetchHDBData(offset: number, limit: number, q?: string): Promise<
   return [];
 }
 
-// Helper to get username
 const getUsername = () => {
   if (typeof window !== "undefined") {
     return localStorage.getItem("username") || "";
@@ -58,7 +57,6 @@ export default function ListingPage() {
     setLoading(false);
   }, [offset, loading, hasMore, q]);
 
-  // Reset when query changes
   useEffect(() => {
     setRecords([]);
     setOffset(0);
@@ -84,7 +82,6 @@ export default function ListingPage() {
     return () => observer.disconnect();
   }, [loadMore, hasMore, loading]);
 
-  // Fetch bookmarks on mount
   useEffect(() => {
     const fetchBookmarks = async () => {
       const username = getUsername();
@@ -101,8 +98,7 @@ export default function ListingPage() {
   }, []);
 
   return (
-    <div style={{ background: '#e0f2ff', minHeight: '100vh', width: '100%' }}> {/* #e0f2ff is a light blue, change as desired */}
-      {/* Top Bar */}
+    <div style={{ background: "#e0f2ff", minHeight: "100vh", width: "100%" }}>
       <div className="w-full bg-blue-900 text-white flex items-center px-6 py-4 relative shadow-md">
         <button
           className="mr-4 focus:outline-none"
@@ -114,120 +110,137 @@ export default function ListingPage() {
           </svg>
         </button>
         <span className="text-2xl font-bold tracking-wide">HDBFinder</span>
-        {/* Home button top right */}
         <Link href="/home" className="absolute right-6 top-1/2 -translate-y-1/2">
-          <button className="bg-white text-blue-900 font-bold px-5 py-2 rounded-full shadow hover:bg-blue-100 transition-colors border-2 border-blue-900">Home</button>
+          <button className="bg-white text-blue-900 font-bold px-5 py-2 rounded-full shadow hover:bg-blue-100 transition-colors border-2 border-blue-900">
+            Home
+          </button>
         </Link>
-        {/* Dropdown Navigation */}
         {navOpen && (
           <div className="absolute left-0 top-full mt-2 w-56 bg-white text-blue-900 rounded-lg shadow-lg z-50 border border-blue-200 animate-fade-in">
-            <Link href="/recomended" className="block px-6 py-3 hover:bg-blue-50">View Reccomended</Link>
-            <Link href="/bookmarks" className="block px-6 py-3 hover:bg-blue-50">View Bookmarked</Link>
-            <Link href="/account" className="block px-6 py-3 hover:bg-blue-50">Account</Link>
-            <Link href="/userinfo" className="block px-6 py-3 hover:bg-blue-50">User Info</Link>
-            <Link href="/logout" className="block px-6 py-3 hover:bg-blue-50">Logout</Link>
+            <Link href="/recomended" className="block px-6 py-3 hover:bg-blue-50">
+              View Reccomended
+            </Link>
+            <Link href="/bookmarks" className="block px-6 py-3 hover:bg-blue-50">
+              View Bookmarked
+            </Link>
+            <Link href="/account" className="block px-6 py-3 hover:bg-blue-50">
+              Account
+            </Link>
+            <Link href="/userinfo" className="block px-6 py-3 hover:bg-blue-50">
+              User Info
+            </Link>
+            <Link href="/logout" className="block px-6 py-3 hover:bg-blue-50">
+              Logout
+            </Link>
           </div>
         )}
       </div>
 
-  {/* Listing Content */}
-  <div className="flex flex-col items-center py-8 gap-8">
-    {records.map((rec, i) => {
-      // Calculate the global index of this record
-            const globalIndex = offset - records.length + i + 1;
-            // Offset should be the largest multiple of 1000 <= globalIndex
-            const offsetForKey = Math.floor(globalIndex / 1000) * 1000;
-            const compositeKey = `${rec.block}__${rec.street_name}__${rec.flat_type}__${rec.month}__${offsetForKey}`;
-            const isBookmarked = bookmarkedKeys.includes(compositeKey);
-            const handleAddBookmark = async () => {
-              const username = getUsername();
-              if (!username) return;
-              setAddingKey(compositeKey);
-              const bookmark = {
-                block: rec.block,
-                street_name: rec.street_name,
-                flat_type: rec.flat_type,
-                month: rec.month,
-                resale_price: rec.resale_price,
-                compositeKey,
-              };
-              try {
-                const res = await fetch("/api/bookmarks", {
-                  method: "POST",
-                  headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify({ username, bookmark })
-                });
-                const data = await res.json();
-                if (data.success) {
-                  setBookmarkedKeys((prev) => [...prev, compositeKey]);
-                }
-              } catch {}
-              setAddingKey(null);
+      <div className="flex flex-col items-center py-8 gap-8">
+        {records.map((rec, i) => {
+          // Build a fully encoded 5-part key with dummy offset "0"
+          const compositeKey = [
+            encodeURIComponent(rec.block),
+            encodeURIComponent(rec.street_name),
+            encodeURIComponent(rec.flat_type),
+            encodeURIComponent(rec.month),
+            "0",
+          ].join("__");
+
+          const isBookmarked = bookmarkedKeys.includes(decodeURIComponent(compositeKey));
+          const username = getUsername();
+
+          const handleAddBookmark = async () => {
+            if (!username) return;
+            setAddingKey(compositeKey);
+            const bookmark = {
+              block: rec.block,
+              street_name: rec.street_name,
+              flat_type: rec.flat_type,
+              month: rec.month,
+              resale_price: rec.resale_price,
+              compositeKey: decodeURIComponent(compositeKey),
             };
-      const handleRemoveBookmark = async () => {
-        const username = getUsername();
-        if (!username) return;
-        setAddingKey(compositeKey);
-        try {
-          const res = await fetch("/api/bookmarks", {
-            method: "DELETE",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ username, compositeKey })
-          });
-          const data = await res.json();
-          if (data.success) {
-            setBookmarkedKeys((prev) => prev.filter((k) => k !== compositeKey));
-          }
-        } catch {}
-        setAddingKey(null);
-      };
-      return (
-        <div
-          key={compositeKey + '__' + i}
-          className="w-3/4 rounded-3xl bg-white shadow-lg p-8 flex flex-col items-start hover:scale-105 transition-transform duration-200 border-2 border-blue-200 relative"
-          style={{ minHeight: "16vh", minWidth: "75vw", maxWidth: "75vw" }}
-        >
-          {/* Add/Remove Bookmarks button */}
-          <button
-            className={
-              `absolute top-4 right-4 px-4 py-2 rounded-full font-semibold text-sm border-2 transition-colors duration-200 ` +
-              (isBookmarked
-                ? 'bg-yellow-400 border-yellow-400 text-white shadow-md'
-                : 'bg-white border-yellow-400 text-yellow-500 hover:bg-yellow-100')
-            }
-            style={{ zIndex: 10 }}
-            tabIndex={0}
-            aria-label={isBookmarked ? 'Remove Bookmark' : 'Add to Bookmarks'}
-            onClick={
-              addingKey === compositeKey
-                ? undefined
-                : isBookmarked
-                  ? handleRemoveBookmark
-                  : handleAddBookmark
-            }
-            disabled={addingKey === compositeKey}
-          >
-            {addingKey === compositeKey
-              ? (isBookmarked ? 'Removing...' : 'Adding...')
-              : isBookmarked
-                ? 'Bookmarked'
-                : 'Add to Bookmarks'}
-          </button>
-          <Link
-            href={`listing/${encodeURIComponent(compositeKey)}`}
-            className="w-full flex flex-col items-start"
-            style={{ textDecoration: 'none' }}
-          >
-            <div className="text-3xl font-bold mb-2" style={{ color: '#000' }}>
-              {rec.town}, {rec.flat_type}
+            try {
+              const res = await fetch("/api/bookmarks", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ username, bookmark }),
+              });
+              const data = await res.json();
+              if (data.success) {
+                setBookmarkedKeys((prev) => [...prev, decodeURIComponent(compositeKey)]);
+              }
+            } catch {}
+            setAddingKey(null);
+          };
+
+          const handleRemoveBookmark = async () => {
+            if (!username) return;
+            setAddingKey(compositeKey);
+            try {
+              const res = await fetch("/api/bookmarks", {
+                method: "DELETE",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ username, compositeKey: decodeURIComponent(compositeKey) }),
+              });
+              const data = await res.json();
+              if (data.success) {
+                setBookmarkedKeys((prev) => prev.filter((k) => k !== decodeURIComponent(compositeKey)));
+              }
+            } catch {}
+            setAddingKey(null);
+          };
+
+          return (
+            <div
+              key={compositeKey + "__" + i}
+              className="w-3/4 rounded-3xl bg-white shadow-lg p-8 flex flex-col items-start hover:scale-105 transition-transform duration-200 border-2 border-blue-200 relative"
+              style={{ minHeight: "16vh", minWidth: "75vw", maxWidth: "75vw" }}
+            >
+              <button
+                className={
+                  `absolute top-4 right-4 px-4 py-2 rounded-full font-semibold text-sm border-2 transition-colors duration-200 ` +
+                  (isBookmarked
+                    ? "bg-yellow-400 border-yellow-400 text-white shadow-md"
+                    : "bg-white border-yellow-400 text-yellow-500 hover:bg-yellow-100")
+                }
+                style={{ zIndex: 10 }}
+                tabIndex={0}
+                aria-label={isBookmarked ? "Remove Bookmark" : "Add to Bookmarks"}
+                onClick={
+                  addingKey === compositeKey
+                    ? undefined
+                    : isBookmarked
+                    ? handleRemoveBookmark
+                    : handleAddBookmark
+                }
+                disabled={addingKey === compositeKey}
+              >
+                {addingKey === compositeKey
+                  ? isBookmarked
+                    ? "Removing..."
+                    : "Adding..."
+                  : isBookmarked
+                  ? "Bookmarked"
+                  : "Add to Bookmarks"}
+              </button>
+
+              <Link
+                href={`listing/${compositeKey}`}
+                className="w-full flex flex-col items-start"
+                style={{ textDecoration: "none" }}
+              >
+                <div className="text-3xl font-bold mb-2" style={{ color: "#000" }}>
+                  {rec.town}, {rec.flat_type}
+                </div>
+                <div className="text-2xl font-semibold" style={{ color: "#000" }}>
+                  ${rec.resale_price}
+                </div>
+              </Link>
             </div>
-            <div className="text-2xl font-semibold" style={{ color: '#000' }}>
-              ${rec.resale_price}
-            </div>
-          </Link>
-        </div>
-      );
-    })}
+          );
+        })}
         <div ref={loader} style={{ height: 40 }} />
         {loading && <div className="text-lg text-gray-500">Loading...</div>}
         {!hasMore && <div className="text-lg text-gray-400">No more listings.</div>}

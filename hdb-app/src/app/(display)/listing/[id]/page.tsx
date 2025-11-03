@@ -20,33 +20,42 @@ interface HDBRecord {
 }
 
 function parseCompositeKey(key: string) {
-  // First decode the whole key (handles the case where the entire key was encoded)
+  // decode entire key once
   const once = decodeURIComponent(key);
-  // Then split and decode each segment (handles the case where each segment was encoded,
-  // and also fixes any lingering %xx if the whole key was double-encoded)
-  const [b, s, f, m, o] = once.split("__").map(seg => {
-    try { return decodeURIComponent(seg); } catch { return seg; }
+  // support 4-part and 5-part (legacy) keys
+  const parts = once.split("__").map((seg) => {
+    try {
+      return decodeURIComponent(seg);
+    } catch {
+      return seg;
+    }
   });
+
+  if (parts.length < 4) {
+    return { block: "", street_name: "", flat_type: "", month: "", offset: "0" };
+  }
+
+  const [b, s, f, m, o] = [parts[0], parts[1], parts[2], parts[3], parts[4] ?? "0"];
   return { block: b, street_name: s, flat_type: f, month: m, offset: o };
 }
 
 async function getHDBRecordByCompositeKey(key: string) {
-  const { block, street_name, flat_type, month, offset } = parseCompositeKey(key);
+  const { block, street_name, flat_type, month } = parseCompositeKey(key);
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "";
-  const res = await fetch(`${baseUrl}/api/hdbdata?limit=1000&offset=${offset}`);
-  const data = await res.json();
-  return data.records.find(
-    (rec: any) =>
-      rec.block === block &&
-      rec.street_name === street_name &&
-      rec.flat_type === flat_type &&
-      rec.month === month
+  const res = await fetch(
+    `${baseUrl}/api/hdbdata?lookup=1&block=${encodeURIComponent(block)}&street_name=${encodeURIComponent(
+      street_name
+    )}&flat_type=${encodeURIComponent(flat_type)}&month=${encodeURIComponent(month)}`,
+    { cache: "no-store" }
   );
+  const data = await res.json();
+  return Array.isArray(data?.records) ? data.records[0] ?? null : null;
 }
 
 export default function ListingDetailPage() {
   const params = useParams();
-  const id = typeof params.id === "string" ? params.id : Array.isArray(params.id) ? params.id[0] : "";
+  const id =
+    typeof params.id === "string" ? params.id : Array.isArray(params.id) ? params.id[0] : "";
   const [record, setRecord] = useState<HDBRecord | null>(null);
   const [loading, setLoading] = useState(true);
   const [isBookmarked, setIsBookmarked] = useState(false);
@@ -54,7 +63,6 @@ export default function ListingDetailPage() {
   const [error, setError] = useState("");
   const [navOpen, setNavOpen] = useClientState(false);
 
-  // TODO: Replace with actual user context/session
   const getUsername = () => {
     if (typeof window !== "undefined") {
       return localStorage.getItem("username") || "";
@@ -67,7 +75,6 @@ export default function ListingDetailPage() {
       const rec = await getHDBRecordByCompositeKey(id);
       setRecord(rec);
       setLoading(false);
-      // Check if already bookmarked
       const username = getUsername();
       if (username && rec) {
         try {
@@ -92,7 +99,7 @@ export default function ListingDetailPage() {
     }
     setAdding(true);
     setError("");
-    const compositeKey = id;
+    const compositeKey = id; // keep the original encoded key
     const bookmark = {
       block: record.block,
       street_name: record.street_name,
@@ -105,7 +112,7 @@ export default function ListingDetailPage() {
       const res = await fetch("/api/bookmarks", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, bookmark })
+        body: JSON.stringify({ username, bookmark }),
       });
       const data = await res.json();
       if (data.success) {
@@ -129,7 +136,7 @@ export default function ListingDetailPage() {
       const res = await fetch("/api/bookmarks", {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, compositeKey })
+        body: JSON.stringify({ username, compositeKey }),
       });
       const data = await res.json();
       if (data.success) {
@@ -143,11 +150,12 @@ export default function ListingDetailPage() {
     setAdding(false);
   };
 
-  if (loading) return <div className="min-h-screen flex items-center justify-center bg-[#e0f2ff]">Loading...</div>;
+  if (loading)
+    return <div className="min-h-screen flex items-center justify-center bg-[#e0f2ff]">Loading...</div>;
   if (!record) return notFound();
 
   return (
-    <div style={{ background: '#e0f2ff', minHeight: '100vh', width: '100%' }}>
+    <div style={{ background: "#e0f2ff", minHeight: "100vh", width: "100%" }}>
       {/* Top Bar with Dropdown Navigation - sticky at top of viewport */}
       <div className="w-full bg-blue-900 text-white flex items-center px-6 py-4 relative shadow-md sticky top-0 z-50">
         <button
@@ -160,20 +168,29 @@ export default function ListingDetailPage() {
           </svg>
         </button>
         <span className="text-2xl font-bold tracking-wide">HDBFinder</span>
-        {/* Home button top right */}
         <Link href="/home" className="absolute right-6 top-1/2 -translate-y-1/2">
-          <button className="bg-white text-blue-900 font-bold px-5 py-2 rounded-full shadow hover:bg-blue-100 transition-colors border-2 border-blue-900">Home</button>
+          <button className="bg-white text-blue-900 font-bold px-5 py-2 rounded-full shadow hover:bg-blue-100 transition-colors border-2 border-blue-900">
+            Home
+          </button>
         </Link>
         {navOpen && (
           <div className="absolute left-0 top-full mt-2 w-56 bg-white text-blue-900 rounded-lg shadow-lg z-50 border border-blue-200 animate-fade-in">
-            <Link href="/recomended" className="block px-6 py-3 hover:bg-blue-50">View Recommended</Link>
-            <Link href="/account" className="block px-6 py-3 hover:bg-blue-50">Account</Link>
-            <Link href="/userinfo" className="block px-6 py-3 hover:bg-blue-50">User Info</Link>
-            <Link href="/logout" className="block px-6 py-3 hover:bg-blue-50">Logout</Link>
+            <Link href="/recomended" className="block px-6 py-3 hover:bg-blue-50">
+              View Recommended
+            </Link>
+            <Link href="/account" className="block px-6 py-3 hover:bg-blue-50">
+              Account
+            </Link>
+            <Link href="/userinfo" className="block px-6 py-3 hover:bg-blue-50">
+              User Info
+            </Link>
+            <Link href="/logout" className="block px-6 py-3 hover:bg-blue-50">
+              Logout
+            </Link>
           </div>
         )}
       </div>
-      {/* Centered Card Below Sticky Nav */}
+
       <div className="flex flex-col items-center justify-center py-12 px-4">
         <div className="bg-white rounded-3xl shadow-xl p-10 w-full max-w-2xl border-2 border-blue-200 relative mt-8">
           <div className="flex items-center justify-between mb-4">
@@ -184,50 +201,58 @@ export default function ListingDetailPage() {
               className={
                 `ml-4 px-5 py-2 rounded-full font-semibold text-sm border-2 transition-colors duration-200 ` +
                 (isBookmarked
-                  ? 'bg-yellow-400 border-yellow-400 text-white shadow-md'
-                  : 'bg-white border-yellow-400 text-yellow-500 hover:bg-yellow-100')
+                  ? "bg-yellow-400 border-yellow-400 text-white shadow-md"
+                  : "bg-white border-yellow-400 text-yellow-500 hover:bg-yellow-100")
               }
               style={{ zIndex: 10 }}
               tabIndex={0}
-              aria-label={isBookmarked ? 'Remove Bookmark' : 'Add to Bookmarks'}
-              onClick={
-                adding
-                  ? undefined
-                  : isBookmarked
-                    ? handleRemoveBookmark
-                    : handleAddBookmark
-              }
+              aria-label={isBookmarked ? "Remove Bookmark" : "Add to Bookmarks"}
+              onClick={adding ? undefined : isBookmarked ? handleRemoveBookmark : handleAddBookmark}
               disabled={adding}
             >
-              {adding
-                ? (isBookmarked ? 'Removing...' : 'Adding...')
-                : isBookmarked
-                  ? 'Bookmarked'
-                  : 'Add to Bookmarks'}
+              {adding ? (isBookmarked ? "Removing..." : "Adding...") : isBookmarked ? "Bookmarked" : "Add to Bookmarks"}
             </button>
           </div>
           {error && <div className="text-red-500 mb-2">{error}</div>}
-          <div className="text-3xl font-semibold mb-6 text-blue-700">
-            ${record.resale_price}
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-lg" style={{ color: '#000' }}>
-            <div><span className="font-semibold">Block:</span> {record.block}</div>
-            <div><span className="font-semibold">Street:</span> {record.street_name}</div>
-            <div><span className="font-semibold">Storey:</span> {record.storey_range}</div>
-            <div><span className="font-semibold">Floor Area:</span> {record.floor_area_sqm} sqm</div>
-            <div><span className="font-semibold">Model:</span> {record.flat_model}</div>
-            <div><span className="font-semibold">Lease Commence:</span> {record.lease_commence_date}</div>
-            <div><span className="font-semibold">Remaining Lease:</span> {record.remaining_lease}</div>
-            <div><span className="font-semibold">Month:</span> {record.month}</div>
+          <div className="text-3xl font-semibold mb-6 text-blue-700">${record.resale_price}</div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-lg" style={{ color: "#000" }}>
+            <div>
+              <span className="font-semibold">Block:</span> {record.block}
+            </div>
+            <div>
+              <span className="font-semibold">Street:</span> {record.street_name}
+            </div>
+            <div>
+              <span className="font-semibold">Storey:</span> {record.storey_range}
+            </div>
+            <div>
+              <span className="font-semibold">Floor Area:</span> {record.floor_area_sqm} sqm
+            </div>
+            <div>
+              <span className="font-semibold">Model:</span> {record.flat_model}
+            </div>
+            <div>
+              <span className="font-semibold">Lease Commence:</span> {record.lease_commence_date}
+            </div>
+            <div>
+              <span className="font-semibold">Remaining Lease:</span> {record.remaining_lease}
+            </div>
+            <div>
+              <span className="font-semibold">Month:</span> {record.month}
+            </div>
           </div>
         </div>
-        {/* Add navigation buttons at the bottom */}
+
         <div className="flex justify-center gap-8 mt-8">
           <Link href="/listing">
-            <button className="px-6 py-3 bg-blue-900 text-white rounded-full font-semibold shadow hover:bg-blue-800 transition-colors">View Listings</button>
+            <button className="px-6 py-3 bg-blue-900 text-white rounded-full font-semibold shadow hover:bg-blue-800 transition-colors">
+              View Listings
+            </button>
           </Link>
           <Link href="/bookmarks">
-            <button className="px-6 py-3 bg-yellow-400 text-blue-900 rounded-full font-semibold shadow hover:bg-yellow-300 transition-colors">View Bookmarks</button>
+            <button className="px-6 py-3 bg-yellow-400 text-blue-900 rounded-full font-semibold shadow hover:bg-yellow-300 transition-colors">
+              View Bookmarks
+            </button>
           </Link>
         </div>
       </div>

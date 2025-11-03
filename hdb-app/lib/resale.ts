@@ -1,105 +1,149 @@
 // lib/resale.ts
-import 'server-only';
-import fs from 'node:fs/promises';
-import path from 'node:path';
+import "server-only";
+import path from "node:path";
+import fs from "node:fs/promises";
 
+// Types used by finder
 export type FlatRow = {
   town: string;
   block: string;
   street_name: string;
-  resale_price: string; // keep as string for JSON parity with your route
+  flat_type: string;
+  month: string;         // YYYY-MM
+  resale_price: string;  // numeric string from API
 };
 
-// Simple CSV splitter (quote-aware)
-function splitCsvLine(line: string, expected?: number): string[] {
-  const out: string[] = [];
-  let i = 0, cur = "", inQ = false;
-  while (i < line.length) {
-    const ch = line[i];
-    if (ch === '"') {
-      if (inQ && line[i + 1] === '"') { cur += '"'; i += 2; continue; }
-      inQ = !inQ; i++; continue;
+// ===== data.gov.sg resale dataset info =====
+const RESOURCE_ID = "f1765b54-a209-4718-8d38-a39237f502b3"; // Resale flat prices (Jan 2017 on)
+const PAGE_SIZE = 1000;
+
+// ---------- small utils ----------
+function ymToKey(m: string): number {
+  const [y, mm] = (m || "").split("-").map((x) => parseInt(x, 10));
+  if (!Number.isFinite(y) || !Number.isFinite(mm)) return 0;
+  return y * 100 + mm;
+}
+function addMonths(ym: string, delta: number) {
+  const [y, m] = ym.split("-").map(n => parseInt(n, 10));
+  const d = new Date(y, m - 1, 1);
+  d.setMonth(d.getMonth() + delta);
+  const yy = d.getFullYear();
+  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  return `${yy}-${mm}`;
+}
+function isWithinRecentMonths(month: string, recentMonths: number): boolean {
+  if (!recentMonths || recentMonths <= 0) return true;
+  // End anchor: current month
+  const now = new Date();
+  const anchor = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+  const start = addMonths(anchor, -recentMonths + 1); // inclusive window
+  const k = ymToKey(month);
+  return k >= ymToKey(start) && k <= ymToKey(anchor);
+}
+
+function normU(s: string) { return (s ?? "").toString().trim().toUpperCase(); }
+
+// ---------- GET: All towns from dataset ----------
+export async function getAllTownsFromResaleAPI(): Promise<string[]> {
+  const towns = new Set<string>();
+  let offset = 0;
+  for (let i = 0; i < 10; i++) { // up to 10k rows sample should include all towns
+    const url = `https://data.gov.sg/api/action/datastore_search?resource_id=${RESOURCE_ID}&limit=${PAGE_SIZE}&offset=${offset}`;
+    const r = await fetch(url, { cache: "no-store" });
+    const j = await r.json();
+    const rows: any[] = j?.result?.records ?? [];
+    for (const row of rows) {
+      const t = normU(row.town || "");
+      if (t) towns.add(t);
     }
-    if (ch === "," && !inQ) { out.push(cur); cur = ""; i++; continue; }
-    cur += ch; i++;
+    if (rows.length < PAGE_SIZE) break;
+    offset += PAGE_SIZE;
   }
-  out.push(cur);
-  if (expected) while (out.length < expected) out.push("");
+  const arr = Array.from(towns).sort((a, b) => a.localeCompare(b));
+  // Fallback if something odd happens
+  if (arr.length === 0) return ["ANG MO KIO", "BEDOK", "BISHAN", "BUKIT BATOK", "QUEENSTOWN", "TOA PAYOH"];
+  return arr;
+}
+
+// ---------- FETCH: rows for a single town & flat type ----------
+async function fetchTownTypeRows(town: string, flatType: string): Promise<FlatRow[]> {
+  const T = normU(town);
+  const F = normU(flatType);
+  const filters = encodeURIComponent(JSON.stringify({ town: T, flat_type: F }));
+  let offset = 0;
+  const out: FlatRow[] = [];
+  for (let i = 0; i < 500; i++) { // 500 * 1000 = 500k safety cap
+    const url = `https://data.gov.sg/api/action/datastore_search?resource_id=${RESOURCE_ID}&limit=${PAGE_SIZE}&offset=${offset}&filters=${filters}`;
+    const r = await fetch(url, { cache: "no-store" });
+    if (!r.ok) throw new Error(`Failed to fetch resale data: HTTP ${r.status}`);
+    const j = await r.json();
+    const rows: any[] = j?.result?.records ?? [];
+    for (const rec of rows) {
+      const row: FlatRow = {
+        town: normU(rec.town || ""),
+        block: normU(rec.block || rec.blk_no || ""),
+        street_name: normU(rec.street_name || rec.street || ""),
+        flat_type: normU(rec.flat_type || ""),
+        month: (rec.month || "").toString().trim(),
+        resale_price: (rec.resale_price || "").toString().trim(),
+      };
+      if (row.town && row.block && row.street_name && row.flat_type && row.month && row.resale_price) {
+        out.push(row);
+      }
+    }
+    if (rows.length < PAGE_SIZE) break;
+    offset += PAGE_SIZE;
+  }
   return out;
 }
 
-function parseCsv(text: string): { headers: string[]; rows: Record<string,string>[] } {
-  const lines = text.split(/\r?\n/).filter(l => l.length > 0);
-  if (lines.length === 0) return { headers: [], rows: [] };
-  const headers = splitCsvLine(lines[0]).map(h => h.trim());
-  const rows: Record<string,string>[] = [];
-  for (let i = 1; i < lines.length; i++) {
-    const parts = splitCsvLine(lines[i], headers.length);
-    const rec: Record<string,string> = {};
-    for (let c = 0; c < headers.length; c++) rec[headers[c]] = (parts[c] ?? "").trim();
-    rows.push(rec);
+// ---------- GROUP: choose cheapest recent per (BLOCK, STREET, TOWN) ----------
+export async function loadCheapestRecentByBlockForTownsAndType(
+  towns: string[],
+  flatType: string,
+  recentMonths: number
+): Promise<FlatRow[]> {
+  const wanted = towns.map(normU);
+  const all: FlatRow[] = [];
+  for (const t of wanted) {
+    const rows = await fetchTownTypeRows(t, flatType);
+    all.push(...rows);
   }
-  return { headers, rows };
-}
+  console.log(`[resale] fetched ${all.length} rows for towns=${wanted.join(",")} type=${flatType}`);
 
-function monthToKey(m: string): number {
-  // Expecting "YYYY-MM"
-  const [y, mm] = (m || '').split('-').map(x => parseInt(x, 10));
-  if (!Number.isFinite(y) || !Number.isFinite(mm)) return 0;
-  return y * 100 + mm; // comparable numeric key
-}
+  type Agg = {
+    bestRecent?: FlatRow; // cheapest within window
+    bestAll?: FlatRow;    // cheapest overall (fallback)
+  };
 
-let CACHE: Map<string, FlatRow> | null = null; // key: BLK|STREET|TOWN => latest row
+  const m = new Map<string, Agg>(); // key = block|street|town
 
-export async function loadFlatsForTowns(towns: string[]): Promise<FlatRow[]> {
-  if (!CACHE) {
-    const file = path.join(process.cwd(), 'data', 'ResaleflatpricesbasedonregistrationdatefromJan2017onwards.csv');
-    console.log("[resale] reading resale CSV:", file);
-    const txt = await fs.readFile(file, 'utf8');
-    const { headers, rows } = parseCsv(txt);
-    console.log(`[resale] parsed rows=${rows.length}, headers=${headers.length}`);
+  for (const r of all) {
+    const key = `${r.block}|${r.street_name}|${r.town}`;
+    const price = Number(r.resale_price);
+    if (!Number.isFinite(price)) continue;
 
-    const townKey = headers.find(h => /^town$/i.test(h)) || 'town';
-    const blockKey = headers.find(h => /^(blk_no|block)$/i.test(h)) || 'block';
-    const streetKey = headers.find(h => /^street[_\s]*name$/i.test(h) || /^street$/i.test(h)) || 'street_name';
-    const priceKey = headers.find(h => /^resale[_\s]*price$/i.test(h)) || 'resale_price';
-    const monthKey = headers.find(h => /^month$/i.test(h)) || 'month';
+    let ag = m.get(key);
+    if (!ag) { ag = {}; m.set(key, ag); }
 
-    const m = new Map<string, FlatRow & { _month: number }>();
-    let skipped = 0;
-
-    for (const r of rows) {
-      const town = (r[townKey] ?? '').toString().trim().toUpperCase();
-      const block = (r[blockKey] ?? '').toString().trim().toUpperCase();
-      const street_name = (r[streetKey] ?? '').toString().trim().toUpperCase();
-      const resale_price = (r[priceKey] ?? '').toString().trim();
-      const month = (r[monthKey] ?? '').toString().trim();
-
-      if (!town || !block || !street_name || !resale_price) { skipped++; continue; }
-
-      const mk = monthToKey(month);
-      const key = `${block}|${street_name}|${town}`;
-      const prev = m.get(key);
-      if (!prev || mk > prev._month) {
-        m.set(key, { town, block, street_name, resale_price, _month: mk });
+    // best overall
+    if (!ag.bestAll || Number(ag.bestAll.resale_price) > price) {
+      ag.bestAll = r;
+    }
+    // best in recent window
+    if (isWithinRecentMonths(r.month, recentMonths)) {
+      if (!ag.bestRecent || Number(ag.bestRecent.resale_price) > price) {
+        ag.bestRecent = r;
       }
     }
-
-    // strip helper field
-    CACHE = new Map<string, FlatRow>();
-    for (const [k, v] of m.entries()) {
-      const { _month, ...rest } = v;
-      CACHE.set(k, rest);
-    }
-
-    console.log(`[resale] unique latest entries=${CACHE.size}, skipped invalid=${skipped}`);
   }
 
-  const wanted = new Set(towns.map(t => t.trim().toUpperCase()));
   const out: FlatRow[] = [];
-  for (const v of CACHE.values()) {
-    if (wanted.has(v.town.trim().toUpperCase())) out.push(v);
+  for (const [k, ag] of m.entries()) {
+    const pick = ag.bestRecent ?? ag.bestAll;
+    if (pick) out.push(pick);
   }
-  console.log(`[resale] returning ${out.length} rows for ${wanted.size} requested towns.`);
+
+  console.log(`[resale] grouped to ${out.length} representative rows (policy: cheapest recent ${recentMonths}m, fallback cheapest ever).`);
   return out;
 }

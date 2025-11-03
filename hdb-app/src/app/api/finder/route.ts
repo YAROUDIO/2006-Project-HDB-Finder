@@ -5,76 +5,13 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 
 import { geocodeWithCache } from "@/lib/geocode";
-import {
-  loadStations,
-  loadHospitals,
-  loadSchools,
-  haversineMeters,
-} from "@/lib/loaders";
+import { loadStations, loadHospitals, loadSchools, haversineMeters } from "@/lib/loaders";
 
-// Your resale loader should yield: town, block, street_name, resale_price
-import { loadFlatsForTowns } from "@/lib/resale";
+// town+type loader with "cheapest recent 24 months" policy
+import { loadCheapestRecentByBlockForTownsAndType, FlatRow } from "@/lib/resale";
 
-// --- read towns from resale CSV (full names) ---
-import fs from "node:fs";
-import path from "node:path";
-
-const RESALE_CSV = path.join(
-  process.cwd(),
-  "data",
-  "ResaleflatpricesbasedonregistrationdatefromJan2017onwards.csv"
-);
-
-// tiny, quote-aware CSV splitter
-function splitCsvLine(line: string, expected?: number): string[] {
-  const out: string[] = [];
-  let i = 0,
-    cur = "",
-    inQ = false;
-  while (i < line.length) {
-    const ch = line[i];
-    if (ch === '"') {
-      if (inQ && line[i + 1] === '"') {
-        cur += '"';
-        i += 2;
-        continue;
-      }
-      inQ = !inQ;
-      i++;
-      continue;
-    }
-    if (ch === "," && !inQ) {
-      out.push(cur);
-      cur = "";
-      i++;
-      continue;
-    }
-    cur += ch;
-    i++;
-  }
-  out.push(cur);
-  if (expected) while (out.length < expected) out.push("");
-  return out;
-}
-
-function readDistinctTownsFromResale(): string[] {
-  console.log("[finder][GET /?op=towns] scanning resale CSV for distinct towns…");
-  const txt = fs.readFileSync(RESALE_CSV, "utf8");
-  const lines = txt.split(/\r?\n/).filter(Boolean);
-  if (lines.length === 0) return [];
-  const headers = splitCsvLine(lines[0]);
-  const iTown = headers.findIndex((h) => h.trim().toLowerCase() === "town");
-  if (iTown < 0) return [];
-  const set = new Set<string>();
-  for (let i = 1; i < lines.length; i++) {
-    const parts = splitCsvLine(lines[i], headers.length);
-    const t = (parts[iTown] ?? "").trim();
-    if (t) set.add(t);
-  }
-  const arr = Array.from(set).sort((a, b) => a.localeCompare(b));
-  console.log(`[finder][GET /?op=towns] found ${arr.length} towns.`);
-  return arr;
-}
+// Distinct towns for the picker come from the live resale dataset
+import { getAllTownsFromResaleAPI } from "@/lib/resale";
 
 type WeightInput = {
   mrt: number;
@@ -83,21 +20,11 @@ type WeightInput = {
   affordability: number;
 };
 
-type FlatRow = {
-  town: string;
-  block: string;
-  street_name: string;
-  resale_price: string;
-};
-
 // ---------- helpers ----------
-
 function clamp01(x: number) {
   return Math.max(0, Math.min(1, x));
 }
 
-// Simple distance→score (0..100). Linear taper with a cap distance.
-// Closer gets a higher score; beyond `capMeters` goes to 0.
 function distanceToBaseScore(meters: number, capMeters: number): number {
   if (!Number.isFinite(meters)) return 0;
   const s = 100 * (1 - meters / capMeters);
@@ -117,20 +44,20 @@ function nearestDistance(
 }
 
 // ---------- GET (utility ops like ?op=towns) ----------
-
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const op = (searchParams.get("op") || "").toLowerCase();
 
   if (op === "towns") {
     try {
-      const towns = readDistinctTownsFromResale(); // full names e.g. "ANG MO KIO"
+      const towns = await getAllTownsFromResaleAPI();
       return NextResponse.json({ ok: true, towns });
     } catch (e: any) {
-      console.error("[finder][GET /?op=towns] error:", e?.message || e);
+      console.error("[finder][GET towns] error:", e?.message || e);
+      // Fallback: let the UI still work with a few
       return NextResponse.json(
-        { ok: false, error: e?.message || "Failed to load towns" },
-        { status: 500 }
+        { ok: true, towns: ["ANG MO KIO", "BEDOK", "BISHAN", "BUKIT BATOK", "QUEENSTOWN", "TOA PAYOH"] },
+        { status: 200 }
       );
     }
   }
@@ -139,40 +66,43 @@ export async function GET(req: NextRequest) {
 }
 
 // ---------- POST (main scoring) ----------
-
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     const weights: WeightInput =
       body?.weights ?? { mrt: 7, school: 6, hospital: 3, affordability: 8 };
-    const towns: string[] = Array.isArray(body?.towns) ? body.towns : [];
 
-    console.log("[finder][POST] incoming towns:", towns);
-    console.log("[finder][POST] incoming weights:", weights);
+    const towns: string[] = Array.isArray(body?.towns) ? body.towns : [];
+    const flatType: string = (body?.flatType || "").toString().trim().toUpperCase();
+
+    const RECENT_MONTHS = 24; // policy window
+    console.log("[finder][POST] towns=", towns, "flatType=", flatType, "policy=cheapest-recent", RECENT_MONTHS, "months");
+    console.log("[finder][POST] weights=", weights);
 
     if (towns.length === 0) {
-      console.warn("[finder][POST] No towns selected.");
       return NextResponse.json(
         { ok: false, error: "No towns selected." },
         { status: 400 }
       );
     }
+    if (!flatType) {
+      return NextResponse.json(
+        { ok: false, error: "No flat type selected." },
+        { status: 400 }
+      );
+    }
 
     // Load amenities from local GeoJSON
-    console.log("[finder][POST] loading amenity points from data/…");
     const stations = loadStations(); // MRT/LRT
     const hospitals = loadHospitals(); // clinics/hospitals
     const schools = loadSchools(); // MOE + preschools
-    console.log(
-      `[finder][POST] amenity counts: stations=${stations.length}, hospitals=${hospitals.length}, schools=${schools.length}`
-    );
 
-    // Load candidate flats
-    console.log("[finder][POST] loading candidate flats for selected towns…");
-    const flats: FlatRow[] = await loadFlatsForTowns(towns);
-    console.log(`[finder][POST] candidate unique (BLOCK|STREET|TOWN) = ${flats.length}`);
+    // Load representative flats per (BLOCK, STREET, TOWN) for the given flat type:
+    // Representative row = cheapest resale in last RECENT_MONTHS; if none, cheapest ever.
+    const flats: FlatRow[] = await loadCheapestRecentByBlockForTownsAndType(towns, flatType, RECENT_MONTHS);
 
-    // First pass: compute locations, distances, and collect price range
+    console.log(`[finder][POST] candidates after grouping: ${flats.length}`);
+
     type Temp = {
       row: FlatRow;
       here: { lat: number; lng: number } | null;
@@ -190,12 +120,9 @@ export async function POST(req: NextRequest) {
       const pt = await geocodeWithCache(row.block, row.street_name, row.town);
       if (!pt) {
         misses++;
-        if (missSamples.length < 8) {
-          missSamples.push(`${row.block} | ${row.street_name} | ${row.town}`);
-        }
+        if (missSamples.length < 8) missSamples.push(`${row.block} | ${row.street_name} | ${row.town}`);
         continue;
       }
-
       const here = { lat: pt.lat, lng: pt.lng };
       const dMrt = nearestDistance(here, stations);
       const dSchool = nearestDistance(here, schools);
@@ -206,26 +133,21 @@ export async function POST(req: NextRequest) {
     }
 
     console.log(`[finder][POST] geocoded ok=${temp.length}, misses=${misses}`);
-    if (misses > 0) {
-      console.warn("[finder][POST] sample geocode misses:", missSamples);
-    }
+    if (misses > 0) console.warn("[finder][POST] sample geocode misses:", missSamples);
 
     if (temp.length === 0) {
-      console.warn("[finder][POST] No geocoded candidates; returning empty results.");
       return NextResponse.json({ ok: true, results: [] });
     }
 
-    // Compute price min/max over candidate set (for rank-like mapping)
+    // Price normalization window
     const validPrices = temp.map((t) => t.price).filter(Number.isFinite) as number[];
     const priceLow = Math.min(...validPrices);
     const priceHigh = Math.max(...validPrices);
-    const priceSpan = Math.max(priceHigh - priceLow, 1); // avoid zero division
-
+    const priceSpan = Math.max(priceHigh - priceLow, 1);
     console.log(
-      `[finder][POST] price range among candidates: low=${priceLow.toLocaleString()} high=${priceHigh.toLocaleString()} span=${priceSpan.toLocaleString()}`
+      `[finder][POST] price window among candidates: low=${priceLow} high=${priceHigh} span=${priceSpan}`
     );
 
-    // Convert raw weights (0..10) into percentage shares
     const w = {
       mrt: Math.max(0, weights.mrt || 0),
       school: Math.max(0, weights.school || 0),
@@ -233,7 +155,7 @@ export async function POST(req: NextRequest) {
       affordability: Math.max(0, weights.affordability || 0),
     };
     let wSum = w.mrt + w.school + w.hospital + w.affordability;
-    if (wSum <= 0) wSum = 4; // all zeros -> equal shares
+    if (wSum <= 0) wSum = 4;
 
     const pct = {
       mrt: w.mrt / wSum,
@@ -242,57 +164,48 @@ export async function POST(req: NextRequest) {
       affordability: w.affordability / wSum,
     };
 
-    console.log("[finder][POST] weight shares:", pct);
-
-    // Second pass: compute base scores (0..100) and final weighted score
-    const MRT_CAP = 3000;      // 3.0 km
-    const SCHOOL_CAP = 2000;   // 2.0 km
-    const HOSPITAL_CAP = 3000; // 3.0 km
+    const MRT_CAP = 3000;
+    const SCHOOL_CAP = 2000;
+    const HOSPITAL_CAP = 3000;
 
     const results = temp.map((t) => {
       const baseMrt = distanceToBaseScore(t.dMrt, MRT_CAP);
       const baseSchool = distanceToBaseScore(t.dSchool, SCHOOL_CAP);
       const baseHospital = distanceToBaseScore(t.dHospital, HOSPITAL_CAP);
-
       const priceScore =
-        Number.isFinite(t.price)
-          ? 100 * clamp01((priceHigh - t.price) / priceSpan)
-          : 50;
+        Number.isFinite(t.price) ? 100 * clamp01((priceHigh - t.price) / priceSpan) : 50;
 
-      // Final score in 0..100 (no percent sign)
       const score =
         pct.mrt * baseMrt +
         pct.school * baseSchool +
         pct.hospital * baseHospital +
         pct.affordability * priceScore;
 
-      // Build a stable 3-part uppercase key
+      // Build composite key with the chosen representative month (cheapest-recent)
       const compositeKey = [
         (t.row.block || "").toString().trim().toUpperCase(),
         (t.row.street_name || "").toString().trim().toUpperCase(),
-        (t.row.town || "").toString().trim().toUpperCase(),
-      ].join("__");
+        (t.row.flat_type || "").toString().trim().toUpperCase(),
+        (t.row.month || "").toString().trim(),
+        "0",
+      ].map(encodeURIComponent).join("__");
 
       return {
         town: t.row.town,
         block: t.row.block,
         street_name: t.row.street_name,
         resale_price: t.row.resale_price,
-        score, // 0..100
+        score,
+        flat_type: t.row.flat_type,
+        month: t.row.month,
         distances: { dMrt: t.dMrt, dSchool: t.dSchool, dHospital: t.dHospital },
         compositeKey,
       };
     });
 
-    results.sort((a, b) => b.score - a.score);
+    results.sort((a, b) => (b.score - a.score));
 
-    console.log("[finder][POST] top 3 results (compositeKey | score | price):");
-    results.slice(0, 3).forEach((r, i) => {
-      console.log(
-        `  #${i + 1} ${r.compositeKey} | ${r.score.toFixed(2)} | ${r.resale_price}`
-      );
-    });
-
+    console.log("[finder][POST] top 3:", results.slice(0, 3).map(r => `${r.compositeKey} $${r.resale_price}`));
     return NextResponse.json({ ok: true, results });
   } catch (e: any) {
     console.error("[finder][POST] error:", e?.message || e);

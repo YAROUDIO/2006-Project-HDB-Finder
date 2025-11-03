@@ -10,8 +10,10 @@ type RawResult = {
   street_name: string;
   resale_price: number | string;
   score: number; // 0..100
+  flat_type?: string;
+  month?: string;
   distances?: { dMrt?: number; dSchool?: number; dHospital?: number; dHosp?: number };
-  compositeKey?: string;
+  compositeKey?: string; // 5-part from API
 };
 
 type FinderResult = {
@@ -20,9 +22,21 @@ type FinderResult = {
   street_name: string;
   resale_price: number | string;
   score: number; // 0..100
+  flat_type: string;
+  month: string;
   distances: { dMrt?: number; dSchool?: number; dHospital?: number };
-  compositeKey: string; // `${BLOCK}__${STREET_NAME}__${TOWN}`
+  compositeKey: string; // BLOCK__STREET__FLAT_TYPE__MONTH__0
 };
+
+const FLAT_TYPES = [
+  "1 ROOM",
+  "2 ROOM",
+  "3 ROOM",
+  "4 ROOM",
+  "5 ROOM",
+  "EXECUTIVE",
+  "MULTI-GENERATION",
+];
 
 export default function FinderPage() {
   const [weights, setWeights] = useState({
@@ -38,27 +52,25 @@ export default function FinderPage() {
   const [showSuggest, setShowSuggest] = useState(false);
   const suggestRef = useRef<HTMLDivElement | null>(null);
 
+  // NEW: selected flat type (default 3 ROOM)
+  const [flatType, setFlatType] = useState<string>("3 ROOM");
+
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState<FinderResult[] | null>(null);
   const [error, setError] = useState<string>("");
 
-  // --- Load valid towns (with fallback) ---
   useEffect(() => {
     let alive = true;
     (async () => {
       try {
-        console.log("[finder/page] GET /api/finder?op=towns");
         const res = await fetch("/api/finder?op=towns", { cache: "no-store" });
         const data = await res.json().catch(() => ({}));
         if (alive && data?.ok && Array.isArray(data.towns)) {
-          console.log("[finder/page] towns ok, count=", data.towns.length);
           setAllTowns(data.towns);
         } else if (alive) {
-          console.warn("[finder/page] towns failed; fallback short list.");
           setAllTowns(["ANG MO KIO", "BEDOK", "BISHAN", "BUKIT BATOK", "QUEENSTOWN", "TOA PAYOH"]);
         }
-      } catch (e) {
-        console.warn("[finder/page] towns fetch error; fallback short list.", e);
+      } catch {
         if (alive) {
           setAllTowns(["ANG MO KIO", "BEDOK", "BISHAN", "BUKIT BATOK", "QUEENSTOWN", "TOA PAYOH"]);
         }
@@ -67,7 +79,6 @@ export default function FinderPage() {
     return () => { alive = false; };
   }, []);
 
-  // Close suggestions on outside click
   useEffect(() => {
     function onDocClick(e: MouseEvent) {
       if (!suggestRef.current) return;
@@ -92,11 +103,9 @@ export default function FinderPage() {
     setSelectedTowns((prev) => [...prev, name]);
     setTownQuery("");
     setShowSuggest(false);
-    console.log("[finder/page] town added:", name, "selected:", [...selectedTowns, name]);
   }
   function removeTown(t: string) {
     setSelectedTowns((prev) => prev.filter((x) => x !== t));
-    console.log("[finder/page] town removed:", t);
   }
 
   function Slider({
@@ -131,33 +140,20 @@ export default function FinderPage() {
 
   function normalizeResults(rows: RawResult[] | undefined | null): FinderResult[] {
     if (!Array.isArray(rows)) return [];
-    return rows.map((r, i) => {
+    return rows.map((r) => {
       const dMrt = r.distances?.dMrt;
       const dSchool = r.distances?.dSchool;
       const dHospital = (r.distances?.dHospital ?? r.distances?.dHosp) as number | undefined;
-
-      const compositeKey =
-        r.compositeKey ||
-        [
-          (r.block || "").toString().trim().toUpperCase(),
-          (r.street_name || "").toString().trim().toUpperCase(),
-          (r.town || "").toString().trim().toUpperCase(),
-        ].join("__");
-
-      if (i < 3) {
-        console.log("[finder/page] sample result", i, {
-          town: r.town, block: r.block, street: r.street_name, price: r.resale_price,
-          score: r.score, compositeKey
-        });
-      }
 
       return {
         town: r.town,
         block: r.block,
         street_name: r.street_name,
         resale_price: r.resale_price,
-        score: r.score, // already 0..100 from backend
-        compositeKey,
+        score: r.score,
+        flat_type: r.flat_type || flatType,
+        month: r.month || "",
+        compositeKey: r.compositeKey!, // server builds 5-part
         distances: { dMrt, dSchool, dHospital },
       };
     });
@@ -175,26 +171,24 @@ export default function FinderPage() {
         affordability: weights.affordability,
       };
 
-      console.log("[finder/page] POST /api/finder", { towns: selectedTowns, weights: weightsForApi });
-
       const res = await fetch("/api/finder", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ weights: weightsForApi, towns: selectedTowns }),
+        body: JSON.stringify({
+          weights: weightsForApi,
+          towns: selectedTowns,
+          flatType, // NEW
+          pricePolicy: "cheapest-recent-24m", // doc/debugging tag; server enforces window
+        }),
       });
       const data = await res.json().catch(() => ({}));
-      console.log("[finder/page] response status", res.status, "payload", data);
-
       if (!res.ok || data?.ok === false) {
         setError(data?.error || `Sorry, something went wrong while scoring flats (HTTP ${res.status}).`);
         setResults([]);
       } else {
-        const norm = normalizeResults(data.results);
-        console.log("[finder/page] normalized results length:", norm.length);
-        setResults(norm);
+        setResults(normalizeResults(data.results));
       }
     } catch (e) {
-      console.error("[finder/page] network error:", e);
       setError("Network error. Please try again.");
       setResults([]);
     } finally {
@@ -244,45 +238,62 @@ export default function FinderPage() {
             ))}
           </div>
 
-          <div className="relative" ref={suggestRef}>
-            <label className="block text-sm font-medium text-blue-900 mb-1">Add town (autocomplete shows valid towns)</label>
-            <div className="flex gap-2">
-              <input
-                value={townQuery}
-                onChange={(e) => { setTownQuery(e.target.value); setShowSuggest(true); }}
-                onFocus={() => setShowSuggest(true)}
-                onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addTown(); } }}
-                placeholder="e.g. ANG MO KIO"
-                className="flex-1 rounded-lg border border-blue-300 bg-white text-blue-900 placeholder:text-gray-600 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
-              <button
-                onClick={() => addTown()}
-                className="px-4 py-2 bg-blue-800 text-white rounded-lg font-semibold shadow hover:bg-blue-700 transition"
-                disabled={selectedTowns.length >= 3}
-              >
-                Add
-              </button>
+          <div className="grid gap-4 md:grid-cols-2">
+            {/* Town input + suggestions */}
+            <div className="relative" ref={suggestRef}>
+              <label className="block text-sm font-medium text-blue-900 mb-1">Add town (autocomplete shows valid towns)</label>
+              <div className="flex gap-2">
+                <input
+                  value={townQuery}
+                  onChange={(e) => { setTownQuery(e.target.value); setShowSuggest(true); }}
+                  onFocus={() => setShowSuggest(true)}
+                  onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addTown(); } }}
+                  placeholder="e.g. ANG MO KIO"
+                  className="flex-1 rounded-lg border border-blue-300 bg-white text-blue-900 placeholder:text-gray-600 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                <button
+                  onClick={() => addTown()}
+                  className="px-4 py-2 bg-blue-800 text-white rounded-lg font-semibold shadow hover:bg-blue-700 transition"
+                  disabled={selectedTowns.length >= 3}
+                >
+                  Add
+                </button>
+              </div>
+
+              {showSuggest && filteredSuggestions.length > 0 && (
+                <div className="absolute z-10 mt-1 w-full bg-white text-blue-900 border border-blue-200 rounded-lg shadow max-h-64 overflow-auto">
+                  {filteredSuggestions.map((t) => (
+                    <button
+                      key={t}
+                      type="button"
+                      className="block w-full text-left px-3 py-2 hover:bg-blue-50 focus:bg-blue-100"
+                      onClick={() => addTown(t)}
+                    >
+                      {t}
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              <p className="text-xs text-gray-700 mt-2">
+                Tip: town names must match HDB dataset values (UPPERCASE). Max 3.
+              </p>
             </div>
 
-            {/* Suggestion dropdown */}
-            {showSuggest && filteredSuggestions.length > 0 && (
-              <div className="absolute z-10 mt-1 w-full bg-white text-blue-900 border border-blue-200 rounded-lg shadow max-h-64 overflow-auto">
-                {filteredSuggestions.map((t) => (
-                  <button
-                    key={t}
-                    type="button"
-                    className="block w-full text-left px-3 py-2 hover:bg-blue-50 focus:bg-blue-100"
-                    onClick={() => addTown(t)}
-                  >
-                    {t}
-                  </button>
+            {/* NEW: Flat type select */}
+            <div>
+              <label className="block text-sm font-medium text-blue-900 mb-1">Flat Type</label>
+              <select
+                value={flatType}
+                onChange={(e) => setFlatType(e.target.value)}
+                className="w-full rounded-lg border border-blue-300 bg-white text-blue-900 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                {FLAT_TYPES.map((t) => (
+                  <option key={t} value={t}>{t}</option>
                 ))}
-              </div>
-            )}
-
-            <p className="text-xs text-gray-700 mt-2">
-              Tip: town names must match HDB dataset values (UPPERCASE). Max 3.
-            </p>
+              </select>
+              <p className="text-xs text-gray-700 mt-2">Finder will filter to this flat type.</p>
+            </div>
           </div>
         </section>
 
@@ -314,7 +325,7 @@ export default function FinderPage() {
             <h2 className="text-xl font-bold text-blue-900">Results ({results.length})</h2>
 
             {results.length === 0 && (
-              <div className="text-blue-900/80">No results. Try adjusting your towns or weights.</div>
+              <div className="text-blue-900/80">No results. Try adjusting your towns or flat type.</div>
             )}
 
             <ul className="grid gap-4 md:grid-cols-2">
@@ -326,8 +337,10 @@ export default function FinderPage() {
                   <li key={r.compositeKey + "_" + idx} className="bg-white rounded-2xl shadow p-5 border border-blue-200 hover:shadow-md transition">
                     <div className="flex items-start justify-between gap-4">
                       <div className="text-blue-900">
-                        <div className="text-lg font-bold">{r.town} • {r.block} {r.street_name}</div>
-                        <div className="text-blue-700 font-semibold">{priceText}</div>
+                        <div className="text-lg font-bold">
+                          {r.town} • {r.block} {r.street_name} • {r.flat_type}
+                        </div>
+                        <div className="text-blue-700 font-semibold">{priceText} <span className="text-sm text-blue-900/70">({r.month})</span></div>
                         <div className="text-sm mt-1">Score {scoreText}</div>
                         <div className="text-sm mt-2 space-y-0.5">
                           <div>MRT: {formatMeters(r.distances?.dMrt)}</div>
@@ -338,7 +351,6 @@ export default function FinderPage() {
                       <Link
                         href={`/listing/${encodeURIComponent(r.compositeKey)}`}
                         className="shrink-0 px-4 py-2 bg-blue-900 text-white rounded-full font-semibold shadow hover:bg-blue-800 transition"
-                        onClick={() => console.log("[finder/page] navigate to /listing/", r.compositeKey)}
                       >
                         View details
                       </Link>
