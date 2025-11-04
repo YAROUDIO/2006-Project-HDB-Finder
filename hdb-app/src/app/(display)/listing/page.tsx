@@ -289,15 +289,18 @@ export default function ListingPage() {
             <Link href="/bookmarks" className="block px-6 py-3 hover:bg-blue-50">
               View Bookmarked
             </Link>
-            <Link href="/account" className="block px-6 py-3 hover:bg-blue-50">
-              Account
-            </Link>
-            <Link href="/userinfo" className="block px-6 py-3 hover:bg-blue-50">
-              User Info
-            </Link>
-            <Link href="/logout" className="block px-6 py-3 hover:bg-blue-50">
-              Logout
-            </Link>
+            {getUsername() ? (
+              <>
+                <Link href="/account" className="block px-6 py-3 hover:bg-blue-50">Account</Link>
+                <Link href="/userinfo" className="block px-6 py-3 hover:bg-blue-50">User Info</Link>
+                <Link href="/logout" className="block px-6 py-3 hover:bg-blue-50">Logout</Link>
+              </>
+            ) : (
+              <>
+                <Link href="/login" className="block px-6 py-3 hover:bg-blue-50">Login</Link>
+                <Link href="/register" className="block px-6 py-3 hover:bg-blue-50">Register</Link>
+              </>
+            )}
           </div>
         )}
       </div>
