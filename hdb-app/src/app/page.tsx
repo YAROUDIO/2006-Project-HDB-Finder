@@ -48,6 +48,22 @@ export default function Home() {
             >
               Register
             </Link>
+            <button
+              onClick={async () => {
+                try {
+                  // Clear server-side cookie so server treats the session as guest
+                  await fetch("/api/logout", { method: "POST" });
+                } catch {}
+                try {
+                  if (typeof window !== "undefined") localStorage.removeItem("username");
+                } catch {}
+                // Force full navigation to /home so app mounts as guest
+                if (typeof window !== "undefined") window.location.href = "/home";
+              }}
+              className="px-6 py-2 bg-white text-blue-900 font-bold rounded-full shadow hover:bg-blue-100 transition"
+            >
+              Browse as a Guest
+            </button>
           </div>
         </div>
       </section>

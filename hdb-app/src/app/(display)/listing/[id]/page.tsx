@@ -178,15 +178,19 @@ export default function ListingDetailPage() {
         </Link>
         {navOpen && (
           <div className="absolute left-0 top-full mt-2 w-56 bg-white text-blue-900 rounded-lg shadow-lg z-50 border border-blue-200 animate-fade-in">
-            <Link href="/account" className="block px-6 py-3 hover:bg-blue-50">
-              Account
-            </Link>
-            <Link href="/userinfo" className="block px-6 py-3 hover:bg-blue-50">
-              User Info
-            </Link>
-            <Link href="/logout" className="block px-6 py-3 hover:bg-blue-50">
-              Logout
-            </Link>
+            <Link href="/recomended" className="block px-6 py-3 hover:bg-blue-50">View Recommended</Link>
+            {getUsername() ? (
+              <>
+                <Link href="/account" className="block px-6 py-3 hover:bg-blue-50">Account</Link>
+                <Link href="/userinfo" className="block px-6 py-3 hover:bg-blue-50">User Info</Link>
+                <Link href="/logout" className="block px-6 py-3 hover:bg-blue-50">Logout</Link>
+              </>
+            ) : (
+              <>
+                <Link href="/login" className="block px-6 py-3 hover:bg-blue-50">Login</Link>
+                <Link href="/register" className="block px-6 py-3 hover:bg-blue-50">Register</Link>
+              </>
+            )}
           </div>
         )}
       </div>

@@ -54,9 +54,13 @@ export default function HomePage() {
   const dropdownBtnRef = useRef<HTMLButtonElement | null>(null);
 
   // ---- Load username (and keep in sync across tabs) ----
+  // store `username` as null when not present so we can easily detect guest
   useEffect(() => {
     if (typeof window === "undefined") return;
-    const load = () => setUsername(localStorage.getItem("username") ?? "Guest");
+    const load = () => {
+      const v = localStorage.getItem("username");
+      setUsername(v ? v : null);
+    };
     load();
     const onStorage = (e: StorageEvent) => {
       if (e.key === "username") load();
@@ -234,11 +238,23 @@ export default function HomePage() {
   }, []);
 
   // ---- Logout ----
-  const handleLogout = () => {
-    if (typeof window !== "undefined") {
-      localStorage.removeItem("username");
+  const handleLogout = async () => {
+    try {
+      if (typeof window !== "undefined") {
+        localStorage.removeItem("username");
+      }
+      // Call API to clear server-side cookie
+      await fetch("/api/logout", { method: "POST" });
+    } catch (err) {
+      // ignore errors
+    } finally {
+        // Force a full reload to root so the UI is refreshed and username is re-read
+        if (typeof window !== "undefined") {
+          window.location.href = "/";
+        } else {
+          router.push("/");
+        }
     }
-    router.push("/login");
   };
 
   // ---- Colors (from your scheme) ----
@@ -331,7 +347,7 @@ export default function HomePage() {
           >
             <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
           </svg>
-          {username ?? "Loading..."}
+          {username ?? "Guest"}
         </button>
 
         {dropdownOpen && (
@@ -360,34 +376,58 @@ export default function HomePage() {
                 borderBottom: "1px solid #f0f0f0",
               }}
             >
-              {username}
+              {username ?? "Guest"}
             </div>
-            <Link
-              href="/account"
-              role="menuitem"
-              style={{ ...menuItemStyle(BLUE), textDecoration: "none", display: "block" }}
-              onClick={() => setDropdownOpen(false)}
-            >
-              Account
-            </Link>
-            <Link
-              href="/userinfo"
-              role="menuitem"
-              style={{ ...menuItemStyle(BLUE), textDecoration: "none", display: "block" }}
-              onClick={() => setDropdownOpen(false)}
-            >
-              User Info
-            </Link>
-            <button
-              role="menuitem"
-              onClick={() => {
-                setDropdownOpen(false);
-                handleLogout();
-              }}
-              style={{ ...menuItemStyle(BLUE), fontWeight: 600 }}
-            >
-              Logout
-            </button>
+            {/* Render different menu items depending on whether user is logged in */}
+            {username ? (
+              <>
+                <Link
+                  href="/account"
+                  role="menuitem"
+                  style={{ ...menuItemStyle(BLUE), textDecoration: "none", display: "block" }}
+                  onClick={() => setDropdownOpen(false)}
+                >
+                  Account
+                </Link>
+                <Link
+                  href="/userinfo"
+                  role="menuitem"
+                  style={{ ...menuItemStyle(BLUE), textDecoration: "none", display: "block" }}
+                  onClick={() => setDropdownOpen(false)}
+                >
+                  User Info
+                </Link>
+                <button
+                  role="menuitem"
+                  onClick={() => {
+                    setDropdownOpen(false);
+                    handleLogout();
+                  }}
+                  style={{ ...menuItemStyle(BLUE), fontWeight: 600 }}
+                >
+                  Logout
+                </button>
+              </>
+            ) : (
+              <>
+                <Link
+                  href="/login"
+                  role="menuitem"
+                  style={{ ...menuItemStyle(BLUE), textDecoration: "none", display: "block" }}
+                  onClick={() => setDropdownOpen(false)}
+                >
+                  Login
+                </Link>
+                <Link
+                  href="/register"
+                  role="menuitem"
+                  style={{ ...menuItemStyle(BLUE), textDecoration: "none", display: "block" }}
+                  onClick={() => setDropdownOpen(false)}
+                >
+                  Register
+                </Link>
+              </>
+            )}
           </div>
         )}
       </div>

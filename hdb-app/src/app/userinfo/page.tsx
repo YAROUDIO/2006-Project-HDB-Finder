@@ -1,24 +1,14 @@
 "use client";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 
 /** Full-page blue UI with global styles applied */
 export default function UserInfo() {
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement | null>(null);
+  // Navigation dropdown removed per UI change request
 
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
 
-  const navOptions = [
-    { label: "UserInfo", href: "/userinfo" },
-    { label: "Recommended", href: "/recommended" },
-    { label: "HDB Listings", href: "/hdb-listings" },
-    { label: "Overview", href: "/overview" },
-    { label: "PriceTrend", href: "/pricetrend" },
-    { label: "Affordability", href: "/affordability" },
-    { label: "Amenities", href: "/amenities" },
-  ];
 
   // ---------------- Form state ----------------
   const [income, setIncome] = useState("");
@@ -33,23 +23,7 @@ export default function UserInfo() {
   const [successMsg, setSuccessMsg] = useState("");
   const [showPopup, setShowPopup] = useState(false);
 
-  // ---------------- Effects: dropdown listeners ----------------
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
-        setDropdownOpen(false);
-      }
-    };
-    const handleEsc = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setDropdownOpen(false);
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    document.addEventListener("keydown", handleEsc);
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-      document.removeEventListener("keydown", handleEsc);
-    };
-  }, []);
+  // navigation dropdown logic removed
 
   // ---------------- Effects: fetch user info ----------------
   useEffect(() => {
@@ -89,6 +63,12 @@ export default function UserInfo() {
     e.preventDefault();
     setFormError("");
     setSuccessMsg("");
+
+    // Guard: prevent guests from saving user info
+    if (typeof window !== "undefined" && !localStorage.getItem("username")) {
+      setFormError("You must be logged in to save your information.");
+      return;
+    }
 
     if (!income || !onlyDigits(income)) {
       setFormError("Yearly household income must be an integer.");
@@ -190,6 +170,7 @@ export default function UserInfo() {
               padding: "14px 24px",
               maxWidth: 1200,
               margin: "0 auto",
+              position: "relative",
             }}
           >
             <Link
@@ -214,72 +195,15 @@ export default function UserInfo() {
                 letterSpacing: 0.4,
                 fontWeight: 900,
                 color: c.ink,
+                position: "absolute",
+                left: "50%",
+                transform: "translateX(-50%)",
               }}
             >
               User Information
             </h1>
 
-            {/* Dropdown */}
-            <div ref={dropdownRef} style={{ position: "relative" }}>
-              <button
-                aria-haspopup="menu"
-                aria-expanded={dropdownOpen}
-                onClick={() => setDropdownOpen((v) => !v)}
-                style={{
-                  border: `1px solid ${c.line}`,
-                  background: c.chip,
-                  borderRadius: 12,
-                  padding: "8px 14px",
-                  fontWeight: 800,
-                  cursor: "pointer",
-                  color: c.ink,
-                  boxShadow: "0 1px 0 rgba(20,61,141,0.05)",
-                }}
-                onFocus={(e) =>
-                  (e.currentTarget.style.boxShadow = `0 0 0 3px ${c.focus}33`)
-                }
-                onBlur={(e) =>
-                  (e.currentTarget.style.boxShadow = "0 1px 0 rgba(20,61,141,0.05)")
-                }
-              >
-                Navigation ▾
-              </button>
-              {dropdownOpen && (
-                <div
-                  role="menu"
-                  style={{
-                    position: "absolute",
-                    right: 0,
-                    top: "calc(100% + 8px)",
-                    width: 220,
-                    background: c.card,
-                    border: `1px solid ${c.line}`,
-                    borderRadius: 12,
-                    boxShadow: cardShadow,
-                    overflow: "hidden",
-                  }}
-                >
-                  {navOptions.map((opt, i) => (
-                    <Link
-                      key={opt.label}
-                      href={opt.href}
-                      onClick={() => setDropdownOpen(false)}
-                      style={{
-                        display: "block",
-                        padding: "12px 16px",
-                        textDecoration: "none",
-                        color: c.ink,
-                        fontWeight: 700,
-                        borderBottom:
-                          i === navOptions.length - 1 ? "none" : `1px solid ${c.line}`,
-                      }}
-                    >
-                      {opt.label}
-                    </Link>
-                  ))}
-                </div>
-              )}
-            </div>
+            {/* Navigation button removed */}
           </nav>
         </header>
 
