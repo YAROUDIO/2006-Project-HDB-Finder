@@ -8,7 +8,6 @@ type UserInfo = {
   income?: string;
   citizenship?: string;
   householdSize?: number;
-  loan?: string;
   flatType?: string;
   budget?: string;
   area?: string;
@@ -124,8 +123,7 @@ export default function AccountPage() {
                   <div className="col-span-2">{user.citizenship ?? "—"}</div>
                   <div className="font-semibold">Household Size</div>
                   <div className="col-span-2">{user.householdSize ?? "—"}</div>
-                  <div className="font-semibold">Loan</div>
-                  <div className="col-span-2">{user.loan ?? "—"}</div>
+                  {/* Loan removed as requested */}
                   <div className="font-semibold">Preferred Flat Type</div>
                   <div className="col-span-2">{user.flatType ?? "—"}</div>
                   <div className="font-semibold">Budget</div>

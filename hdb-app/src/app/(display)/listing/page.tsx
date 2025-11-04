@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { useEffect, useState, useRef, useCallback } from "react";
+import { useEffect, useState, useRef, useCallback, useMemo } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useState as useClientState } from "react";
 
@@ -52,6 +52,69 @@ export default function ListingPage() {
   const [addingKey, setAddingKey] = useState<string | null>(null);
   const [townInput, setTownInput] = useState<string>(townParam);
 
+  // ---------------- Filters state ----------------
+  const FLAT_TYPES = [
+    "1 ROOM",
+    "2 ROOM",
+    "3 ROOM",
+    "4 ROOM",
+    "5 ROOM",
+    "EXECUTIVE",
+    "MULTI-GENERATION",
+  ];
+  function normalizeFlatType(input: any): string | null {
+    if (!input) return null;
+    const raw = String(input).trim().toUpperCase();
+    if (FLAT_TYPES.includes(raw)) return raw;
+    if (/EXEC(UTIVE)?/.test(raw)) return "EXECUTIVE";
+    if (/MULTI/.test(raw) || /GEN/.test(raw)) return "MULTI-GENERATION";
+    const simple = raw.replace(/[-_]/g, "");
+    const m = simple.match(/^([1-5])(RM|ROOM)?$/);
+    if (m) return `${m[1]} ROOM`;
+    const d = raw.match(/([1-5])/);
+    if (d) return `${d[1]} ROOM`;
+    return null;
+  }
+
+  const [rooms, setRooms] = useState<string>("");
+  // Price range min/max inputs
+  const [priceMin, setPriceMin] = useState<string>("");
+  const [priceMax, setPriceMax] = useState<string>("");
+  const SCORE_OPTIONS: { key: string; label: string; min?: number }[] = [
+    { key: "", label: "Any" },
+    { key: "50+", label: "50+", min: 50 },
+    { key: "60+", label: "60+", min: 60 },
+    { key: "70+", label: "70+", min: 70 },
+    { key: "75+", label: "75+", min: 75 },
+    { key: "80+", label: "80+", min: 80 },
+    { key: "85+", label: "85+", min: 85 },
+    { key: "90+", label: "90+", min: 90 },
+  ];
+  const [scoreKey, setScoreKey] = useState<string>("");
+  const [filtersVersion, setFiltersVersion] = useState(0);
+
+  const minScoreNum = useMemo(() => {
+    const found = SCORE_OPTIONS.find((o) => o.key === scoreKey);
+    return typeof found?.min === "number" ? found.min : NaN;
+  }, [scoreKey]);
+
+  const priceMinNum = useMemo(() => {
+    const n = Number((priceMin || "").replace(/[^0-9.]/g, ""));
+    return Number.isFinite(n) ? n : NaN;
+  }, [priceMin]);
+  const priceMaxNum = useMemo(() => {
+    const n = Number((priceMax || "").replace(/[^0-9.]/g, ""));
+    return Number.isFinite(n) ? n : NaN;
+  }, [priceMax]);
+
+  const applyFilters = () => {
+    // Reset list and trigger reload
+    setRecords([]);
+    setOffset(0);
+    setHasMore(true);
+    setFiltersVersion((v) => v + 1);
+  };
+
   const loadMore = useCallback(async () => {
     if (loading || !hasMore) return;
     setLoading(true);
@@ -84,17 +147,39 @@ export default function ListingPage() {
       }
     } catch {}
 
-    setRecords((prev) => [...prev, ...newRecords]);
+    // Apply client-side filters: price range, rooms, min score
+    const filtered = newRecords.filter((rec) => {
+      // Rooms filter
+      if (rooms) {
+        const n = normalizeFlatType(rec.flat_type);
+        if (n !== rooms.toUpperCase()) return false;
+      }
+      // Price filter
+      const price = Number((rec.resale_price || "").toString().replace(/[^0-9.]/g, ""));
+      if (Number.isFinite(priceMinNum) && !Number.isNaN(priceMinNum)) {
+        if (!(price >= priceMinNum)) return false;
+      }
+      if (Number.isFinite(priceMaxNum) && !Number.isNaN(priceMaxNum)) {
+        if (!(price <= priceMaxNum)) return false;
+      }
+      // Score filter
+      if (Number.isFinite(minScoreNum) && !Number.isNaN(minScoreNum)) {
+        if (!(typeof (rec as any).score === "number" && (rec as any).score >= minScoreNum)) return false;
+      }
+      return true;
+    });
+
+    setRecords((prev) => [...prev, ...filtered]);
     setOffset((prev) => prev + PAGE_SIZE);
     setHasMore(newRecords.length === PAGE_SIZE);
     setLoading(false);
-  }, [offset, loading, hasMore, q, townParam]);
+  }, [offset, loading, hasMore, q, townParam, rooms, priceMinNum, priceMaxNum, minScoreNum]);
 
   useEffect(() => {
     setRecords([]);
     setOffset(0);
     setHasMore(true);
-  }, [q, townParam]);
+  }, [q, townParam, filtersVersion]);
 
   useEffect(() => {
     loadMore();
@@ -205,6 +290,58 @@ export default function ListingPage() {
               Search
             </Link>
           </div>
+          {/* Filters row */}
+          <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            {/* Price range */}
+            <div className="flex flex-col">
+              <label className="text-xs font-semibold text-slate-700 mb-1">Price range (S$)</label>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  placeholder="Min"
+                  value={priceMin}
+                  onChange={(e) => setPriceMin(e.target.value)}
+                  className="flex-1 rounded-lg border border-blue-200 px-3 py-2 text-sm bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  placeholder="Max"
+                  value={priceMax}
+                  onChange={(e) => setPriceMax(e.target.value)}
+                  className="flex-1 rounded-lg border border-blue-200 px-3 py-2 text-sm bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+            </div>
+            {/* Rooms */}
+            <div className="flex flex-col">
+              <label className="text-xs font-semibold text-slate-700 mb-1">Number of rooms</label>
+              <select
+                value={rooms}
+                onChange={(e) => setRooms(e.target.value)}
+                className="rounded-lg border border-blue-200 px-3 py-2 text-sm bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="">Any</option>
+                {FLAT_TYPES.map((t) => (
+                  <option key={t} value={t}>{t}</option>
+                ))}
+              </select>
+            </div>
+            {/* Score */}
+            <div className="flex flex-col">
+              <label className="text-xs font-semibold text-slate-700 mb-1">Min score</label>
+              <select
+                value={scoreKey}
+                onChange={(e) => setScoreKey(e.target.value)}
+                className="rounded-lg border border-blue-200 px-3 py-2 text-sm bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                {SCORE_OPTIONS.map((o) => (
+                  <option key={o.key} value={o.key}>{o.label}</option>
+                ))}
+              </select>
+            </div>
+          </div>
 
           <div className="mt-3 flex items-center gap-3">
             <Link href="/finder" className="super-button">
@@ -216,6 +353,12 @@ export default function ListingPage() {
                 </svg>
               </span>
             </Link>
+            <button
+              onClick={applyFilters}
+              className="bg-blue-900 text-white font-bold px-5 py-2 rounded-full shadow hover:bg-blue-800 transition-colors border-2 border-blue-900"
+            >
+              Apply filters
+            </button>
             {(townParam || "").trim() ? (
               <Link href={`/listing${q.trim() ? `?q=${encodeURIComponent(q.trim())}` : ""}`} className="text-sm text-blue-900 underline">
                 Clear town

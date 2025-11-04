@@ -24,7 +24,6 @@ export default function UserInfo() {
   const [income, setIncome] = useState("");
   const [citizenship, setCitizenship] = useState("");
   const [householdSize, setHouseholdSize] = useState("");
-  const [loanType, setLoanType] = useState("");
   const [flatType, setFlatType] = useState("");
   const [budget, setBudget] = useState("");
   const [area, setArea] = useState("");
@@ -64,7 +63,6 @@ export default function UserInfo() {
           setIncome(user.income ? String(user.income) : "");
           setCitizenship(user.citizenship || "");
           setHouseholdSize(user.householdSize ? String(user.householdSize) : "");
-          setLoanType(user.loan || "");
           setFlatType(user.flatType || "");
           setBudget(user.budget ? String(user.budget) : "");
           setArea(user.area || "");
@@ -110,7 +108,6 @@ export default function UserInfo() {
           income,
           citizenship,
           householdSize,
-          loanType,
           flatType,
           budget,
           area,
@@ -371,14 +368,7 @@ export default function UserInfo() {
                   </Select>
                 </Field>
 
-                <Field label="Loan Type">
-                  <Select value={loanType} onChange={setLoanType}>
-                    <option value="">Select…</option>
-                    <option value="Loan A">Loan A</option>
-                    <option value="Loan B">Loan B</option>
-                    <option value="Loan C">Loan C</option>
-                  </Select>
-                </Field>
+                {/* Loan Type removed as requested */}
               </div>
 
               {/* Section: Preferences */}

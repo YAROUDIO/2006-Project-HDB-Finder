@@ -21,6 +21,7 @@ export default function HomePage() {
   };
   const [featuredGroups, setFeaturedGroups] = useState<Record<string, FeaturedItem[]>>({});
   const [featuredLoading, setFeaturedLoading] = useState(false);
+  const [budgetActive, setBudgetActive] = useState(false);
 
   // Supported flat types for scoring (keep in sync with Finder)
   const FLAT_TYPES = [
@@ -119,18 +120,40 @@ export default function HomePage() {
     (async () => {
       try {
         setFeaturedLoading(true);
-        // Try to get user's preferred flat type; fallback to 3 ROOM
+        // Try to get user's preferred info; fallback sensibly
         let flatType = "3 ROOM";
+        let preferredArea: string | null = null;
+        let budgetNumber: number | null = null;
         try {
           const res = await fetch("/api/userinfo", { cache: "no-store" });
           if (res.ok) {
             const data = await res.json();
             const ft = normalizeFlatType(data?.user?.flatType || data?.user?.flat_type);
             if (ft) flatType = ft;
+            const rawArea = (data?.user?.area ?? "").toString();
+            if (rawArea) {
+              preferredArea = rawArea.trim();
+            }
+            const rawBudget = (data?.user?.budget ?? "").toString();
+            if (rawBudget) {
+              const n = Number(rawBudget.replace(/[^0-9.]/g, ""));
+              if (Number.isFinite(n) && n > 0) budgetNumber = n;
+              setBudgetActive(Number.isFinite(n) && n > 0);
+            }
           }
         } catch {}
 
-        const towns = ["ANG MO KIO", "BISHAN", "QUEENSTOWN"];
+        // Area -> towns mapping (broad, friendly defaults)
+        const AREA_TOWNS: Record<string, string[]> = {
+          north: ["WOODLANDS", "YISHUN", "SEMBAWANG", "ANG MO KIO"],
+          northeast: ["SENGKANG", "PUNGGOL", "HOUGANG"],
+          "north-east": ["SENGKANG", "PUNGGOL", "HOUGANG"],
+          east: ["TAMPINES", "PASIR RIS", "BEDOK"],
+          west: ["JURONG WEST", "JURONG EAST", "BUKIT BATOK", "CHOA CHU KANG", "BUKIT PANJANG", "CLEMENTI"],
+          central: ["QUEENSTOWN", "BISHAN", "TOA PAYOH", "BUKIT MERAH", "KALLANG/WHAMPOA", "GEYLANG", "MARINE PARADE"],
+        };
+        const areaKey = preferredArea ? preferredArea.toLowerCase().replace(/\s+/g, "").replace(/-/g, "") : "";
+        const towns = AREA_TOWNS[areaKey] ?? ["ANG MO KIO", "BISHAN", "QUEENSTOWN"];
         const basePayload = {
           weights: { mrt: 7, school: 6, hospital: 3, affordability: 8 },
           towns,
@@ -159,19 +182,29 @@ export default function HomePage() {
         if (res.ok && Array.isArray(data?.results) && data.results.length > 0) {
           // Group top ~30 results by town, evenly split across selected towns
           const perTown = Math.ceil(30 / towns.length);
-          const grouped: Record<string, FeaturedItem[]> = {};
-          for (const t of towns) grouped[t] = [];
-          // results are already sorted by score desc on server
-          for (const r of data.results as FeaturedItem[]) {
-            const town = (r.town || "").toString().trim().toUpperCase();
-            if (!(town in grouped)) continue; // ignore towns not in our list
-            if (grouped[town].length < perTown) {
+
+          const groupWithOptionalBudget = (applyBudget: boolean) => {
+            const grouped: Record<string, FeaturedItem[]> = {};
+            for (const t of towns) grouped[t] = [];
+            for (const r of data.results as FeaturedItem[]) {
+              const town = (r.town || "").toString().trim().toUpperCase();
+              if (!(town in grouped)) continue;
+              if (grouped[town].length >= perTown) continue;
+              if (applyBudget && budgetNumber && Number.isFinite(budgetNumber)) {
+                const price = typeof r.resale_price === "number" ? r.resale_price : Number(r.resale_price);
+                if (Number.isFinite(price) && budgetNumber > 0 && price > budgetNumber) {
+                  continue; // skip over-budget items
+                }
+              }
               grouped[town].push(r);
+              const total = Object.values(grouped).reduce((a, arr) => a + arr.length, 0);
+              if (total >= perTown * towns.length) break;
             }
-            // stop when we reached our target roughly
-            const total = Object.values(grouped).reduce((a, arr) => a + arr.length, 0);
-            if (total >= perTown * towns.length) break;
-          }
+            return grouped;
+          };
+
+          // Only show items under budget if a budget is set; else show all
+          const grouped = groupWithOptionalBudget(Boolean(budgetNumber && Number.isFinite(budgetNumber) && budgetNumber > 0));
           setFeaturedGroups(grouped);
         } else {
           setFeaturedGroups({});
@@ -479,12 +512,13 @@ export default function HomePage() {
           )}
           {/* Render by town sections */}
           {(() => {
-            const order = ["QUEENSTOWN", "BISHAN", "ANG MO KIO"]; // preferred display order
-            const townsToShow = order.filter((t) => (featuredGroups[t]?.length || 0) > 0);
+            // Display towns in the same order we queried
+            const queriedOrder = Object.keys(featuredGroups);
+            const townsToShow = queriedOrder.filter((t) => (featuredGroups[t]?.length || 0) > 0);
             if (!featuredLoading && townsToShow.length === 0) {
               return (
                 <div style={{ marginTop: 12, color: "#475569" }}>
-                  No featured flats available at the moment.
+                  {budgetActive ? "No featured flats under your budget." : "No featured flats available at the moment."}
                 </div>
               );
             }
