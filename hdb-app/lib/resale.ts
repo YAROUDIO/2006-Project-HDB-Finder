@@ -49,7 +49,8 @@ export async function getAllTownsFromResaleAPI(): Promise<string[]> {
   let offset = 0;
   for (let i = 0; i < 10; i++) { // up to 10k rows sample should include all towns
     const url = `https://data.gov.sg/api/action/datastore_search?resource_id=${RESOURCE_ID}&limit=${PAGE_SIZE}&offset=${offset}`;
-    const r = await fetch(url, { cache: "no-store" });
+    // Cache town discovery for a day; towns rarely change
+    const r = await fetch(url, { next: { revalidate: 86400 } });
     const j = await r.json();
     const rows: any[] = j?.result?.records ?? [];
     for (const row of rows) {
@@ -74,7 +75,8 @@ async function fetchTownTypeRows(town: string, flatType: string): Promise<FlatRo
   const out: FlatRow[] = [];
   for (let i = 0; i < 500; i++) { // 500 * 1000 = 500k safety cap
     const url = `https://data.gov.sg/api/action/datastore_search?resource_id=${RESOURCE_ID}&limit=${PAGE_SIZE}&offset=${offset}&filters=${filters}`;
-    const r = await fetch(url, { cache: "no-store" });
+    // Cache upstream responses on the server for 1 hour to avoid repeated downloads
+    const r = await fetch(url, { next: { revalidate: 3600 } });
     if (!r.ok) throw new Error(`Failed to fetch resale data: HTTP ${r.status}`);
     const j = await r.json();
     const rows: any[] = j?.result?.records ?? [];
@@ -104,11 +106,9 @@ export async function loadCheapestRecentByBlockForTownsAndType(
   recentMonths: number
 ): Promise<FlatRow[]> {
   const wanted = towns.map(normU);
-  const all: FlatRow[] = [];
-  for (const t of wanted) {
-    const rows = await fetchTownTypeRows(t, flatType);
-    all.push(...rows);
-  }
+  // Fetch towns in parallel for speed
+  const perTown = await Promise.all(wanted.map((t) => fetchTownTypeRows(t, flatType)));
+  const all: FlatRow[] = perTown.flat();
   console.log(`[resale] fetched ${all.length} rows for towns=${wanted.join(",")} type=${flatType}`);
 
   type Agg = {

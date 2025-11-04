@@ -23,6 +23,31 @@ export default function HomePage() {
   const [featuredGroups, setFeaturedGroups] = useState<Record<string, FeaturedItem[]>>({});
   const [featuredLoading, setFeaturedLoading] = useState(false);
 
+  // Supported flat types for scoring (keep in sync with Finder)
+  const FLAT_TYPES = [
+    "1 ROOM",
+    "2 ROOM",
+    "3 ROOM",
+    "4 ROOM",
+    "5 ROOM",
+    "EXECUTIVE",
+    "MULTI-GENERATION",
+  ];
+
+  function normalizeFlatType(input: any): string | null {
+    if (!input) return null;
+    const raw = String(input).trim().toUpperCase();
+    if (FLAT_TYPES.includes(raw)) return raw;
+    if (/EXEC(UTIVE)?/.test(raw)) return "EXECUTIVE";
+    if (/MULTI/.test(raw) || /GEN/.test(raw)) return "MULTI-GENERATION";
+    const simple = raw.replace(/[-_]/g, "");
+    const m = simple.match(/^([1-5])(RM|ROOM)?$/);
+    if (m) return `${m[1]} ROOM`;
+    const d = raw.match(/([1-5])/);
+    if (d) return `${d[1]} ROOM`;
+    return null;
+  }
+
   const firstLinkRef = useRef<HTMLAnchorElement | null>(null);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
   const dropdownBtnRef = useRef<HTMLButtonElement | null>(null);
@@ -101,25 +126,37 @@ export default function HomePage() {
           const res = await fetch("/api/userinfo", { cache: "no-store" });
           if (res.ok) {
             const data = await res.json();
-            const ft = (data?.user?.flatType || data?.user?.flat_type || "").toString().trim();
+            const ft = normalizeFlatType(data?.user?.flatType || data?.user?.flat_type);
             if (ft) flatType = ft;
           }
         } catch {}
 
         const towns = ["ANG MO KIO", "BISHAN", "QUEENSTOWN"];
-        const payload = {
+        const basePayload = {
           weights: { mrt: 7, school: 6, hospital: 3, affordability: 8 },
           towns,
-          flatType,
           pricePolicy: "cheapest-recent-24m",
         };
-        const res = await fetch("/api/finder", {
-          method: "POST",
-          headers: { "content-type": "application/json" },
-          body: JSON.stringify(payload),
-        });
-        const data = await res.json().catch(() => ({}));
+        const runFinder = async (ft: string) => {
+          return fetch("/api/finder", {
+            method: "POST",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify({ ...basePayload, flatType: ft }),
+          });
+        };
+
+        // First attempt with user's preferred type
+        let res = await runFinder(flatType);
+        let data = await res.json().catch(() => ({}));
         if (!alive) return;
+        if (!(res.ok && Array.isArray(data?.results) && data.results.length > 0)) {
+          // Fallback to a popular default if no results
+          if (flatType !== "3 ROOM") {
+            res = await runFinder("3 ROOM");
+            data = await res.json().catch(() => ({}));
+          }
+        }
+
         if (res.ok && Array.isArray(data?.results) && data.results.length > 0) {
           // Group top ~30 results by town, evenly split across selected towns
           const perTown = Math.ceil(30 / towns.length);

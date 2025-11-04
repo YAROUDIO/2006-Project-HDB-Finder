@@ -20,6 +20,20 @@ type WeightInput = {
   affordability: number;
 };
 
+// Simple in-memory cache for computed results (keyed by payload); TTL-based.
+// This reduces repeated heavy work across users (especially for Featured on Home).
+type CacheEntry = { ts: number; data: any };
+const FINDER_CACHE = new Map<string, CacheEntry>();
+const FINDER_TTL_MS = 10 * 60 * 1000; // 10 minutes
+
+function cacheKeyFromBody(body: any): string {
+  const towns = Array.isArray(body?.towns) ? [...body.towns].map((t: string) => (t || "").toString().trim().toUpperCase()).sort() : [];
+  const weights = body?.weights ?? {};
+  const flatType = (body?.flatType || "").toString().trim().toUpperCase();
+  const pricePolicy = (body?.pricePolicy || "cheapest-recent-24m").toString();
+  return JSON.stringify({ towns, weights, flatType, pricePolicy, v: 1 });
+}
+
 // ---------- helpers ----------
 function clamp01(x: number) {
   return Math.max(0, Math.min(1, x));
@@ -69,6 +83,15 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
+
+    // Check cache first
+    const key = cacheKeyFromBody(body);
+    const now = Date.now();
+    const hit = FINDER_CACHE.get(key);
+    if (hit && now - hit.ts < FINDER_TTL_MS) {
+      // console.log("[finder][POST] cache HIT for key", key);
+      return NextResponse.json(hit.data);
+    }
     const weights: WeightInput =
       body?.weights ?? { mrt: 7, school: 6, hospital: 3, affordability: 8 };
 
@@ -206,7 +229,9 @@ export async function POST(req: NextRequest) {
     results.sort((a, b) => (b.score - a.score));
 
     console.log("[finder][POST] top 3:", results.slice(0, 3).map(r => `${r.compositeKey} $${r.resale_price}`));
-    return NextResponse.json({ ok: true, results });
+    const payload = { ok: true, results } as const;
+    FINDER_CACHE.set(key, { ts: Date.now(), data: payload });
+    return NextResponse.json(payload);
   } catch (e: any) {
     console.error("[finder][POST] error:", e?.message || e);
     return NextResponse.json(
