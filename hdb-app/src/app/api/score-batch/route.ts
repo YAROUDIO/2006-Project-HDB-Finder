@@ -3,7 +3,13 @@ export const runtime = "nodejs";
 
 import { NextRequest, NextResponse } from "next/server";
 import { geocodeWithCache } from "@/lib/geocode";
-import { loadStations, loadHospitals, loadSchools, haversineMeters } from "@/lib/loaders";
+import { loadHospitals, loadSchools } from "@/lib/loaders";
+import { loadStations } from "@/lib/stations";
+import { haversine } from "@/lib/geo";
+import { evaluateAffordability, parseRemainingLeaseYears } from "@/lib/affordability";
+import { cookies } from "next/headers";
+import { connectDB } from "@/lib/mongoose";
+import User from "@/models/User";
 
 type Item = {
   town: string;
@@ -12,6 +18,7 @@ type Item = {
   flat_type: string;
   month?: string;
   resale_price: string | number;
+  remaining_lease?: string;
 };
 
 type WeightInput = {
@@ -51,6 +58,28 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ ok: true, results: [] });
     }
 
+    // Fetch user info for affordability calculation
+    let userAge: number | undefined;
+    let userIncome: number | undefined;
+    let userDownPaymentBudget: number | undefined;
+    
+    try {
+      await connectDB();
+      const cookieStore = cookies();
+      const username = (await cookieStore).get("username")?.value;
+      if (username) {
+        const user = await User.findOne({ username });
+        if (user) {
+          userAge = user.age;
+          userIncome = user.income ? Number(user.income) : undefined;
+          userDownPaymentBudget = user.downPaymentBudget;
+        }
+      }
+    } catch (e) {
+      // If we can't fetch user info, affordability scoring will fall back to price-based
+      console.warn("[score-batch][POST] Could not fetch user info for affordability:", e);
+    }
+
     // Cache key based on ordered compositeKeys (or normalized addresses) and weights
     const keyParts = items.map((it) => [
       encodeURIComponent(normU(it.block)),
@@ -67,9 +96,9 @@ export async function POST(req: NextRequest) {
     }
 
     // Load amenities (cached in module scope by loaders.ts)
-    const stations = loadStations();
-    const hospitals = loadHospitals();
-    const schools = loadSchools();
+    const stations = await loadStations();
+    const hospitals = await loadHospitals();
+    const schools = await loadSchools();
 
     const temp: Array<{
       item: Item;
@@ -86,15 +115,15 @@ export async function POST(req: NextRequest) {
       if (!dists) {
         let bestMrt = Infinity, bestSch = Infinity, bestHosp = Infinity;
         for (const s of stations) {
-          const d = haversineMeters(here as any, s as any);
+          const d = haversine(here.lat, here.lng, s.lat, s.lng);
           if (d < bestMrt) bestMrt = d;
         }
         for (const s of schools) {
-          const d = haversineMeters(here as any, s as any);
+          const d = haversine(here.lat, here.lng, s.lat, s.lng);
           if (d < bestSch) bestSch = d;
         }
         for (const h of hospitals) {
-          const d = haversineMeters(here as any, h as any);
+          const d = haversine(here.lat, here.lng, h.lat, h.lng);
           if (d < bestHosp) bestHosp = d;
         }
         dists = { dMrt: bestMrt, dSchool: bestSch, dHospital: bestHosp };
@@ -135,8 +164,37 @@ export async function POST(req: NextRequest) {
       const baseMrt = distanceToBaseScore(t.dMrt, MRT_CAP);
       const baseSchool = distanceToBaseScore(t.dSchool, SCHOOL_CAP);
       const baseHospital = distanceToBaseScore(t.dHospital, HOSPITAL_CAP);
-      const priceScore = Number.isFinite(t.price) ? 100 * clamp01((priceHigh - t.price) / priceSpan) : 50;
-      const score = pct.mrt * baseMrt + pct.school * baseSchool + pct.hospital * baseHospital + pct.affordability * priceScore;
+      
+      // Calculate affordability score using our library
+      let affordabilityScore = 50; // Default fallback (mid-range) for weighted score
+      let affordabilityScoreRaw: number | undefined = undefined; // Raw 1-10 score for display
+      
+      if (userAge !== undefined && userIncome !== undefined) {
+        // We have user info, calculate actual affordability
+        const remainingLeaseYears = parseRemainingLeaseYears(t.item.remaining_lease);
+        const evaluation = evaluateAffordability({
+          price: t.price,
+          age: userAge,
+          remainingLeaseYears,
+          incomePerAnnum: userIncome,
+          downPaymentBudget: userDownPaymentBudget,
+        });
+        
+        // Store raw 1-10 score for display
+        affordabilityScoreRaw = evaluation.score;
+        
+        // Convert score (1-10) to 0-100 scale for weighted calculation
+        if (evaluation.score !== undefined) {
+          affordabilityScore = (evaluation.score / 10) * 100;
+        }
+      } else {
+        // Fallback to price-based scoring if no user info
+        affordabilityScore = Number.isFinite(t.price) 
+          ? 100 * clamp01((priceHigh - t.price) / priceSpan) 
+          : 50;
+      }
+      
+      const score = pct.mrt * baseMrt + pct.school * baseSchool + pct.hospital * baseHospital + pct.affordability * affordabilityScore;
 
       const compositeKey = [
         encodeURIComponent((t.item.block || "").toString().trim().toUpperCase()),
@@ -146,7 +204,7 @@ export async function POST(req: NextRequest) {
         "0",
       ].join("__");
 
-      return { compositeKey, score };
+      return { compositeKey, score, affordabilityScore: affordabilityScoreRaw };
     });
 
     const payload = { ok: true, results } as const;

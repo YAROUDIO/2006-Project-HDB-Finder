@@ -18,6 +18,7 @@ export default function HomePage() {
     month: string;
     compositeKey: string;
     score: number;
+    affordabilityScore?: number;
   };
   const [featuredGroups, setFeaturedGroups] = useState<Record<string, FeaturedItem[]>>({});
   const [featuredLoading, setFeaturedLoading] = useState(false);
@@ -633,11 +634,10 @@ export default function HomePage() {
                       style={{ textDecoration: "none" }}
                     >
                       <div className="glass-card" style={{ padding: 16, paddingBottom: 48, position: "relative" }}>
-                        {/* Score badge */}
-                        {Number.isFinite(r.score) && (
-                          <div className="pill pill-score" style={{ position: "absolute", bottom: 12, right: 12 }}>
-                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.77 5.82 22 7 14.14l-5-4.87 6.91-1.01z"/></svg>
-                            {Number(r.score).toFixed(1)}
+                        {/* Affordability score badge */}
+                        {typeof r.affordabilityScore === "number" && Number.isFinite(r.affordabilityScore) && (
+                          <div style={{ position: "absolute", bottom: 12, right: 12, backgroundColor: "#3b82f6", color: "white", padding: "4px 10px", borderRadius: "12px", fontSize: "12px", fontWeight: "600", boxShadow: "0 2px 4px rgba(0,0,0,0.1)" }}>
+                            Affordability: {r.affordabilityScore.toFixed(1)}/10
                           </div>
                         )}
                         <div style={{ fontWeight: 800, color: "#0f172a" }}>

@@ -1,115 +1,181 @@
-// lib/loaders.ts
 import 'server-only';
-import fs from 'node:fs';
-import path from 'node:path';
+import { geocodeWithCache } from './geocode';
+import { getTownCentroid } from './townCentroids';
+import { Pt } from './geo';
 
-export type Pt = { lat: number; lng: number };
+// Simple fetch helper
+async function fetchJSON(url: string) {
+  const res = await fetch(url, { cache: 'no-store' });
+  if (!res.ok) throw new Error(`Failed fetch ${url}`);
+  return res.json();
+}
 
-function flattenCoords(coords: any): number[][] {
-  const out: number[][] = [];
-  (function walk(c: any) {
-    if (Array.isArray(c) && c.length >= 2 && typeof c[0] === 'number' && typeof c[1] === 'number') {
-      out.push([c[0], c[1]]);
-    } else if (Array.isArray(c)) {
-      for (const x of c) walk(x);
+export interface FlatRec {
+  id: string;
+  town: string;
+  block: string;
+  street_name: string;
+  storey_range: string;
+  floor_area_sqm: number;
+  remaining_lease: string; // raw
+  remaining_lease_yrs: number; // parsed
+  resale_price: number;
+  lat: number;
+  lng: number;
+  approx?: boolean; // true if using centroid fallback
+}
+
+function parseRemainingLease(raw: string): number {
+  if (!raw) return 0;
+  const m = raw.match(/(\d+)\s*years?(?:\s*(\d+)\s*months?)?/i);
+  if (!m) return 0;
+  const y = Number(m[1]);
+  const mo = m[2] ? Number(m[2]) : 0;
+  return y + mo/12;
+}
+
+// Basic Singapore bounding box + numeric sanity check
+function isValidCoord(lat: any, lng: any): boolean {
+  if (!Number.isFinite(lat) || !Number.isFinite(lng)) return false;
+  // Rough SG bounds (lat ~1.20–1.50, lng ~103.55–104.10) allow a little slack
+  return lat > 1.15 && lat < 1.55 && lng > 103.5 && lng < 104.15;
+}
+
+export async function loadFlatsForTowns(towns: string[], maxPerTown = 100): Promise<FlatRec[]> {
+  // We'll page through the public API until we have enough per town (rough heuristic)
+  const dataset_id = 'd_8b84c4ee58e3cfc0ece0d773c8ca6abc';
+  const targetTowns = new Set(towns.map(t=>t.toUpperCase()));
+  const perTown: Record<string, FlatRec[]> = {};
+  let offset = 0; const pageSize = 100; // moderate
+  while (offset < 4000) { // safety bound
+    const url = `https://data.gov.sg/api/action/datastore_search?resource_id=${dataset_id}&limit=${pageSize}&offset=${offset}`;
+    const data = await fetchJSON(url);
+    const records = data.result.records;
+    if (!records.length) break;
+    let consecutiveGeoFailures = 0;
+    for (const r of records) {
+      const town = String(r.town || r.TOWN || '').toUpperCase();
+      if (!targetTowns.has(town)) continue;
+      if (!perTown[town]) perTown[town] = [];
+      if (perTown[town].length >= maxPerTown) continue;
+      const lease = parseRemainingLease(r.remaining_lease || r.REMAINING_LEASE);
+      const price = Number(r.resale_price || r.RESALE_PRICE || 0);
+      const fa = Number(r.floor_area_sqm || r.FLOOR_AREA_SQM || 0);
+      const storey = String(r.storey_range || r.STOREY_RANGE || '');
+      // Geocode block+street
+      let geo = null;
+      let usedFallback = false;
+      try {
+        geo = await geocodeWithCache(r.block || r.BLOCK, r.street_name || r.STREET_NAME, town);
+        if (!geo) {
+          consecutiveGeoFailures++;
+          const centroid = getTownCentroid(town);
+          if (centroid) {
+            // Use centroid fallback (still counts as a recovery, reset failure counter partially)
+            geo = { lat: centroid.lat, lng: centroid.lng } as any;
+            console.warn('[loadFlatsForTowns] fallback centroid used for', town);
+            consecutiveGeoFailures = Math.max(0, consecutiveGeoFailures - 5);
+            usedFallback = true;
+          } else if (consecutiveGeoFailures > 25) {
+            console.warn('[loadFlatsForTowns] too many consecutive geocode nulls – temporarily skipping rest of page');
+            break;
+          } else {
+            continue; // skip this record
+          }
+        } else {
+          consecutiveGeoFailures = 0;
+        }
+        await new Promise(r=>setTimeout(r, 60)); // throttle
+      } catch (e) {
+        consecutiveGeoFailures++;
+        const centroid = getTownCentroid(town);
+        if (centroid) {
+          geo = { lat: centroid.lat, lng: centroid.lng } as any;
+          console.warn('[loadFlatsForTowns] exception geocode -> centroid fallback', town);
+          consecutiveGeoFailures = Math.max(0, consecutiveGeoFailures - 5);
+          usedFallback = true;
+        } else if (consecutiveGeoFailures > 25) {
+          console.warn('[loadFlatsForTowns] aborting remaining records this page due to repeated geocode errors');
+          break;
+        } else {
+          console.warn('[loadFlatsForTowns] geocode error', (e as any)?.message);
+          continue;
+        }
+      }
+      // Coordinate validation & secondary fallback attempt
+      if (!isValidCoord((geo as any).lat, (geo as any).lng)) {
+        console.warn('[loadFlatsForTowns] invalid coordinates', {
+          town,
+          block: r.block || r.BLOCK,
+            street: r.street_name || r.STREET_NAME,
+            lat: (geo as any).lat,
+            lng: (geo as any).lng,
+            approx: usedFallback
+        });
+        if (!usedFallback) {
+          const centroid = getTownCentroid(town);
+          if (centroid && isValidCoord(centroid.lat, centroid.lng)) {
+            geo = { lat: centroid.lat, lng: centroid.lng } as any;
+            usedFallback = true;
+            console.warn('[loadFlatsForTowns] replaced invalid geocode with centroid fallback', town);
+          } else {
+            // Skip this record entirely if we cannot salvage
+            continue;
+          }
+        } else {
+          // Already using fallback but still invalid -> skip
+          continue;
+        }
+      }
+      perTown[town].push({
+        id: `${r._id}`,
+        town,
+        block: r.block || r.BLOCK,
+        street_name: r.street_name || r.STREET_NAME,
+        storey_range: storey,
+        floor_area_sqm: fa,
+        remaining_lease: r.remaining_lease || r.REMAINING_LEASE,
+        remaining_lease_yrs: lease,
+        resale_price: price,
+        lat: (geo as any).lat,
+        lng: (geo as any).lng,
+        approx: usedFallback,
+      });
     }
-  })(coords);
-  return out;
-}
-
-function centroidLngLat(coords: number[][]): Pt | null {
-  if (!coords.length) return null;
-  let sx = 0, sy = 0, n = 0;
-  for (const [lng, lat] of coords) {
-    if (Number.isFinite(lat) && Number.isFinite(lng)) { sx += lng; sy += lat; n++; }
+    if (towns.every(t=> (perTown[t]||[]).length >= maxPerTown)) break;
+    offset += pageSize;
   }
-  if (!n) return null;
-  return { lat: sy / n, lng: sx / n };
+  return Object.values(perTown).flat();
 }
 
-function readGeoJSONSync(file: string): any {
-  const p = path.join(process.cwd(), 'data', file);
-  const txt = fs.readFileSync(p, 'utf8');
-  return JSON.parse(txt);
-}
-
-let CACHE_STATIONS: Pt[] | null = null;
-let CACHE_HOSPITALS: Pt[] | null = null;
-let CACHE_SCHOOLS: Pt[] | null = null;
-
-export function loadStations(): Pt[] {
-  if (CACHE_STATIONS) return CACHE_STATIONS;
-  console.log("[loaders] loading stations from MasterPlan2019RailStationlayerGEOJSON.geojson …");
-  const gj = readGeoJSONSync('MasterPlan2019RailStationlayerGEOJSON.geojson');
-  const out: Pt[] = [];
-  let polyCount = 0, ptCount = 0;
-
-  for (const f of gj.features ?? []) {
-    const g = f?.geometry;
-    if (!g) continue;
-    if (g.type === 'Point') {
-      const c = g.coordinates;
-      if (Array.isArray(c) && c.length >= 2) { out.push({ lat: c[1], lng: c[0] }); ptCount++; }
-    } else {
-      const flat = flattenCoords(g.coordinates);
-      const ctr = centroidLngLat(flat);
-      if (ctr) { out.push(ctr); polyCount++; }
-    }
-  }
-  console.log(`[loaders] stations: total=${out.length} (points=${ptCount}, polys=${polyCount})`);
-  CACHE_STATIONS = out;
-  return out;
-}
-
-export function loadHospitals(): Pt[] {
-  if (CACHE_HOSPITALS) return CACHE_HOSPITALS;
-  console.log("[loaders] loading hospitals/clinics from chas_clinics.geojson …");
-  const gj = readGeoJSONSync('chas_clinics.geojson');
-  const out: Pt[] = [];
-  for (const f of gj.features ?? []) {
-    const c = f?.geometry?.coordinates;
-    if (Array.isArray(c) && c.length >= 2) out.push({ lat: c[1], lng: c[0] });
-  }
-  console.log(`[loaders] hospitals/clinics: total=${out.length}`);
-  CACHE_HOSPITALS = out;
-  return out;
-}
-
-export function loadSchools(): Pt[] {
-  if (CACHE_SCHOOLS) return CACHE_SCHOOLS;
-  console.log("[loaders] loading schools from schools_points.geojson (+preschools.geojson if present) …");
-  const out: Pt[] = [];
-
-  const schools = readGeoJSONSync('schools_points.geojson');
-  for (const f of schools.features ?? []) {
-    const c = f?.geometry?.coordinates;
-    if (Array.isArray(c) && c.length >= 2) out.push({ lat: c[1], lng: c[0] });
-  }
-  let preCount = 0;
+export async function loadSchools(): Promise<Pt[]> {
+  const base = process.env.NEXT_PUBLIC_BASE_URL || '';
+  // If running server-side without a base URL, attempt direct dataset call as fallback
+  const directUrl = 'https://data.gov.sg/api/action/datastore_search?resource_id=d_688b934f82c1059ed0a6993d2a829089';
+  const url = base ? `${base}/api/schooldataset` : directUrl;
   try {
-    const pre = readGeoJSONSync('preschools.geojson');
-    for (const f of pre.features ?? []) {
-      const c = f?.geometry?.coordinates;
-      if (Array.isArray(c) && c.length >= 2) { out.push({ lat: c[1], lng: c[0] }); preCount++; }
+    const data = await fetchJSON(url);
+    const recs = (data.result?.records)||[];
+    const pts: Pt[] = [];
+    for (const r of recs.slice(0, 300)) { // cap for performance
+      const addr = r.address || r.Address || r.ADDRESS || r.name || '';
+      if (!addr) continue;
+      const m = addr.match(/BLK\s*(\d+)\s+(.*)/i);
+      if (!m) continue;
+      const block = m[1];
+      const street = m[2];
+      try {
+        const g = await geocodeWithCache(block, street);
+        if (g) pts.push({ lat: g.lat, lng: g.lng });
+      } catch (e) {
+        console.warn('[loadSchools] geocode error', (e as any)?.message);
+      }
     }
-  } catch {
-    // optional file; ignore if missing
+    return pts;
+  } catch (e) {
+    console.error('[loadSchools] failed to fetch schools dataset', (e as any)?.message);
+    return [];
   }
-  console.log(`[loaders] schools: total=${out.length} (including ${preCount} preschools if any)`);
-  CACHE_SCHOOLS = out;
-  return out;
 }
 
-// Haversine in meters
-export function haversineMeters(a: Pt, b: Pt): number {
-  const R = 6371000;
-  const toRad = (x: number) => (x * Math.PI) / 180;
-  const dLat = toRad(b.lat - a.lat);
-  const dLng = toRad(b.lng - a.lng);
-  const la1 = toRad(a.lat);
-  const la2 = toRad(b.lat);
-  const sinDLat = Math.sin(dLat / 2);
-  const sinDLng = Math.sin(dLng / 2);
-  const h = sinDLat * sinDLat + Math.cos(la1) * Math.cos(la2) * sinDLng * sinDLng;
-  return 2 * R * Math.asin(Math.min(1, Math.sqrt(h)));
-}
+export async function loadHospitals(): Promise<Pt[]> { return []; }

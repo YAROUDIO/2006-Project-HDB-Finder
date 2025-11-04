@@ -5,7 +5,9 @@ export const dynamic = "force-dynamic";
 import { NextRequest, NextResponse } from "next/server";
 
 import { geocodeWithCache } from "@/lib/geocode";
-import { loadStations, loadHospitals, loadSchools, haversineMeters } from "@/lib/loaders";
+import { loadHospitals, loadSchools } from "@/lib/loaders";
+import { loadStations } from "@/lib/stations";
+import { haversine } from "@/lib/geo";
 import { evaluateAffordability, parseRemainingLeaseYears } from "@/lib/affordability";
 import { cookies } from "next/headers";
 import { connectDB } from "@/lib/mongoose";
@@ -55,7 +57,7 @@ function nearestDistance(
 ) {
   let best = Infinity;
   for (const c of candidates) {
-    const d = haversineMeters(here as any, c as any);
+    const d = haversine(here.lat, here.lng, c.lat, c.lng);
     if (d < best) best = d;
   }
   return Number.isFinite(best) ? best : NaN;
@@ -147,9 +149,9 @@ export async function POST(req: NextRequest) {
     }
 
     // Load amenities from local GeoJSON
-    const stations = loadStations(); // MRT/LRT
-    const hospitals = loadHospitals(); // clinics/hospitals
-    const schools = loadSchools(); // MOE + preschools
+    const stations = await loadStations(); // MRT/LRT
+    const hospitals = await loadHospitals(); // clinics/hospitals
+    const schools = await loadSchools(); // MOE + preschools
 
     // Load representative flats per (BLOCK, STREET, TOWN) for the given flat type:
     // Representative row = cheapest resale in last RECENT_MONTHS; if none, cheapest ever.

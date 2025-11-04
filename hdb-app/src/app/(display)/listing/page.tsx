@@ -13,6 +13,7 @@ interface HDBRecord {
   street_name: string;
   month: string;
   score?: number;
+  affordabilityScore?: number;
 }
 
 const PAGE_SIZE = 20;
@@ -157,9 +158,9 @@ export default function ListingPage() {
       });
       const scoreData = await scoreRes.json();
       if (scoreRes.ok && Array.isArray(scoreData?.results)) {
-        const scoreMap = new Map<string, number>();
+        const scoreMap = new Map<string, { score: number; affordabilityScore?: number }>();
         for (const r of scoreData.results) {
-          if (r?.compositeKey) scoreMap.set(r.compositeKey, r.score);
+          if (r?.compositeKey) scoreMap.set(r.compositeKey, { score: r.score, affordabilityScore: r.affordabilityScore });
         }
         for (const rec of newRecords) {
           const compositeKey = [
@@ -169,8 +170,11 @@ export default function ListingPage() {
             encodeURIComponent(rec.month),
             "0",
           ].join("__");
-          const s = scoreMap.get(compositeKey);
-          if (typeof s === "number") (rec as any).score = s;
+          const data = scoreMap.get(compositeKey);
+          if (data) {
+            (rec as any).score = data.score;
+            (rec as any).affordabilityScore = data.affordabilityScore;
+          }
         }
       }
     } catch {}
@@ -283,9 +287,6 @@ export default function ListingPage() {
         </Link>
         {navOpen && (
           <div className="absolute left-0 top-full mt-2 w-56 bg-white text-blue-900 rounded-lg shadow-lg z-50 border border-blue-200 animate-fade-in">
-            <Link href="/recomended" className="block px-6 py-3 hover:bg-blue-50">
-              View Reccomended
-            </Link>
             <Link href="/bookmarks" className="block px-6 py-3 hover:bg-blue-50">
               View Bookmarked
             </Link>
@@ -494,11 +495,10 @@ export default function ListingPage() {
               key={compositeKey + "__" + i}
               className="rounded-xl bg-white shadow-md p-4 pb-12 hover:shadow-lg transition-shadow duration-200 border border-blue-200 relative"
             >
-              {/* Score badge bottom-right above bookmark */}
-              {typeof rec.score === "number" ? (
-                <div className="pill pill-score" style={{ position: "absolute", bottom: 44, right: 12 }}>
-                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.77 5.82 22 7 14.14l-5-4.87 6.91-1.01z"/></svg>
-                  {rec.score.toFixed(1)}
+              {/* Affordability score badge bottom-right above bookmark */}
+              {typeof rec.affordabilityScore === "number" ? (
+                <div style={{ position: "absolute", bottom: 44, right: 12, backgroundColor: "#3b82f6", color: "white", padding: "4px 10px", borderRadius: "12px", fontSize: "12px", fontWeight: "600", boxShadow: "0 2px 4px rgba(0,0,0,0.1)" }}>
+                  Affordability: {rec.affordabilityScore.toFixed(1)}/10
                 </div>
               ) : null}
               <button
