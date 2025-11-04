@@ -1,3 +1,10 @@
+import { NextResponse } from "next/server";
+import { connectDB } from "@/lib/mongoose";
+import User from "@/models/User";
+import { cookies } from "next/headers";
+
+export const runtime = "nodejs";
+
 export async function GET() {
 	await connectDB();
 	try {
@@ -15,24 +22,19 @@ export async function GET() {
 		return NextResponse.json({ error: "Failed to fetch user info." }, { status: 500 });
 	}
 }
-export const runtime = "nodejs";
-import { NextResponse } from "next/server";
-import { connectDB } from "@/lib/mongoose";
-import User from "@/models/User";
-import { cookies } from "next/headers";
 
 export async function POST(req: Request) {
 	await connectDB();
 	try {
-        const body = await req.json()
+		const body = await req.json();
 		const cookieStore = cookies();
-        const username = (await cookieStore).get("username")?.value;
+		const username = (await cookieStore).get("username")?.value;
 		const {
 			income,
+			age,
 			citizenship,
-			householdSize,
 			flatType,
-			budget,
+			downPaymentBudget,
 			area,
 			lease
 		} = body;
@@ -41,18 +43,33 @@ export async function POST(req: Request) {
 			return NextResponse.json({ error: "Username is required." }, { status: 400 });
 		}
 
+		// Convert age and downPaymentBudget to numbers if provided (form sends strings)
+		const ageNum = age && age !== "" ? Number(age) : undefined;
+		const downPaymentBudgetNum = downPaymentBudget && downPaymentBudget !== "" ? Number(downPaymentBudget) : undefined;
+
+		// Build update object, only including numeric fields if they're valid numbers
+		const updateData: any = {
+			income,
+			citizenship,
+			flatType,
+			area,
+			leaseLeft: lease
+		};
+		
+		// Only set age if we have a valid number
+		if (ageNum !== undefined && !isNaN(ageNum)) {
+			updateData.age = ageNum;
+		}
+
+		// Only set downPaymentBudget if we have a valid number
+		if (downPaymentBudgetNum !== undefined && !isNaN(downPaymentBudgetNum)) {
+			updateData.downPaymentBudget = downPaymentBudgetNum;
+		}
+
 		// Update user preferences
 		const updated = await User.findOneAndUpdate(
 			{ username },
-			{
-				income,
-				citizenship,
-				householdSize,
-				flatType,
-				budget,
-				area,
-				leaseLeft: lease
-			},
+			updateData,
 			{ new: true }
 		);
 

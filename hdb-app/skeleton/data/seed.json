@@ -1,0 +1,11 @@
+{
+  "username": "demo",
+  "income": 80000,
+  "citizenship": "Singapore",
+  "householdSize": 3,
+  "loan": "Loan A",
+  "flatType": "4-room",
+  "budget": 600000,
+  "area": "East",
+  "leaseLeft": 75
+}

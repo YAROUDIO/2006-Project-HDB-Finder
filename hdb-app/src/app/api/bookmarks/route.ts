@@ -79,10 +79,17 @@ export async function DELETE(req: NextRequest) {
   if (!username || !compositeKey) {
     return NextResponse.json({ success: false, error: "Username and compositeKey required" }, { status: 400 });
   }
+  // Normalize: always compare using a decoded compositeKey (accepts encoded input from clients)
+  let normalizedKey = compositeKey;
+  try {
+    normalizedKey = decodeURIComponent(String(compositeKey));
+  } catch {
+    // keep original if decode fails
+  }
   const hasDB = await ensureDB();
   if (!hasDB) {
     const arr = MEM_BOOKMARKS.get(username) || [];
-    const next = arr.filter((b: any) => b.compositeKey !== compositeKey);
+    const next = arr.filter((b: any) => b.compositeKey !== normalizedKey);
     MEM_BOOKMARKS.set(username, next);
     return NextResponse.json({ success: true });
   }
@@ -90,7 +97,7 @@ export async function DELETE(req: NextRequest) {
   if (!entry) {
     return NextResponse.json({ success: false, error: "No bookmarks found for user" }, { status: 404 });
   }
-  entry.bookmarks = entry.bookmarks.filter((b: any) => b.compositeKey !== compositeKey);
+  entry.bookmarks = entry.bookmarks.filter((b: any) => b.compositeKey !== normalizedKey);
   await entry.save();
   return NextResponse.json({ success: true });
 }

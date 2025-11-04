@@ -10,6 +10,7 @@ type RawResult = {
   street_name: string;
   resale_price: number | string;
   score: number; // 0..100
+  affordabilityScore?: number; // 0..10 (from our affordability library)
   flat_type?: string;
   month?: string;
   distances?: { dMrt?: number; dSchool?: number; dHospital?: number; dHosp?: number };
@@ -22,6 +23,7 @@ type FinderResult = {
   street_name: string;
   resale_price: number | string;
   score: number; // 0..100
+  affordabilityScore?: number; // 0..10
   flat_type: string;
   month: string;
   distances: { dMrt?: number; dSchool?: number; dHospital?: number };
@@ -151,6 +153,7 @@ export default function FinderPage() {
         street_name: r.street_name,
         resale_price: r.resale_price,
         score: r.score,
+        affordabilityScore: r.affordabilityScore,
         flat_type: r.flat_type || flatType,
         month: r.month || "",
         compositeKey: r.compositeKey!, // server builds 5-part
@@ -346,6 +349,9 @@ export default function FinderPage() {
                           <div>MRT: {formatMeters(r.distances?.dMrt)}</div>
                           <div>Schools: {formatMeters(r.distances?.dSchool)}</div>
                           <div>Hospitals/Clinics: {formatMeters(r.distances?.dHospital)}</div>
+                          {r.affordabilityScore !== undefined && (
+                            <div>Affordability: {r.affordabilityScore.toFixed(1)}/10</div>
+                          )}
                         </div>
                       </div>
                       <Link

@@ -12,11 +12,11 @@ const userSchema = new mongoose.Schema({
   },
   password: { type: String, required: true },
   income: { type: String },
+  age: { type: Number },
   citizenship: { type: String },
-  householdSize: { type: Number },
   loan: { type: String },
   flatType: { type: String },
-  budget: { type: String },
+  downPaymentBudget: { type: Number },
   area: { type: String },
   leaseLeft: { type: String }
 });

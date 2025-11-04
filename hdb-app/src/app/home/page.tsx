@@ -22,6 +22,7 @@ export default function HomePage() {
   const [featuredGroups, setFeaturedGroups] = useState<Record<string, FeaturedItem[]>>({});
   const [featuredLoading, setFeaturedLoading] = useState(false);
   const [budgetActive, setBudgetActive] = useState(false);
+  const [userInfoIncomplete, setUserInfoIncomplete] = useState(false);
 
   // Supported flat types for scoring (keep in sync with Finder)
   const FLAT_TYPES = [
@@ -128,20 +129,33 @@ export default function HomePage() {
           const res = await fetch("/api/userinfo", { cache: "no-store" });
           if (res.ok) {
             const data = await res.json();
-            const ft = normalizeFlatType(data?.user?.flatType || data?.user?.flat_type);
+            const user = data?.user;
+            
+            // Check if user info is incomplete (missing critical fields for affordability)
+            const hasAge = user?.age !== undefined && user?.age !== null && user?.age !== "";
+            const hasIncome = user?.income !== undefined && user?.income !== null && user?.income !== "";
+            const hasDownPaymentBudget = user?.downPaymentBudget !== undefined && user?.downPaymentBudget !== null && user?.downPaymentBudget !== "";
+            setUserInfoIncomplete(!hasAge || !hasIncome || !hasDownPaymentBudget);
+            
+            const ft = normalizeFlatType(user?.flatType || user?.flat_type);
             if (ft) flatType = ft;
-            const rawArea = (data?.user?.area ?? "").toString();
+            const rawArea = (user?.area ?? "").toString();
             if (rawArea) {
               preferredArea = rawArea.trim();
             }
-            const rawBudget = (data?.user?.budget ?? "").toString();
+            const rawBudget = (user?.budget ?? "").toString();
             if (rawBudget) {
               const n = Number(rawBudget.replace(/[^0-9.]/g, ""));
               if (Number.isFinite(n) && n > 0) budgetNumber = n;
               setBudgetActive(Number.isFinite(n) && n > 0);
             }
+          } else {
+            // If no user data at all, mark as incomplete
+            setUserInfoIncomplete(true);
           }
-        } catch {}
+        } catch {
+          setUserInfoIncomplete(true);
+        }
 
         // Area -> towns mapping (broad, friendly defaults)
         const AREA_TOWNS: Record<string, string[]> = {
@@ -455,11 +469,11 @@ export default function HomePage() {
           </Link>
 
           <Link
-            href="/recommended"
+            href="/userinfo"
             onClick={() => setDrawerOpen(false)}
             style={navLinkStyle}
           >
-            View recommended flats
+            Set User Info
           </Link>
 
           <Link
@@ -469,6 +483,7 @@ export default function HomePage() {
           >
             View Bookmarked Flats
           </Link>
+
         </nav>
       </aside>
 
@@ -493,13 +508,55 @@ export default function HomePage() {
             Browse all current resale listings in Singapore. One place, every town.
           </p>
 
-          {/* Single big CTA: View all flats */}
-          <div style={{ marginTop: 16 }}>
+          {/* Single big CTA: View all flats - centered */}
+          <div style={{ marginTop: 16, display: "flex", justifyContent: "center" }}>
             <Link href="/listing" className="super-button super-button-xl" aria-label="View all HDB flats">
               View all flats
               <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style={{ marginLeft: 8 }}><path d="M12 4l1.41 1.41L8.83 10H20v2H8.83l4.58 4.59L12 18l-8-8z"/></svg>
             </Link>
           </div>
+
+          {/* User info incomplete message */}
+          {userInfoIncomplete && (
+            <div style={{ 
+              marginTop: 20, 
+              padding: "16px 20px", 
+              background: "linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%)",
+              borderRadius: 16,
+              border: "2px solid #3b82f6",
+              textAlign: "center"
+            }}>
+              <p style={{ margin: 0, color: "#1e3a8a", fontWeight: 600, fontSize: "1rem" }}>
+                Want Flat Finding customised to your needs? Fill up info in UserInfo!
+              </p>
+              <div style={{ marginTop: 12 }}>
+                <Link 
+                  href="/userinfo" 
+                  style={{
+                    display: "inline-block",
+                    padding: "10px 24px",
+                    background: "#3b82f6",
+                    color: "white",
+                    borderRadius: 12,
+                    fontWeight: 700,
+                    textDecoration: "none",
+                    boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
+                    transition: "all 0.2s"
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = "#2563eb";
+                    e.currentTarget.style.transform = "translateY(-2px)";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = "#3b82f6";
+                    e.currentTarget.style.transform = "translateY(0)";
+                  }}
+                >
+                  Go to User Info
+                </Link>
+              </div>
+            </div>
+          )}
 
           {/* Removed other quick buttons as requested */}
         </section>

@@ -22,10 +22,10 @@ export default function UserInfo() {
 
   // ---------------- Form state ----------------
   const [income, setIncome] = useState("");
+  const [age, setAge] = useState("");
   const [citizenship, setCitizenship] = useState("");
-  const [householdSize, setHouseholdSize] = useState("");
   const [flatType, setFlatType] = useState("");
-  const [budget, setBudget] = useState("");
+  const [downPaymentBudget, setDownPaymentBudget] = useState("");
   const [area, setArea] = useState("");
   const [lease, setLease] = useState("");
 
@@ -61,10 +61,10 @@ export default function UserInfo() {
         const user = data.user;
         if (user) {
           setIncome(user.income ? String(user.income) : "");
+          setAge(user.age ? String(user.age) : "");
           setCitizenship(user.citizenship || "");
-          setHouseholdSize(user.householdSize ? String(user.householdSize) : "");
           setFlatType(user.flatType || "");
-          setBudget(user.budget ? String(user.budget) : "");
+          setDownPaymentBudget(user.downPaymentBudget ? String(user.downPaymentBudget) : "");
           setArea(user.area || "");
           setLease(user.leaseLeft ? String(user.leaseLeft) : "");
         }
@@ -94,8 +94,12 @@ export default function UserInfo() {
       setFormError("Yearly household income must be an integer.");
       return;
     }
-    if (budget && !onlyDigits(budget)) {
-      setFormError("Budget must be an integer if provided.");
+    if (downPaymentBudget && !onlyDigits(downPaymentBudget)) {
+      setFormError("Down Payment Budget must be an integer if provided.");
+      return;
+    }
+    if (age && !onlyDigits(age)) {
+      setFormError("Age must be an integer if provided.");
       return;
     }
 
@@ -106,10 +110,10 @@ export default function UserInfo() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           income,
+          age,
           citizenship,
-          householdSize,
           flatType,
-          budget,
+          downPaymentBudget,
           area,
           lease,
         }),
@@ -358,17 +362,9 @@ export default function UserInfo() {
                   </Select>
                 </Field>
 
-                <Field label="Household Size">
-                  <Select value={householdSize} onChange={setHouseholdSize}>
-                    <option value="">Select…</option>
-                    {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((n) => (
-                      <option key={n} value={n}>{n}</option>
-                    ))}
-                    <option value=">9">More than 9</option>
-                  </Select>
+                <Field label="Age">
+                  <InputNumeric value={age} onChange={setAge} placeholder="e.g. 30" />
                 </Field>
-
-                {/* Loan Type removed as requested */}
               </div>
 
               {/* Section: Preferences */}
@@ -385,8 +381,8 @@ export default function UserInfo() {
                   </Select>
                 </Field>
 
-                <Field label="Budget" hint={`Optional • e.g. ${prettyNumber("600000")}`}>
-                  <InputNumeric value={budget} onChange={setBudget} placeholder="e.g. 600000" />
+                <Field label="Down Payment Budget" hint={`Optional • e.g. ${prettyNumber("150000")}`}>
+                  <InputNumeric value={downPaymentBudget} onChange={setDownPaymentBudget} placeholder="e.g. 150000" />
                 </Field>
 
                 <Field label="Preferred Area">

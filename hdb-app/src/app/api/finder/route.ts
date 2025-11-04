@@ -6,6 +6,10 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { geocodeWithCache } from "@/lib/geocode";
 import { loadStations, loadHospitals, loadSchools, haversineMeters } from "@/lib/loaders";
+import { evaluateAffordability, parseRemainingLeaseYears } from "@/lib/affordability";
+import { cookies } from "next/headers";
+import { connectDB } from "@/lib/mongoose";
+import User from "@/models/User";
 
 // town+type loader with "cheapest recent 24 months" policy
 import { loadCheapestRecentByBlockForTownsAndType, FlatRow } from "@/lib/resale";
@@ -99,6 +103,28 @@ export async function POST(req: NextRequest) {
 
     const towns: string[] = Array.isArray(body?.towns) ? body.towns : [];
     const flatType: string = (body?.flatType || "").toString().trim().toUpperCase();
+
+    // Fetch user info for affordability calculation
+    let userAge: number | undefined;
+    let userIncome: number | undefined;
+    let userDownPaymentBudget: number | undefined;
+    
+    try {
+      await connectDB();
+      const cookieStore = cookies();
+      const username = (await cookieStore).get("username")?.value;
+      if (username) {
+        const user = await User.findOne({ username });
+        if (user) {
+          userAge = user.age;
+          userIncome = user.income ? Number(user.income) : undefined;
+          userDownPaymentBudget = user.downPaymentBudget;
+        }
+      }
+    } catch (e) {
+      // If we can't fetch user info, affordability scoring will fall back to price-based
+      console.warn("[finder][POST] Could not fetch user info for affordability:", e);
+    }
 
     const RECENT_MONTHS = 24; // policy window
     const isDev = process.env.NODE_ENV !== 'production';
@@ -202,14 +228,37 @@ export async function POST(req: NextRequest) {
       const baseMrt = distanceToBaseScore(t.dMrt, MRT_CAP);
       const baseSchool = distanceToBaseScore(t.dSchool, SCHOOL_CAP);
       const baseHospital = distanceToBaseScore(t.dHospital, HOSPITAL_CAP);
-      const priceScore =
-        Number.isFinite(t.price) ? 100 * clamp01((priceHigh - t.price) / priceSpan) : 50;
+      
+      // Calculate affordability score using our library
+      let affordabilityScore = 50; // Default fallback (mid-range)
+      
+      if (userAge !== undefined && userIncome !== undefined) {
+        // We have user info, calculate actual affordability
+        const remainingLeaseYears = parseRemainingLeaseYears(t.row.remaining_lease);
+        const evaluation = evaluateAffordability({
+          price: t.price,
+          age: userAge,
+          remainingLeaseYears,
+          incomePerAnnum: userIncome,
+          downPaymentBudget: userDownPaymentBudget,
+        });
+        
+        // Convert score (1-10) to 0-100 scale
+        if (evaluation.score !== undefined) {
+          affordabilityScore = (evaluation.score / 10) * 100;
+        }
+      } else {
+        // Fallback to price-based scoring if no user info
+        affordabilityScore = Number.isFinite(t.price) 
+          ? 100 * clamp01((priceHigh - t.price) / priceSpan) 
+          : 50;
+      }
 
       const score =
         pct.mrt * baseMrt +
         pct.school * baseSchool +
         pct.hospital * baseHospital +
-        pct.affordability * priceScore;
+        pct.affordability * affordabilityScore;
 
       // Build composite key with the chosen representative month (cheapest-recent)
       const compositeKey = [
@@ -226,6 +275,7 @@ export async function POST(req: NextRequest) {
         street_name: t.row.street_name,
         resale_price: t.row.resale_price,
         score,
+        affordabilityScore: affordabilityScore / 10, // Convert back to 1-10 scale for display
         flat_type: t.row.flat_type,
         month: t.row.month,
         distances: { dMrt: t.dMrt, dSchool: t.dSchool, dHospital: t.dHospital },

@@ -3,6 +3,8 @@ import { useState, useEffect } from "react";
 import { notFound, useParams } from "next/navigation";
 import Link from "next/link";
 import { useState as useClientState } from "react";
+import AffordabilityWidget from "@/components/AffordabilityWidget";
+import { parseRemainingLeaseYears, parseCurrencyToNumber } from "@/lib/affordability";
 
 interface HDBRecord {
   _id: string | number;
@@ -62,6 +64,7 @@ export default function ListingDetailPage() {
   const [adding, setAdding] = useState(false);
   const [error, setError] = useState("");
   const [navOpen, setNavOpen] = useClientState(false);
+  const [showAffordabilityError, setShowAffordabilityError] = useState(false);
 
   const getUsername = () => {
     if (typeof window !== "undefined") {
@@ -175,9 +178,6 @@ export default function ListingDetailPage() {
         </Link>
         {navOpen && (
           <div className="absolute left-0 top-full mt-2 w-56 bg-white text-blue-900 rounded-lg shadow-lg z-50 border border-blue-200 animate-fade-in">
-            <Link href="/recomended" className="block px-6 py-3 hover:bg-blue-50">
-              View Recommended
-            </Link>
             <Link href="/account" className="block px-6 py-3 hover:bg-blue-50">
               Account
             </Link>
@@ -241,6 +241,15 @@ export default function ListingDetailPage() {
               <span className="font-semibold">Month:</span> {record.month}
             </div>
           </div>
+
+          {/* Affordability Widget */}
+          <div className="mt-6">
+            <AffordabilityWidget
+              price={parseCurrencyToNumber(record.resale_price) ?? 0}
+              remainingLeaseYears={parseRemainingLeaseYears(record.remaining_lease)}
+              onMissingUserInfo={() => setShowAffordabilityError(true)}
+            />
+          </div>
         </div>
 
         <div className="flex justify-center gap-8 mt-8">
@@ -256,6 +265,40 @@ export default function ListingDetailPage() {
           </Link>
         </div>
       </div>
+
+      {/* Affordability Error Popup */}
+      {showAffordabilityError && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+          onClick={() => setShowAffordabilityError(false)}
+        >
+          <div
+            className="bg-white rounded-2xl p-8 max-w-md shadow-2xl border-2 border-red-400"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center gap-3 mb-4">
+              <span className="text-red-500 text-4xl">⚠️</span>
+              <h2 className="text-2xl font-bold text-red-600">Missing Information</h2>
+            </div>
+            <p className="text-gray-700 mb-6 text-lg">
+              Fill up userinfo for affordability score!
+            </p>
+            <div className="flex gap-4">
+              <Link href="/userinfo" className="flex-1">
+                <button className="w-full px-6 py-3 bg-blue-900 text-white rounded-full font-semibold shadow hover:bg-blue-800 transition-colors">
+                  Go to User Info
+                </button>
+              </Link>
+              <button
+                onClick={() => setShowAffordabilityError(false)}
+                className="flex-1 px-6 py-3 bg-gray-200 text-gray-700 rounded-full font-semibold shadow hover:bg-gray-300 transition-colors"
+              >
+                Close
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
