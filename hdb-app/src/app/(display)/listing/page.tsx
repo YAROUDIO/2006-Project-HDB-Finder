@@ -52,6 +52,10 @@ export default function ListingPage() {
   const [bookmarkedKeys, setBookmarkedKeys] = useState<string[]>([]);
   const [addingKey, setAddingKey] = useState<string | null>(null);
   const [townInput, setTownInput] = useState<string>(townParam);
+  // Neighbourhood autocomplete (reuse Finder pattern)
+  const [allTowns, setAllTowns] = useState<string[]>([]);
+  const [showTownSuggest, setShowTownSuggest] = useState(false);
+  const suggestRef = useRef<HTMLDivElement | null>(null);
 
   // ---------------- Filters state ----------------
   const FLAT_TYPES = [
@@ -78,33 +82,16 @@ export default function ListingPage() {
   }
 
   const [rooms, setRooms] = useState<string>("");
-  // Price range min/max inputs
-  const [priceMin, setPriceMin] = useState<string>("");
-  const [priceMax, setPriceMax] = useState<string>("");
-  const SCORE_OPTIONS: { key: string; label: string; min?: number }[] = [
-    { key: "", label: "Any" },
-    { key: "50+", label: "50+", min: 50 },
-    { key: "60+", label: "60+", min: 60 },
-    { key: "70+", label: "70+", min: 70 },
-    { key: "75+", label: "75+", min: 75 },
-    { key: "80+", label: "80+", min: 80 },
-    { key: "85+", label: "85+", min: 85 },
-    { key: "90+", label: "90+", min: 90 },
-  ];
-  const [scoreKey, setScoreKey] = useState<string>("");
+  // Price range min/max inputs with default values
+  const [priceMin, setPriceMin] = useState<string>("100000");
+  const [priceMax, setPriceMax] = useState<string>("1500000");
   const [filtersVersion, setFiltersVersion] = useState(0);
   const [filtersApplied, setFiltersApplied] = useState(false);
   const [appliedFilters, setAppliedFilters] = useState<{
     rooms: string;
     priceMinNum: number;
     priceMaxNum: number;
-    minScoreNum: number;
-  }>({ rooms: "", priceMinNum: NaN, priceMaxNum: NaN, minScoreNum: NaN });
-
-  const minScoreNum = useMemo(() => {
-    const found = SCORE_OPTIONS.find((o) => o.key === scoreKey);
-    return typeof found?.min === "number" ? found.min : NaN;
-  }, [scoreKey]);
+  }>({ rooms: "", priceMinNum: NaN, priceMaxNum: NaN });
 
   const priceMinNum = useMemo(() => {
     const n = Number((priceMin || "").replace(/[^0-9.]/g, ""));
@@ -115,99 +102,105 @@ export default function ListingPage() {
     return Number.isFinite(n) ? n : NaN;
   }, [priceMax]);
 
-  // Gate: only allow applying filters when all fields are filled
+  // Determine whether any filter has been provided (used for minor UX hints).
+  // We still allow Apply to be clicked even when some fields are missing; missing
+  // filters will simply be ignored.
   const allFiltersFilled = useMemo(() => {
     const hasRooms = !!rooms && rooms.trim().length > 0;
     const hasMin = Number.isFinite(priceMinNum) && !Number.isNaN(priceMinNum);
     const hasMax = Number.isFinite(priceMaxNum) && !Number.isNaN(priceMaxNum);
-    const hasScore = !!scoreKey && scoreKey.trim().length > 0;
-    return hasRooms && hasMin && hasMax && hasScore;
-  }, [rooms, priceMinNum, priceMaxNum, scoreKey]);
+    return hasRooms || hasMin || hasMax;
+  }, [rooms, priceMinNum, priceMaxNum]);
 
   const applyFilters = () => {
-    // Only apply when all fields are filled
-    if (!allFiltersFilled) {
-      return;
+    // Snapshot current inputs into applied filters and enable filtering.
+    // If price min/max are invalid (min > max) we ignore the price filter.
+    let effectiveMin = Number.isFinite(priceMinNum) ? priceMinNum : NaN;
+    let effectiveMax = Number.isFinite(priceMaxNum) ? priceMaxNum : NaN;
+    if (Number.isFinite(effectiveMin) && Number.isFinite(effectiveMax) && effectiveMin > effectiveMax) {
+      // drop price filter when range is invalid
+      effectiveMin = NaN;
+      effectiveMax = NaN;
     }
-    // Snapshot current inputs into applied filters and enable filtering
     setAppliedFilters({
       rooms,
-      priceMinNum,
-      priceMaxNum,
-      minScoreNum,
+      priceMinNum: effectiveMin,
+      priceMaxNum: effectiveMax,
     });
     setFiltersApplied(true);
-    // Reset list and trigger reload
-    setRecords([]);
-    setOffset(0);
-    setHasMore(true);
+    // Bump version to trigger reset and reload (reset effect handles clearing records)
     setFiltersVersion((v) => v + 1);
   };
 
   const loadMore = useCallback(async () => {
     if (loading || !hasMore) return;
     setLoading(true);
-    const newRecords = await fetchHDBData(offset, PAGE_SIZE, q.trim() || undefined, (townParam || "").trim() || undefined);
-
-    // Fetch scores for this batch
     try {
-      const scoreRes = await fetch("/api/score-batch", {
-        method: "POST",
-        headers: { "content-type": "application/json" },
-        body: JSON.stringify({ items: newRecords }),
-      });
-      const scoreData = await scoreRes.json();
-      if (scoreRes.ok && Array.isArray(scoreData?.results)) {
-        const scoreMap = new Map<string, { score: number; affordabilityScore?: number }>();
-        for (const r of scoreData.results) {
-          if (r?.compositeKey) scoreMap.set(r.compositeKey, { score: r.score, affordabilityScore: r.affordabilityScore });
-        }
-        for (const rec of newRecords) {
-          const compositeKey = [
-            encodeURIComponent(rec.block),
-            encodeURIComponent(rec.street_name),
-            encodeURIComponent(rec.flat_type),
-            encodeURIComponent(rec.month),
-            "0",
-          ].join("__");
-          const data = scoreMap.get(compositeKey);
-          if (data) {
-            (rec as any).score = data.score;
-            (rec as any).affordabilityScore = data.affordabilityScore;
-          }
-        }
-      }
-    } catch {}
+      const newRecords = await fetchHDBData(offset, PAGE_SIZE, q.trim() || undefined, (townParam || "").trim() || undefined);
 
-    // Apply client-side filters only if user clicked "Apply filters"
-    const filtered = !filtersApplied
-      ? newRecords
-      : newRecords.filter((rec) => {
-          const { rooms: aRooms, priceMinNum: aMin, priceMaxNum: aMax, minScoreNum: aScore } = appliedFilters;
-          // Rooms filter
-          if (aRooms) {
-            const n = normalizeFlatType(rec.flat_type);
-            if (n !== aRooms.toUpperCase()) return false;
-          }
-          // Price filter
-          const price = Number((rec.resale_price || "").toString().replace(/[^0-9.]/g, ""));
-          if (Number.isFinite(aMin) && !Number.isNaN(aMin)) {
-            if (!(price >= aMin)) return false;
-          }
-          if (Number.isFinite(aMax) && !Number.isNaN(aMax)) {
-            if (!(price <= aMax)) return false;
-          }
-          // Score filter
-          if (Number.isFinite(aScore) && !Number.isNaN(aScore)) {
-            if (!(typeof (rec as any).score === "number" && (rec as any).score >= aScore)) return false;
-          }
-          return true;
+      // Fetch scores for this batch
+      try {
+        const scoreRes = await fetch("/api/score-batch", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ items: newRecords }),
         });
+        const scoreData = await scoreRes.json();
+        if (scoreRes.ok && Array.isArray(scoreData?.results)) {
+          const scoreMap = new Map<string, { score: number; affordabilityScore?: number }>();
+          for (const r of scoreData.results) {
+            if (r?.compositeKey) scoreMap.set(r.compositeKey, { score: r.score, affordabilityScore: r.affordabilityScore });
+          }
+          for (const rec of newRecords) {
+            const compositeKey = [
+              encodeURIComponent(rec.block),
+              encodeURIComponent(rec.street_name),
+              encodeURIComponent(rec.flat_type),
+              encodeURIComponent(rec.month),
+              "0",
+            ].join("__");
+            const data = scoreMap.get(compositeKey);
+            if (data) {
+              (rec as any).score = data.score;
+              (rec as any).affordabilityScore = data.affordabilityScore;
+            }
+          }
+        }
+      } catch (err) {
+        console.error("score-batch error:", err);
+      }
 
-    setRecords((prev) => [...prev, ...filtered]);
-    setOffset((prev) => prev + PAGE_SIZE);
-    setHasMore(newRecords.length === PAGE_SIZE);
-    setLoading(false);
+      // Apply client-side filters only if user clicked "Apply filters"
+      const filtered = !filtersApplied
+        ? newRecords
+        : newRecords.filter((rec) => {
+            const { rooms: aRooms, priceMinNum: aMin, priceMaxNum: aMax } = appliedFilters;
+            // Rooms filter
+            if (aRooms) {
+              const n = normalizeFlatType(rec.flat_type);
+              if (n !== aRooms.toUpperCase()) return false;
+            }
+            // Price filter
+            const price = Number((rec.resale_price || "").toString().replace(/[^0-9.]/g, ""));
+            if (Number.isFinite(aMin) && !Number.isNaN(aMin)) {
+              if (!(price >= aMin)) return false;
+            }
+            if (Number.isFinite(aMax) && !Number.isNaN(aMax)) {
+              if (!(price <= aMax)) return false;
+            }
+            return true;
+          });
+
+      setRecords((prev) => [...prev, ...filtered]);
+      setOffset((prev) => prev + PAGE_SIZE);
+      setHasMore(newRecords.length === PAGE_SIZE);
+    } catch (err) {
+      console.error("loadMore error:", err);
+      // Stop further attempts on fatal errors
+      setHasMore(false);
+    } finally {
+      setLoading(false);
+    }
   }, [offset, loading, hasMore, q, townParam, filtersApplied, appliedFilters]);
 
   // Reset list when either search params or filtersVersion change
@@ -217,26 +210,17 @@ export default function ListingPage() {
     setHasMore(true);
   }, [q, townParam, filtersVersion]);
 
-  // When search changes, show unfiltered listings until user applies filters again
-  useEffect(() => {
-    if (q || townParam) {
-      setFiltersApplied(false);
-    }
-  }, [q, townParam]);
-
   // After applying filters (filtersVersion bump), kick off a load immediately
   useEffect(() => {
-    // Only trigger for filter application, not initial mount
-    if (filtersApplied) {
-      loadMore();
-    }
+    loadMore();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [filtersVersion]);
 
+  // Initial load and when search query changes
   useEffect(() => {
     loadMore();
     // eslint-disable-next-line
-  }, [q]);
+  }, [q, townParam]);
 
   useEffect(() => {
     if (!loader.current) return;
@@ -266,6 +250,54 @@ export default function ListingPage() {
     };
     fetchBookmarks();
   }, []);
+
+  // Fetch list of towns (same endpoint used by Finder)
+  useEffect(() => {
+    let alive = true;
+    (async () => {
+      try {
+        const res = await fetch("/api/finder?op=towns", { cache: "no-store" });
+        const data = await res.json().catch(() => ({}));
+        if (alive && data?.ok && Array.isArray(data.towns)) {
+          setAllTowns(data.towns as string[]);
+        } else if (alive) {
+          setAllTowns(["ANG MO KIO", "BEDOK", "BISHAN", "BUKIT BATOK", "QUEENSTOWN", "TOA PAYOH"]);
+        }
+      } catch {
+        if (alive) {
+          setAllTowns(["ANG MO KIO", "BEDOK", "BISHAN", "BUKIT BATOK", "QUEENSTOWN", "TOA PAYOH"]);
+        }
+      }
+    })();
+    return () => { alive = false; };
+  }, []);
+
+  // Close suggestions on outside click
+  useEffect(() => {
+    function onDocClick(e: MouseEvent) {
+      if (!suggestRef.current) return;
+      if (!suggestRef.current.contains(e.target as Node)) setShowTownSuggest(false);
+    }
+    document.addEventListener("mousedown", onDocClick);
+    return () => document.removeEventListener("mousedown", onDocClick);
+  }, []);
+
+  // Filtered suggestions
+  const filteredTownSuggestions = useMemo(() => {
+    const q = townInput.trim().toUpperCase();
+    if (!q) return allTowns.slice(0, 10);
+    return allTowns.filter((t) => t.includes(q)).slice(0, 10);
+  }, [townInput, allTowns]);
+
+  function handleSelectTown(town: string) {
+    const params = new URLSearchParams();
+    if (q.trim()) params.set("q", q.trim());
+    const t = (town || townInput).trim().toUpperCase();
+    if (t) params.set("town", t);
+    setTownInput(t);
+    setShowTownSuggest(false);
+    router.push(`/listing${params.toString() ? `?${params.toString()}` : ""}`);
+  }
 
   return (
     <div style={{ background: "#e0f2ff", minHeight: "100vh", width: "100%" }}>
@@ -308,39 +340,55 @@ export default function ListingPage() {
 
       <div className="px-6 py-6 max-w-7xl mx-auto">
         {/* Hero-style search card (like Home) */}
-        <section className="glass-card rounded-2xl border mb-5 p-5 md:p-6">
+  <section className="glass-card rounded-2xl border mb-5 p-5 md:p-6 relative z-30 overflow-visible">
           <h2 className="gradient-text font-extrabold text-2xl md:text-3xl m-0">Find HDBs by neighbourhood</h2>
           <p className="text-slate-600 mt-1 text-sm">Type a town name and we’ll load all listings with infinite scroll.</p>
 
-          <div className="flex items-stretch w-full max-w-xl mt-3">
-            <input
-              type="text"
-              value={townInput}
-              onChange={(e) => setTownInput(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
+          <div className="relative w-full max-w-xl mt-3" ref={suggestRef}>
+            <div className="flex items-stretch w-full">
+              <input
+                type="text"
+                value={townInput}
+                onChange={(e) => { setTownInput(e.target.value); setShowTownSuggest(true); }}
+                onFocus={() => setShowTownSuggest(true)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    handleSelectTown(townInput);
+                  }
+                }}
+                placeholder="Search by neighbourhood (e.g., Bishan)"
+                className="flex-1 rounded-l-xl border border-blue-200 px-4 py-3 text-sm shadow-sm bg-white text-slate-800 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+              <Link
+                href={(() => {
                   const params = new URLSearchParams();
                   if (q.trim()) params.set("q", q.trim());
                   const t = townInput.trim().toUpperCase();
                   if (t) params.set("town", t);
-                  router.push(`/listing${params.toString() ? `?${params.toString()}` : ""}`);
-                }
-              }}
-              placeholder="Search by neighbourhood (e.g., Bishan)"
-              className="flex-1 rounded-l-xl border border-blue-200 px-4 py-3 text-sm shadow-sm bg-white text-slate-800 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-            <Link
-              href={(() => {
-                const params = new URLSearchParams();
-                if (q.trim()) params.set("q", q.trim());
-                const t = townInput.trim().toUpperCase();
-                if (t) params.set("town", t);
-                return `/listing${params.toString() ? `?${params.toString()}` : ""}`;
-              })()}
-              className="rounded-r-xl bg-blue-900 text-white font-bold px-5 py-3 shadow hover:bg-blue-800 border border-blue-900"
-            >
-              Search
-            </Link>
+                  return `/listing${params.toString() ? `?${params.toString()}` : ""}`;
+                })()}
+                className="rounded-r-xl bg-blue-900 text-white font-bold px-5 py-3 shadow hover:bg-blue-800 border border-blue-900"
+                onClick={() => setShowTownSuggest(false)}
+              >
+                Search
+              </Link>
+            </div>
+
+            {showTownSuggest && filteredTownSuggestions.length > 0 && (
+              <div className="absolute z-50 mt-1 w-[calc(100%-90px)] bg-white text-blue-900 border border-blue-200 rounded-lg shadow-xl max-h-64 overflow-auto">
+                {filteredTownSuggestions.map((t) => (
+                  <button
+                    key={t}
+                    type="button"
+                    className="block w-full text-left px-3 py-2 hover:bg-blue-50 focus:bg-blue-100"
+                    onClick={() => handleSelectTown(t)}
+                  >
+                    {t}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
           {/* Filters row */}
           <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
@@ -380,19 +428,6 @@ export default function ListingPage() {
                 ))}
               </select>
             </div>
-            {/* Score */}
-            <div className="flex flex-col">
-              <label className="text-xs font-semibold text-slate-700 mb-1">Min score</label>
-              <select
-                value={scoreKey}
-                onChange={(e) => setScoreKey(e.target.value)}
-                className="rounded-lg border border-blue-200 px-3 py-2 text-sm bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                {SCORE_OPTIONS.map((o) => (
-                  <option key={o.key} value={o.key}>{o.label}</option>
-                ))}
-              </select>
-            </div>
           </div>
 
           <div className="mt-3 flex items-center gap-3">
@@ -407,12 +442,8 @@ export default function ListingPage() {
             </Link>
             <button
               onClick={applyFilters}
-              disabled={!allFiltersFilled}
               className={
-                "font-bold px-5 py-2 rounded-full shadow transition-colors border-2 " +
-                (allFiltersFilled
-                  ? "bg-blue-900 text-white hover:bg-blue-800 border-blue-900"
-                  : "bg-gray-200 text-gray-500 cursor-not-allowed border-gray-300")
+                "font-bold px-5 py-2 rounded-full shadow transition-colors border-2 bg-blue-900 text-white hover:bg-blue-800 border-blue-900"
               }
             >
               Apply filters

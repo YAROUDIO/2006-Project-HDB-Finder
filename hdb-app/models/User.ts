@@ -17,8 +17,7 @@ const userSchema = new mongoose.Schema({
   loan: { type: String },
   flatType: { type: String },
   downPaymentBudget: { type: Number },
-  area: { type: String },
-  leaseLeft: { type: String }
+  area: { type: String }
 });
 
 export default mongoose.models.User || mongoose.model("User", userSchema);

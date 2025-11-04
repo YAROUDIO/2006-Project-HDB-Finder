@@ -3,6 +3,34 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
+import { parseRemainingLeaseYears } from "@/lib/affordability";
+
+// Helper: Check if remaining lease matches user preference
+function matchesLeasePreference(remaining_lease: string | undefined, leaseLeft: string | undefined): boolean {
+  // If no preference set, show all flats
+  if (!leaseLeft) return true;
+  
+  // If no remaining_lease data, exclude the flat
+  if (!remaining_lease) return false;
+  
+  const years = parseRemainingLeaseYears(remaining_lease);
+  if (years === undefined) return false;
+  
+  // Match against preference ranges
+  switch (leaseLeft) {
+    case "0-25":
+      return years >= 0 && years <= 25;
+    case "25-50":
+      return years > 25 && years <= 50;
+    case "50-75":
+      return years > 50 && years <= 75;
+    case "75-99":
+      return years > 75 && years <= 99;
+    default:
+      return true; // Unknown preference, show all
+  }
+}
 
 type RawResult = {
   town: string;
@@ -40,13 +68,27 @@ const FLAT_TYPES = [
   "MULTI-GENERATION",
 ];
 
+const BLUE = "#1e3a8a";
+
+function menuItemStyle() {
+  return "block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-blue-50 transition-colors";
+}
+
 export default function FinderPage() {
+  const router = useRouter();
+  
   const [weights, setWeights] = useState({
     mrt: 7,
     school: 6,
     hospital: 3,
     affordability: 8,
   });
+
+  // Menu dropdown state
+  const [username, setUsername] = useState<string>("");
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuDropdownRef = useRef<HTMLDivElement | null>(null);
+  const menuBtnRef = useRef<HTMLButtonElement | null>(null);
 
   const [allTowns, setAllTowns] = useState<string[]>([]);
   const [townQuery, setTownQuery] = useState("");
@@ -60,6 +102,38 @@ export default function FinderPage() {
   const [loading, setLoading] = useState(false);
   const [results, setResults] = useState<FinderResult[] | null>(null);
   const [error, setError] = useState<string>("");
+
+  // Get username from localStorage
+  useEffect(() => {
+    const storedUsername = localStorage.getItem("username");
+    if (storedUsername) {
+      setUsername(storedUsername);
+    }
+  }, []);
+
+  // Close menu dropdown on outside click
+  useEffect(() => {
+    function onDocClick(e: MouseEvent) {
+      if (!menuDropdownRef.current || !menuBtnRef.current) return;
+      if (!menuDropdownRef.current.contains(e.target as Node) && !menuBtnRef.current.contains(e.target as Node)) {
+        setMenuOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", onDocClick);
+    return () => document.removeEventListener("mousedown", onDocClick);
+  }, []);
+
+  const handleLogout = async () => {
+    try {
+      await fetch("/api/logout", { method: "POST" });
+    } catch (err) {
+      console.error("Logout error:", err);
+    }
+    localStorage.removeItem("username");
+    setUsername("");
+    setMenuOpen(false);
+    router.push("/login");
+  };
 
   useEffect(() => {
     let alive = true;
@@ -210,7 +284,88 @@ export default function FinderPage() {
     <div className="min-h-screen w-full" style={{ background: "#e0f2ff" }}>
       {/* Top Bar */}
       <div className="w-full bg-blue-900 text-white flex items-center px-6 py-4 relative shadow-md">
+        {/* Menu Dropdown on the left */}
+        <button
+          ref={menuBtnRef}
+          className="mr-4 focus:outline-none"
+          onClick={() => setMenuOpen(!menuOpen)}
+          aria-label="Open navigation menu"
+        >
+          <svg width="32" height="32" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+        
         <span className="text-2xl font-bold tracking-wide">FlatMatch</span>
+        
+        {menuOpen && (
+          <div
+            ref={menuDropdownRef}
+            className="absolute left-0 top-full mt-2 w-56 bg-white text-blue-900 rounded-lg shadow-lg z-50 border border-blue-200 animate-fade-in"
+          >
+            <Link
+              href="/listing"
+              className="block px-6 py-3 hover:bg-blue-50"
+              onClick={() => setMenuOpen(false)}
+            >
+              Listing
+            </Link>
+            
+            <Link
+              href="/bookmarked"
+              className="block px-6 py-3 hover:bg-blue-50"
+              onClick={() => setMenuOpen(false)}
+            >
+              View Bookmarked
+            </Link>
+            
+            {username ? (
+              <>
+                <Link
+                  href="/account"
+                  className="block px-6 py-3 hover:bg-blue-50"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  Account
+                </Link>
+                
+                <Link
+                  href="/userinfo"
+                  className="block px-6 py-3 hover:bg-blue-50"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  User Info
+                </Link>
+                
+                <button
+                  onClick={handleLogout}
+                  className="block px-6 py-3 hover:bg-blue-50 w-full text-left"
+                >
+                  Logout
+                </button>
+              </>
+            ) : (
+              <>
+                <Link
+                  href="/login"
+                  className="block px-6 py-3 hover:bg-blue-50"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  Login
+                </Link>
+                
+                <Link
+                  href="/register"
+                  className="block px-6 py-3 hover:bg-blue-50"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  Register
+                </Link>
+              </>
+            )}
+          </div>
+        )}
+        
         <div className="ml-auto flex items-center gap-2">
           <Link href="/home" className="bg-white text-blue-900 font-bold px-4 py-2 rounded-full shadow hover:bg-blue-100 transition-colors border-2 border-blue-900">
             Home
@@ -306,7 +461,7 @@ export default function FinderPage() {
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             <Slider label="Distance to MRT" value={weights.mrt} onChange={(v) => setWeights({ ...weights, mrt: v })} />
             <Slider label="Distance to Schools" value={weights.school} onChange={(v) => setWeights({ ...weights, school: v })} />
-            <Slider label="Distance to Hospitals/Clinics" value={weights.hospital} onChange={(v) => setWeights({ ...weights, hospital: v })} />
+            <Slider label="Distance to Medical" value={weights.hospital} onChange={(v) => setWeights({ ...weights, hospital: v })} />
             <Slider label="Affordability" value={weights.affordability} onChange={(v) => setWeights({ ...weights, affordability: v })} />
           </div>
 

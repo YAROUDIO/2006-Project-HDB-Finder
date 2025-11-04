@@ -8,7 +8,7 @@ import { geocodeWithCache } from "@/lib/geocode";
 import { loadHospitals, loadSchools } from "@/lib/loaders";
 import { loadStations } from "@/lib/stations";
 import { haversine } from "@/lib/geo";
-import { evaluateAffordability, parseRemainingLeaseYears } from "@/lib/affordability";
+import { evaluateAffordability } from "@/lib/affordability";
 import { cookies } from "next/headers";
 import { connectDB } from "@/lib/mongoose";
 import User from "@/models/User";
@@ -236,11 +236,11 @@ export async function POST(req: NextRequest) {
       
       if (userAge !== undefined && userIncome !== undefined) {
         // We have user info, calculate actual affordability
-        const remainingLeaseYears = parseRemainingLeaseYears(t.row.remaining_lease);
+        // Note: remaining_lease not available in FlatRow, using undefined for now
         const evaluation = evaluateAffordability({
           price: t.price,
           age: userAge,
-          remainingLeaseYears,
+          remainingLeaseYears: undefined,
           incomePerAnnum: userIncome,
           downPaymentBudget: userDownPaymentBudget,
         });

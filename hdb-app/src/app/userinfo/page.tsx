@@ -17,7 +17,6 @@ export default function UserInfo() {
   const [flatType, setFlatType] = useState("");
   const [downPaymentBudget, setDownPaymentBudget] = useState("");
   const [area, setArea] = useState("");
-  const [lease, setLease] = useState("");
 
   const [formError, setFormError] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
@@ -40,7 +39,6 @@ export default function UserInfo() {
           setFlatType(user.flatType || "");
           setDownPaymentBudget(user.downPaymentBudget ? String(user.downPaymentBudget) : "");
           setArea(user.area || "");
-          setLease(user.leaseLeft ? String(user.leaseLeft) : "");
         }
       } catch {
         // ignore; show empty form
@@ -95,7 +93,6 @@ export default function UserInfo() {
           flatType,
           downPaymentBudget,
           area,
-          lease,
         }),
       });
       const data = await res.json().catch(() => ({}));
@@ -317,16 +314,6 @@ export default function UserInfo() {
                     <option value="East">East</option>
                     <option value="West">West</option>
                     <option value="Central">Central</option>
-                  </Select>
-                </Field>
-
-                <Field label="Lease Duration (years left)">
-                  <Select value={lease} onChange={setLease}>
-                    <option value="">Select…</option>
-                    <option value="0-25">0–25</option>
-                    <option value="25-50">25–50</option>
-                    <option value="50-75">50–75</option>
-                    <option value="75-99">75–99</option>
                   </Select>
                 </Field>
               </div>

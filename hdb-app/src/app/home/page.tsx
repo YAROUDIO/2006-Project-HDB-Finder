@@ -549,11 +549,19 @@ export default function HomePage() {
             Browse all current resale listings in Singapore. One place, every town.
           </p>
 
-          {/* Single big CTA: View all flats - centered */}
-          <div style={{ marginTop: 16, display: "flex", justifyContent: "center" }}>
-            <Link href="/listing" className="super-button super-button-xl" aria-label="View all HDB flats">
+          {/* Three CTAs: View all flats, View Bookmarked, and Go to HDB Finder */}
+          <div style={{ marginTop: 16, display: "flex", justifyContent: "center", gap: "16px", flexWrap: "wrap" }}>
+            <Link href="/listing" className="super-button super-button-xl" aria-label="View all HDB flats" style={{ minWidth: "200px", paddingLeft: "24px" }}>
               View all flats
               <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style={{ marginLeft: 8 }}><path d="M12 4l1.41 1.41L8.83 10H20v2H8.83l4.58 4.59L12 18l-8-8z"/></svg>
+            </Link>
+            <Link href="/bookmarked" className="super-button super-button-xl" aria-label="View bookmarked flats" style={{ minWidth: "200px" }}>
+              View Bookmarked Flats
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style={{ marginLeft: 8 }}><path d="M17 3H7c-1.1 0-1.99.9-1.99 2L5 21l7-3 7 3V5c0-1.1-.9-2-2-2z"/></svg>
+            </Link>
+            <Link href="/finder" className="super-button super-button-xl" aria-label="Go to HDB Finder" style={{ minWidth: "200px" }}>
+              Go to HDB Finder!
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" style={{ marginLeft: 8 }}><path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
             </Link>
           </div>
 

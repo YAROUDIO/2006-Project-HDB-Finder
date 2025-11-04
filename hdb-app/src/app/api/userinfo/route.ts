@@ -19,6 +19,7 @@ export async function GET() {
 		}
 		return NextResponse.json({ user });
 	} catch (err) {
+		console.error("GET /api/userinfo error:", err);
 		return NextResponse.json({ error: "Failed to fetch user info." }, { status: 500 });
 	}
 }
@@ -35,8 +36,7 @@ export async function POST(req: Request) {
 			citizenship,
 			flatType,
 			downPaymentBudget,
-			area,
-			lease
+			area
 		} = body;
 
 		if (!username) {
@@ -52,8 +52,7 @@ export async function POST(req: Request) {
 			income,
 			citizenship,
 			flatType,
-			area,
-			leaseLeft: lease
+			area
 		};
 		
 		// Only set age if we have a valid number
@@ -78,6 +77,7 @@ export async function POST(req: Request) {
 		}
 		return NextResponse.json({ message: "User info updated.", user: updated });
 	} catch (err) {
+		console.error("POST /api/userinfo error:", err);
 		return NextResponse.json({ error: "Failed to update user info." }, { status: 500 });
 	}
 }
