@@ -10,6 +10,18 @@ export default function HomePage() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [searchText, setSearchText] = useState("");
+  type FeaturedItem = {
+    town: string;
+    block: string;
+    street_name: string;
+    resale_price: number | string;
+    flat_type: string;
+    month: string;
+    compositeKey: string;
+    score: number;
+  };
+  const [featuredGroups, setFeaturedGroups] = useState<Record<string, FeaturedItem[]>>({});
+  const [featuredLoading, setFeaturedLoading] = useState(false);
 
   const firstLinkRef = useRef<HTMLAnchorElement | null>(null);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
@@ -77,6 +89,67 @@ export default function HomePage() {
     return () => document.removeEventListener("mousedown", handler);
   }, [dropdownOpen]);
 
+  // ---- Load featured top-scored flats for homepage ----
+  useEffect(() => {
+    let alive = true;
+    (async () => {
+      try {
+        setFeaturedLoading(true);
+        // Try to get user's preferred flat type; fallback to 3 ROOM
+        let flatType = "3 ROOM";
+        try {
+          const res = await fetch("/api/userinfo", { cache: "no-store" });
+          if (res.ok) {
+            const data = await res.json();
+            const ft = (data?.user?.flatType || data?.user?.flat_type || "").toString().trim();
+            if (ft) flatType = ft;
+          }
+        } catch {}
+
+        const towns = ["ANG MO KIO", "BISHAN", "QUEENSTOWN"];
+        const payload = {
+          weights: { mrt: 7, school: 6, hospital: 3, affordability: 8 },
+          towns,
+          flatType,
+          pricePolicy: "cheapest-recent-24m",
+        };
+        const res = await fetch("/api/finder", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!alive) return;
+        if (res.ok && Array.isArray(data?.results) && data.results.length > 0) {
+          // Group top ~30 results by town, evenly split across selected towns
+          const perTown = Math.ceil(30 / towns.length);
+          const grouped: Record<string, FeaturedItem[]> = {};
+          for (const t of towns) grouped[t] = [];
+          // results are already sorted by score desc on server
+          for (const r of data.results as FeaturedItem[]) {
+            const town = (r.town || "").toString().toUpperCase();
+            if (!(town in grouped)) continue; // ignore towns not in our list
+            if (grouped[town].length < perTown) {
+              grouped[town].push(r);
+            }
+            // stop when we reached our target roughly
+            const total = Object.values(grouped).reduce((a, arr) => a + arr.length, 0);
+            if (total >= perTown * towns.length) break;
+          }
+          setFeaturedGroups(grouped);
+        } else {
+          setFeaturedGroups({});
+        }
+      } catch {
+        if (!alive) return;
+        setFeaturedGroups({});
+      } finally {
+        if (alive) setFeaturedLoading(false);
+      }
+    })();
+    return () => { alive = false; };
+  }, []);
+
   // ---- Logout ----
   const handleLogout = () => {
     if (typeof window !== "undefined") {
@@ -89,6 +162,16 @@ export default function HomePage() {
   const BLUE = "#143D8D";
   const BLUE_DARK = "#0E2B64";
   const SURFACE = "#E9F5FF";
+
+  // Short, friendly neighbourhood blurbs shown above each town's featured list
+  const TOWN_BLURBS: Record<string, string> = {
+    QUEENSTOWN:
+      "A centrally located, mature estate with excellent MRT access, lively dining, and green corridors like the Rail Corridor. Close to the city, one-north, and Alexandra amenities—great balance of convenience and lifestyle.",
+    BISHAN:
+      "Popular with families for its schools, parks, and connectivity. Home to Bishan–Ang Mo Kio Park and an MRT interchange, it offers a calm neighbourhood feel with city access in minutes.",
+    "ANG MO KIO":
+      "A classic heartland favourite known for great food, everyday conveniences, and strong transport links. Mature amenities and parks make it practical and comfortable to live in.",
+  };
 
   return (
     <div style={{ minHeight: "100vh", width: "100%", background: SURFACE }}>
@@ -334,14 +417,7 @@ export default function HomePage() {
             padding: 24,
           }}
         >
-          <h2
-            style={{
-              margin: 0,
-              fontSize: "1.8rem",
-              fontWeight: 800,
-              color: BLUE_DARK,
-            }}
-          >
+          <h2 className="title-underline gradient-text" style={{ margin: 0, fontSize: "1.9rem", fontWeight: 900 }}>
             Find your next HDB home
           </h2>
           <p style={{ marginTop: 6, color: "#334155" }}>
@@ -425,49 +501,61 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* Featured placeholders (you can wire real data later) */}
+        {/* Featured top-scored HDBs (grouped by town) */}
         <section style={{ marginTop: 28 }}>
-          <h3 style={{ margin: 0, fontSize: "1.4rem", color: "#0f172a" }}>
-            Featured neighbourhoods
-          </h3>
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))",
-              gap: 14,
-              marginTop: 12,
-            }}
-          >
-            {["Bishan • 3-Room near MRT", "Sengkang • 4-Room Corner", "Pasir Ris • Executive Maisonette"].map(
-              (t, i) => (
-                <div
-                  key={i}
-                  style={{
-                    borderRadius: 16,
-                    background: "#ffffffcc",
-                    backdropFilter: "blur(4px)",
-                    border: "1px solid #ffffff",
-                    boxShadow: "0 6px 16px rgba(20,61,141,0.08)",
-                    padding: 14,
-                  }}
-                >
-                  <div
-                    style={{
-                      aspectRatio: "16/10",
-                      borderRadius: 12,
-                      background:
-                        "linear-gradient(135deg, #ffffff, rgba(20,61,141,0.08))",
-                      marginBottom: 10,
-                    }}
-                  />
-                  <div style={{ fontWeight: 700, color: "#0f172a" }}>{t}</div>
-                  <div style={{ fontSize: 13, color: "#475569", marginTop: 2 }}>
-                    Sample listing card
-                  </div>
+          <h3 style={{ margin: 0, fontSize: "1.4rem", color: "#0f172a" }}>Featured neighbourhoods</h3>
+          {featuredLoading && (
+            <div style={{ marginTop: 12, color: "#475569" }}>Loading top flats…</div>
+          )}
+          {/* Render by town sections */}
+          {(() => {
+            const order = ["QUEENSTOWN", "BISHAN", "ANG MO KIO"]; // preferred display order
+            const townsToShow = order.filter((t) => (featuredGroups[t]?.length || 0) > 0);
+            if (!featuredLoading && townsToShow.length === 0) {
+              return (
+                <div style={{ marginTop: 12, color: "#475569" }}>
+                  No featured flats available at the moment.
                 </div>
-              )
-            )}
-          </div>
+              );
+            }
+            return townsToShow.map((town) => (
+              <div key={town} style={{ marginTop: 16 }}>
+                <div className="gradient-text" style={{ fontWeight: 900, fontSize: 20, marginBottom: 6 }}>{town}</div>
+                <div style={{ color: "#475569", fontSize: 14, marginBottom: 10 }}>
+                  {TOWN_BLURBS[town] || "A well-loved neighbourhood with handy amenities, transport links, and green spaces."}
+                </div>
+                <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))", gap: 16 }}>
+                  {(featuredGroups[town] || []).map((r, i) => (
+                    <Link
+                      key={(r.compositeKey || "") + "_" + i}
+                      href={`/listing/${encodeURIComponent(r.compositeKey)}`}
+                      style={{ textDecoration: "none" }}
+                    >
+                      <div className="glass-card" style={{ padding: 16, paddingBottom: 48, position: "relative" }}>
+                        {/* Score badge */}
+                        {Number.isFinite(r.score) && (
+                          <div className="pill pill-score" style={{ position: "absolute", bottom: 12, right: 12 }}>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87L18.18 22 12 18.77 5.82 22 7 14.14l-5-4.87 6.91-1.01z"/></svg>
+                            {Number(r.score).toFixed(1)}
+                          </div>
+                        )}
+                        <div style={{ fontWeight: 800, color: "#0f172a" }}>
+                          {r.block} {r.street_name} • {r.flat_type}
+                        </div>
+                        <div style={{ fontSize: 13, color: "#475569", marginTop: 6 }}>
+                          {typeof r.resale_price === "number" ? `$${r.resale_price.toLocaleString()}` : `$${Number(r.resale_price).toLocaleString()}`}
+                        </div>
+                        <div style={{ marginTop: 10, fontSize: 12, color: "#1e293b", fontWeight: 600, display: "inline-flex", alignItems: "center", gap: 6 }}>
+                          View details
+                          <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 4l1.41 1.41L8.83 10H20v2H8.83l4.58 4.59L12 18l-8-8z"/></svg>
+                        </div>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            ));
+          })()}
         </section>
 
         <footer style={{ padding: "28px 0 36px", color: "#475569", fontSize: 14 }}>
