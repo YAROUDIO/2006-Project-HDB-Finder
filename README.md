@@ -21,6 +21,34 @@ Discover Singapore resale HDB flats with fast search, smart scoring, maps, and b
 - Maps: Leaflet + react-leaflet (client only)
 - Backend: Next.js API routes, MongoDB with Mongoose
 
+## Dependencies
+
+Install everything with `npm install` inside `hdb-app`. Key packages used:
+
+- Runtime:
+	- next, react, react-dom
+	- mongoose (MongoDB ODM)
+	- leaflet, react-leaflet (maps)
+	- axios (HTTP), papaparse (CSV), proj4 (coordinate transforms)
+	- bcryptjs (password hashing), jose (JWT/crypto)
+	- dotenv (env vars)
+- Dev:
+	- typescript, eslint, eslint-config-next
+	- @types/node, @types/react, @types/react-dom
+	- tailwindcss, @tailwindcss/postcss
+	- tsx (script runner), csv-parse, p-limit
+- Optional (recommended for TypeScript):
+	- @types/leaflet (type defs for Leaflet)
+
+Engines (from `package.json`): Node >= 18 < 21, npm >= 9.
+
+If you see missing type hints or build errors related to Leaflet types, add:
+
+```powershell
+cd hdb-app
+npm i -D @types/leaflet
+```
+
 ## Project layout (high level)
 
 ```
