@@ -1,104 +1,121 @@
-# FlatMatch (HDB Finder)
+# FlatMatch – HDB Flat Finder
 
-Discover Singapore resale HDB flats with fast search, smart scoring, maps, and bookmarks. Built with Next.js App Router, TypeScript, MongoDB, and Leaflet.
+> **Smart HDB flat discovery for Singaporeans** — Fast search, AI-powered scoring, interactive maps, and instant bookmarks.
 
-## Features
+**FlatMatch** helps you find your perfect resale HDB flat in Singapore with an intelligent scoring system that evaluates affordability and nearby amenities. Built with modern web technologies: Next.js, TypeScript, MongoDB, and Leaflet maps.
 
-- Listings with infinite scroll and a dense, responsive grid
-- Town search + filters (Rooms, Price Min/Max, Min Score)
-	- Filters only apply after you click “Apply filters” (predictable UX)
-	- “Search” button updates the town without auto-filtering
-- Amenity- and affordability-based scoring (batch scored for performance)
-- Bookmarks: save listings and view them with scores
-- Detail view with interactive Leaflet map, nearby amenities (≤1 km), and walking routes/time via OneMap
-- Personalized Featured on Home using your user info (budget/area/flat type)
+## Key Features
 
-## Tech stack
+- **Smart Search & Filters** — Find flats by town, rooms, price, and custom score thresholds. Filters apply only when you click "Apply" for predictable UX.
+- **Intelligent Scoring** — Composite scoring based on affordability metrics and nearby amenities (evaluated server-side in batches for performance).
+- **Interactive Maps** — Leaflet-powered detail pages with unit markers, nearby amenities (≤1 km), and OneMap walking routes with estimated times.
+- **Bookmarks** — Save your favorite listings and compare them at a glance with computed scores.
+- **Responsive Grid** — Infinite-scroll listings with dense, mobile-friendly layout.
+- **Personalized Home** — Featured flat recommendations based on your saved preferences (budget, location, flat type).
 
-- Framework: Next.js (App Router), React 19, TypeScript
-- Styling: Tailwind CSS (globals) + custom utility classes
-- Data: data.gov.sg (resale dataset), local CSV/GeoJSON in `/data`
-- Maps: Leaflet + react-leaflet (client only)
-- Backend: Next.js API routes, MongoDB with Mongoose
+## Tech Stack
 
-## Dependencies
+| Component | Technology |
+|-----------|-----------|
+| **Frontend** | Next.js 15 (App Router), React 19, TypeScript |
+| **Styling** | Tailwind CSS + custom utility classes |
+| **Maps & Routing** | Leaflet + react-leaflet (client-side) |
+| **Backend** | Next.js API routes, MongoDB with Mongoose |
+| **Data Sources** | data.gov.sg (resale dataset), local CSV/GeoJSON |
+| **Location Services** | OneMap API (search, routing, proximity) |
+| **Auth** | bcryptjs (hashing), jose (JWT/crypto) |
 
-Install everything with `npm install` inside `hdb-app`. Key packages used:
-
-- Runtime:
-	- next, react, react-dom
-	- mongoose (MongoDB ODM)
-	- leaflet, react-leaflet (maps)
-	- axios (HTTP), papaparse (CSV), proj4 (coordinate transforms)
-	- bcryptjs (password hashing), jose (JWT/crypto)
-	- dotenv (env vars)
-- Dev:
-	- typescript, eslint, eslint-config-next
-	- @types/node, @types/react, @types/react-dom
-	- tailwindcss, @tailwindcss/postcss
-	- tsx (script runner), csv-parse, p-limit
-- Optional (recommended for TypeScript):
-	- @types/leaflet (type defs for Leaflet)
-
-Engines (from `package.json`): Node >= 18 < 21, npm >= 9.
-
-If you see missing type hints or build errors related to Leaflet types, add:
-
-```powershell
-cd hdb-app
-npm i -D @types/leaflet
-```
-
-## Project layout (high level)
-
-```
-2006-Project-HDB-Finder/
-	hdb-app/
-		src/app/
-			(display)/listing/page.tsx         # Listings grid, search & filters
-			(display)/listing/[id]/page.tsx    # Listing detail + map/amenities
-			(display)/bookmarks/page.tsx       # Bookmarked listings
-			home/page.tsx                      # Featured sections
-			api/
-				hdbdata/route.ts                 # Resale data fetch (paged)
-				score-batch/route.ts             # Batch scoring endpoint
-				userinfo/route.ts                # Read/update user profile
-				bookmarks/route.ts               # Add/list/remove bookmarks
-				onemap/                          # Search, nearby, route proxies
-				sg/amenities/route.ts            # Local GeoJSON amenity lookup
-				coords/route.ts                  # Local CSV-based geocoding
-		lib/                                 # Geocode, loaders, scoring, etc.
-		models/                              # Mongoose models (User, Bookmark)
-		data/                                # CSV/GeoJSON datasets
-```
-
-## Getting started
+## Dependencies & Requirements
 
 ### Prerequisites
+- **Node.js** 18–20 (Windows supported)  
+- **npm** ≥ 9  
+- **MongoDB** connection string (Atlas or local)  
+- **OneMap** credentials (recommended for search/routing)
 
-- Node.js 18–20 (Windows supported). npm ≥ 9
-- A MongoDB connection string (Atlas or local)
-- OneMap credentials (recommended) or a static token
- - Add your machine's IP to MongoDB Atlas (Project → Network Access → Add IP) so your dev app can connect.
-
-### Setup
-
-1) Install dependencies
+### Installation
 
 ```powershell
 cd hdb-app
 npm install
 ```
 
-2) Create `hdb-app/.env.local`
+### Runtime Dependencies
+
+| Package | Purpose |
+|---------|---------|
+| `next`, `react`, `react-dom` | Core framework |
+| `mongoose` | MongoDB ODM |
+| `leaflet`, `react-leaflet` | Interactive maps |
+| `axios`, `papaparse` | HTTP & CSV parsing |
+| `proj4` | Coordinate transforms (SVY21 ↔ WGS84) |
+| `bcryptjs`, `jose` | Security (hashing, JWT) |
+| `dotenv` | Environment variables |
+
+### Development Dependencies
+
+```bash
+typescript, eslint, @types/node, @types/react
+tailwindcss, @tailwindcss/postcss
+tsx, csv-parse, p-limit
+@types/leaflet  # Optional but recommended
+```
+
+**Note:** If you see missing type hints for Leaflet, run:
+```powershell
+npm i -D @types/leaflet
+```
+
+## Project Structure
 
 ```
+2006-Project-HDB-Finder/
+├── hdb-app/
+│   ├── src/app/
+│   │   ├── (display)/
+│   │   │   ├── listing/page.tsx          # Listings grid + search/filters
+│   │   │   ├── listing/[id]/page.tsx     # Detail view + Leaflet map
+│   │   │   └── bookmarks/page.tsx        # Saved flats
+│   │   ├── home/page.tsx                 # Featured sections
+│   │   ├── api/
+│   │   │   ├── hdbdata/route.ts          # Resale data (paged)
+│   │   │   ├── score-batch/route.ts      # Batch scoring
+│   │   │   ├── userinfo/route.ts         # User profiles
+│   │   │   ├── bookmarks/route.ts        # Bookmark CRUD
+│   │   │   ├── onemap/                   # OneMap API proxies
+│   │   │   ├── sg/amenities/route.ts     # Local amenity lookups
+│   │   │   └── coords/route.ts           # Geocoding helpers
+│   │   ├── (auth)/, auth/, logout/       # Authentication flows
+│   │   └── globals.css
+│   ├── lib/                              # Utilities: geocoding, scoring, loaders
+│   ├── models/                           # Mongoose schemas (User, Bookmark)
+│   ├── data/                             # CSV/GeoJSON datasets
+│   ├── components/                       # React components
+│   └── package.json
+└── README.md
+```
+
+## Quick Start
+
+### 1. Install Dependencies
+```powershell
+cd hdb-app
+npm install
+```
+
+### 2. Configure Environment
+Create `hdb-app/.env.local`:
+
+```env
+# MongoDB connection (required)
 MONGODB_URI=mongodb+srv://<user>:<pass>@<cluster>/<db>?retryWrites=true&w=majority
 
-# Option A: static token (simplest)
-ONEMAP_TOKEN=<token>
+# OneMap API – Choose ONE approach:
 
-# Option B: credentials (token will be fetched and cached)
+# Option A: Static Token (simplest)
+ONEMAP_TOKEN=<your-static-token>
+
+# Option B: Credentials (token auto-fetched & cached)
 ONEMAP_EMAIL=<your-email>
 ONEMAP_PASSWORD=<your-password>
 
@@ -106,134 +123,189 @@ ONEMAP_PASSWORD=<your-password>
 NEXT_PUBLIC_BASE_URL=http://localhost:3000
 ```
 
-3) Run the app
+### 3. Allow MongoDB Atlas IP
+If using **MongoDB Atlas**, whitelist your IP:
+1. Log in to Atlas → Your Project → **Network Access**
+2. Click **"Add IP Address"** → **"Add Current IP Address"**
+3. (Optional) Name it (e.g., `dev-laptop`)
+4. Save and wait 30 seconds
 
+> **Note:** Residential IPs change; re-whitelist if connectivity drops.  
+> **Security:** Avoid `0.0.0.0/0` except for quick testing.
+
+### 4. Start Development Server
 ```powershell
 npm run dev
 ```
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-Build & start (production):
-
+### 5. Production Build
 ```powershell
 npm run build
 npm start
 ```
 
-### MongoDB Atlas IP Allowlist
-
-If you're using MongoDB Atlas you must permit your client IP, otherwise connections will fail.
-
-Steps:
-1. Log in to Atlas and open your Project.
-2. Go to Network Access.
-3. Click "Add IP Address".
-4. Choose "Add Current IP Address" (recommended) and optionally name it (e.g. `dev-laptop`).
-5. Save and wait a few seconds.
-
-Tips:
-- Residential / dynamic IPs change; repeat if connectivity breaks.
-- Avoid 0.0.0.0/0 except for quick demos (it's wide open).
-- For CI, add its egress IP or use the Atlas Data API (not integrated yet).
-
 ### OneMap API Setup
 
-You can either supply a static token or let the app fetch and cache a token using your OneMap credentials.
+#### Step 1 - Register
+Visit [https://www.onemap.gov.sg/](https://www.onemap.gov.sg/) and create a free account.
 
-1. Register at https://www.onemap.gov.sg/ to get an account (email + password).
-2. Choose ONE approach:
-	- Static: set `ONEMAP_TOKEN` only.
-	- Dynamic: set `ONEMAP_EMAIL` and `ONEMAP_PASSWORD` (omit `ONEMAP_TOKEN`).
-3. The backend will call OneMap's auth endpoint (`/api/auth/post/getToken`) and keep the token in memory.
-4. Quick token test (dynamic) with PowerShell (no app needed):
+#### Step 2 - Choose Your Approach
+| Approach | Setup Time | Pros | Cons |
+|----------|-----------|------|------|
+| **Static Token** | 5 min | Simple, no dependencies | Manual renewal needed |
+| **Credentials** | 2 min | Auto-refreshed token | Stores email/password |
 
+#### Step 3 - Verify Your Credentials (Optional)
+Test with PowerShell (no app needed):
 ```powershell
 $body = @{ email = '<your-email>'; password = '<your-password>' } | ConvertTo-Json
-Invoke-RestMethod -Uri 'https://www.onemap.gov.sg/api/auth/post/getToken' -Method Post -ContentType 'application/json' -Body $body
+Invoke-RestMethod `
+  -Uri 'https://www.onemap.gov.sg/api/auth/post/getToken' `
+  -Method Post `
+  -ContentType 'application/json' `
+  -Body $body
 ```
 
-If you get an `access_token` in the response, your credentials are valid. If not, check your email/password or try again later.
+You should see an `access_token` in the response.
 
-#### Proxied Endpoints in this app
+#### Step 4 - Use in Your App
+The backend automatically calls OneMap APIs via proxied endpoints:
 
-- `GET /api/onemap/search?query=<text>` (Search API)
-- `GET /api/onemap/nearby?lat=<lat>&lng=<lng>&dist=<meters>` (Nearby amenities)
-- `GET /api/onemap/route?start=<lat,lng>&end=<lat,lng>&routeType=walk` (Walking route & duration)
+| Endpoint | Purpose |
+|----------|---------|
+| `GET /api/onemap/search?query=<text>` | Search locations |
+| `GET /api/onemap/nearby?lat=<lat>&lng=<lng>&dist=<meters>` | Find nearby amenities |
+| `GET /api/onemap/route?start=<lat,lng>&end=<lat,lng>&routeType=walk` | Walking route & time |
 
-Token renewal: On 401/403 from OneMap, refresh (static) or verify credentials (dynamic). For production you might implement periodic refresh.
+**Note on Token Renewal:** On 401/403 from OneMap, the app refreshes (static) or re-verifies credentials (dynamic). For production, consider periodic proactive refresh.
 
-Reference docs:
-- Auth: https://www.onemap.gov.sg/docs/#authentication
-- Search: https://www.onemap.gov.sg/docs/#search
-- Route: https://www.onemap.gov.sg/docs/#route-planning
+For full OneMap docs, see:
+- [Authentication](https://www.onemap.gov.sg/docs/#authentication)
+- [Search API](https://www.onemap.gov.sg/docs/#search)
+- [Route Planning](https://www.onemap.gov.sg/docs/#route-planning)
 
-## Key flows
+## How It Works
 
-### Listings
-
-- Use the town input + Search to load listings for a town
-- Set Rooms, Price Min/Max, and Min Score, then click “Apply filters”
-	- Filters don’t apply until you click Apply
-	- Infinite scroll loads subsequent pages
-- Score pills appear on cards (computed server-side in batches)
+### Search & Filter Workflow
+1. Enter a **town name** and click **"Search"** to load listings
+2. Set **Rooms**, **Price (Min/Max)**, and **Min Score**
+3. Click **"Apply filters"** — filters only apply now (predictable UX)
+4. Scroll infinitely to load more results
+5. Scores appear on each card (computed in batches server-side)
 
 ### Bookmarks
+1. Click **"Add to Bookmarks"** on any listing card or detail page
+2. View all bookmarks at `/bookmarks`
+3. Scores are fetched in a single batch request
 
-- Click “Add to Bookmarks” on a listing card or detail page
-- View saved items at `/bookmarks`; scores are fetched in one batch
+### Detail View with Maps
+1. Click a flat to view full details
+2. See an **interactive Leaflet map** with:
+   - Exact unit location
+   - Nearby amenities (≤ 1 km: MRT, hawker, parks, schools, etc.)
+   - Walking route & estimated time via OneMap
+3. All OneMap calls are proxied through the backend (secrets stay safe)
 
-### Listing detail (maps)
+## API Reference
 
-- Leaflet map with: unit marker, nearby amenities (≤ 1 km), and walking route/time
-- OneMap APIs are wrapped by server routes to avoid exposing secrets
+### Core Endpoints
 
-## API overview
+| Method | Endpoint | Purpose | Query/Body |
+|--------|----------|---------|-----------|
+| `GET` | `/api/hdbdata` | Fetch resale records (paged) | `offset`, `limit`, `town?`, `q?` |
+| `POST` | `/api/score-batch` | Score multiple flats | `{ items: [...] }` |
+| `GET` | `/api/userinfo` | Read user profile | — |
+| `POST` | `/api/userinfo` | Update user profile | `{ field: value }` |
+| `GET` | `/api/bookmarks` | List saved flats | `username=<username>` |
+| `POST` | `/api/bookmarks` | Add bookmark | `{ username, bookmark }` |
+| `DELETE` | `/api/bookmarks` | Remove bookmark | `{ username, compositeKey }` |
 
-- `GET /api/hdbdata` — Paged resale records
-	- Query: `offset`, `limit`, `q?`, `town?`
-	- Returns: `records[]`
-- `POST /api/score-batch` — Batch scoring
-	- Body: `{ items: [{ block, street_name, flat_type, town?, month, resale_price }] }`
-	- Returns: `{ results: [{ compositeKey, score }] }`
-- `GET /api/userinfo` — Read profile
-- `POST /api/userinfo` — Update profile (partial fields OK)
-- `GET /api/bookmarks?username=...` — List bookmarks
-- `POST /api/bookmarks` — Add `{ username, bookmark }` (prevent duplicates)
-- `DELETE /api/bookmarks` — Remove `{ username, compositeKey }`
-- OneMap proxies: `/api/onemap/search`, `/api/onemap/nearby`, `/api/onemap/route`
-- Local data helpers: `/api/coords`, `/api/sg/amenities`
+### OneMap Proxies
 
-## Data & scoring
+| Method | Endpoint | Purpose |
+|--------|----------|---------|
+| `GET` | `/api/onemap/search` | Search locations by name |
+| `GET` | `/api/onemap/nearby` | Find amenities near a point |
+| `GET` | `/api/onemap/route` | Calculate walking route & time |
 
-- `/data` contains CSV/GeoJSON used for geocoding and amenity lookups
-- `lib/geocode.ts` builds in-memory indexes once (fast repeated lookups)
-- `score-batch` caches results (TTL) and memoizes nearest distances per address
+### Local Data Helpers
 
-## Troubleshooting (Windows tips)
+| Endpoint | Purpose |
+|----------|---------|
+| `/api/sg/amenities` | GeoJSON-based amenity lookup |
+| `/api/coords` | CSV-based geocoding |
 
-### EPERM: `.next/trace` during dev
+**See `/lib`** for utility functions: scoring, geocoding, batch loading, etc.
 
-This is usually a locked file from a stray Node process.
+## Data & Scoring
 
+- **Data Sources:** `/data` contains CSV and GeoJSON files for geocoding and amenity lookups
+- **Fast Lookups:** `lib/geocode.ts` builds in-memory indexes once (subsequent lookups are O(1))
+- **Smart Caching:** `score-batch` endpoint caches results (with TTL) and memoizes nearest distances per address
+- **Scoring Algorithm:** Composite score based on:
+  - **Affordability:** Proximity to price thresholds
+  - **Amenities:** Distance to schools, MRT, parks, healthcare, hawker centers, etc.
+
+## Troubleshooting
+
+### Windows: EPERM Error on `.next/trace`
+**Problem:** Locked file from stray Node process during development.
+
+**Solution:**
 ```powershell
+# Kill all Node processes
 taskkill /F /IM node.exe
+
+# Remove build cache
 Remove-Item -Recurse -Force .next
+
+# Restart dev server
 npm run dev
 ```
 
-### Leaflet CSS import error
+### Leaflet CSS Not Loading
+**Problem:** Styles missing from Leaflet map; CSS import errors in console.
 
-- Do not import `leaflet/dist/leaflet.css` inside a page component
-- Load CSS once globally (e.g., via a `<link>` in `app/layout.tsx` head), or use a route-level `head.tsx` for the detail page
-- Types: `npm i -D @types/leaflet`
+**Solution:**
+- **Don't** import `leaflet/dist/leaflet.css` inside page components
+- **Do** load CSS globally (via `<link>` in `app/layout.tsx`) or use a route-level `head.tsx`
+- **Do** install types: `npm i -D @types/leaflet`
 
-## Security & sessions
+### MongoDB Connection Fails
+**Problem:** `MongooseError` or `getaddrinfo ENOTFOUND` when connecting to Atlas.
 
-- Current demo checks `localStorage` for `username` to simulate a session
-- For production, use a proper auth solution (e.g., NextAuth) and secure server-side checks in API routes
+**Checklist:**
+- IP address whitelisted in MongoDB Atlas **Network Access**
+- Connection string format: `mongodb+srv://user:pass@cluster.mongodb.net/db`
+- Credentials have no special characters (URL-encode if needed: `@` → `%40`)
+- `.env.local` has `MONGODB_URI` (not `DATABASE_URL`)
+- Network allows outbound HTTPS (port 443)
 
-## Diagrams (sequence examples)
+### OneMap 401/403 Errors
+**Problem:** Unauthorized access to OneMap API.
 
-Bookmark flat:
+**Solution:**
+- Verify credentials: run PowerShell test (see OneMap setup section)
+- Check token expiry (static tokens may need manual renewal)
+- For dynamic credentials, ensure email/password are correct and account is active
+
+## Security & Sessions
+
+### Current Implementation
+- Demo mode: **localStorage** simulation (stores `username` in browser)
+- **Not suitable for production**
+
+### Production Recommendations
+- Use a proper auth library (e.g., **NextAuth.js**, **Auth0**, **Supabase**)
+- Implement **secure server-side session checks** in API routes
+- Store sensitive tokens in **HTTP-only cookies**
+- Add CSRF protection and rate limiting
+- Use environment variables for API secrets (never expose in frontend)
+
+## Workflow Diagrams
+
+### Bookmark a Flat
 
 ```mermaid
 sequenceDiagram
@@ -286,15 +358,23 @@ sequenceDiagram
 	UI-->>User: “Saved”
 ```
 
-## Roadmap / ideas
+## Roadmap & Future Improvements
 
-- Proper auth/session and per-user security on APIs
-- Server-side rendering for Featured sections
-- Search relevance boosts and sort options
-- Unit tests for scoring, geocoding, and API contracts
+- [ ] **Proper Authentication** — Integrate NextAuth.js or similar
+- [ ] **Server-Side Rendering** — Pre-render Featured sections for better SEO
+- [ ] **Advanced Sorting** — Sort by price, date, score, or distance to location
+- [ ] **Search Relevance** — Boost scores based on user preferences
+- [ ] **Unit Tests** — Coverage for scoring, geocoding, and API contracts
+- [ ] **CI/CD Pipeline** — GitHub Actions for automated testing and deployment
+- [ ] **Performance** — Implement data pagination and caching strategies
+- [ ] **Amenity Customization** — Let users weight amenities differently in scoring
+
+See [FUTURE_IMPROVEMENTS.md](./hdb-app/FUTURE_IMPROVEMENTS.md) for detailed ideas.
 
 ## License
 
-MIT
+MIT © 2025 SCSD-20
 
-# 2006-SCSD-20
+---
+
+**Built for Singapore HDB seekers** | [Report an issue](https://github.com/YAROUDIO/2006-Project-HDB-Finder/issues)
